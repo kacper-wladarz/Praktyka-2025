@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+:root {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+}
+
+.appear {
+    animation-name: AppearBox;
+    animation-duration: 500ms;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes AppearBox {
+    from {
+        opacity: 0.1;
+    }
+    to {
+        opacity: 1;
+    }
+}
