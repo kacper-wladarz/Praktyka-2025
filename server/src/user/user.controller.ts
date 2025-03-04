@@ -1,4 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { RegisterUserDto } from './dtos/register-user.dto';
@@ -13,9 +22,23 @@ export class UserController {
     this.userService = userService;
   }
 
-  @Post('/login')
+  @Get('auth')
+  userAuth(@Req() req) {
+    return this.userService.userAuth(req);
+  }
+
+  @Post('login')
   login(@Body() body: LoginUserDto) {
     return this.userService.loginUser(body.login, body.password);
+  }
+
+  @Post('registration')
+  registration(@Body() body: RegisterUserDto) {
+    return this.userService.registerUser(
+      body.login,
+      body.password,
+      body.repeatedPassword,
+    );
   }
 
   @Post('google-login')
@@ -23,17 +46,18 @@ export class UserController {
     return this.userService.googleLoginUser(body.token);
   }
 
-  @Post('/registration')
-  registration(@Body() body: RegisterUserDto) {
-    return this.userService.registerUser(
-      body.login,
-      body.password,
-      body.repeatPassword,
-    );
-  }
-
   @Post('google-auth/registration')
   googleRegistration(@Body() body: GoogleRegistrationAuth) {
     return this.userService.googleRegistration(body.token);
+  }
+
+  @Delete('google-auth/registration/cancel/:authCode')
+  googleRegistrationCancel(@Param('authCode') authCode: string) {
+    return this.userService.googleRegistrationCancel(authCode);
+  }
+
+  @Put('google-auth/registration/confirm/:authCode')
+  googleRegistrtionConfirm(@Param('authCode') authCode: string) {
+    return this.userService.googleRegistrationConfirm(authCode);
   }
 }

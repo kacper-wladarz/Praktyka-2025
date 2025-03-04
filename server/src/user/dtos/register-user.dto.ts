@@ -10,6 +10,5 @@ export class RegisterUserDto {
   password: string;
 
   @IsNotEmpty({ message: 'Błędne dane rejestracji' })
-  @MinLength(8, { message: 'Hasło musi mieć conajmniej 8 znaków' })
-  repeatPassword: string;
+  repeatedPassword: string;
 }

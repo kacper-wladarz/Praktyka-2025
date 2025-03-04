@@ -2,17 +2,22 @@ import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import axios, { AxiosError } from "axios";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useContext } from "react";
 import Input from "../../components/Input";
 import QueryError from "../../components/QueryError";
 import { API_URL } from "../../main";
+import Loading from "../../components/Loading";
+import { GlobalContext } from "../../App";
 
 export const Route = createFileRoute("/registration/")({
     component: RouteComponent,
+    pendingComponent: () => <Loading />,
 });
 
 function RouteComponent() {
     const navigate = useNavigate();
+    const { setJWT } = useContext(GlobalContext);
+
     const [data, setData] = useState<RegistrationData>({} as RegistrationData);
     const [error, setError] = useState<string | null>(null);
 
@@ -20,8 +25,9 @@ function RouteComponent() {
         mutationFn: async () =>
             axios.post(`${API_URL}/user/registration`, data),
         onSuccess: (res) => {
-            console.log(res);
+            setJWT(res.data.jwt);
             setError(null);
+            navigate({ to: "/registration/success" });
         },
         onError: (err) => {
             if (err instanceof AxiosError) {
@@ -38,8 +44,13 @@ function RouteComponent() {
                 token: credential,
             }),
         onSuccess: (res) => {
-            const authCode = res.data.authCode;
-            if (authCode) {
+            const auth = res.data.authCode;
+            if (auth) {
+                const email = res.data.email;
+                navigate({
+                    to: "/registration/confirm",
+                    search: { auth: auth, email: email },
+                });
             } else {
                 setError("Wystąpił błąd podczas rejestracji");
             }
@@ -99,7 +110,6 @@ function RouteComponent() {
                         autoComplete="new-password"
                         onChange={handleInputChange}
                     />
-                    {error && <QueryError error={error} />}
                     <GoogleLogin
                         text="signup_with"
                         onSuccess={(response) =>
@@ -116,6 +126,7 @@ function RouteComponent() {
                     </button>
                 </div>
             </form>
+            {error && <QueryError error={error} />}
         </div>
     );
 }

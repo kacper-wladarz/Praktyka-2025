@@ -1,31 +1,37 @@
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import axios, { AxiosError } from "axios";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useContext } from "react";
 import Input from "../components/Input";
 import QueryError from "../components/QueryError";
 import { API_URL } from "../main";
+import Loading from "../components/Loading";
+import { GlobalContext } from "../App";
 
 export const Route = createFileRoute("/login")({
     component: RouteComponent,
+    pendingComponent: () => <Loading />,
 });
 
 function RouteComponent() {
+    const { setJWT } = useContext(GlobalContext);
+    const navigate = useNavigate();
     const [data, setData] = useState<LoginData>({} as LoginData);
     const [error, setError] = useState<string | null>(null);
 
     const loginMutation = useMutation({
         mutationFn: async () => axios.post(`${API_URL}/user/login`, data),
         onSuccess: (res) => {
-            console.log(res);
+            setJWT(res.data.jwt);
             setError(null);
+            navigate({ to: "/" });
         },
         onError: (err) => {
             if (err instanceof AxiosError) {
                 err.response && setError(err.response.data.message);
             } else {
-                setError("Wystąpił błąd podczas rejestracji");
+                setError("Wystąpił błąd podczas logowania");
             }
         },
     });

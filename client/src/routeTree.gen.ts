@@ -11,11 +11,22 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as LogoutImport } from './routes/logout'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as RegistrationIndexImport } from './routes/registration/index'
+import { Route as RegistrationSuccessImport } from './routes/registration/success'
+import { Route as RegistrationErrorImport } from './routes/registration/error'
+import { Route as RegistrationConfirmImport } from './routes/registration/confirm'
+import { Route as RegistrationCancelImport } from './routes/registration/cancel'
 
 // Create/Update Routes
+
+const LogoutRoute = LogoutImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -32,6 +43,30 @@ const IndexRoute = IndexImport.update({
 const RegistrationIndexRoute = RegistrationIndexImport.update({
   id: '/registration/',
   path: '/registration/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RegistrationSuccessRoute = RegistrationSuccessImport.update({
+  id: '/registration/success',
+  path: '/registration/success',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RegistrationErrorRoute = RegistrationErrorImport.update({
+  id: '/registration/error',
+  path: '/registration/error',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RegistrationConfirmRoute = RegistrationConfirmImport.update({
+  id: '/registration/confirm',
+  path: '/registration/confirm',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RegistrationCancelRoute = RegistrationCancelImport.update({
+  id: '/registration/cancel',
+  path: '/registration/cancel',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,6 +88,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/registration/cancel': {
+      id: '/registration/cancel'
+      path: '/registration/cancel'
+      fullPath: '/registration/cancel'
+      preLoaderRoute: typeof RegistrationCancelImport
+      parentRoute: typeof rootRoute
+    }
+    '/registration/confirm': {
+      id: '/registration/confirm'
+      path: '/registration/confirm'
+      fullPath: '/registration/confirm'
+      preLoaderRoute: typeof RegistrationConfirmImport
+      parentRoute: typeof rootRoute
+    }
+    '/registration/error': {
+      id: '/registration/error'
+      path: '/registration/error'
+      fullPath: '/registration/error'
+      preLoaderRoute: typeof RegistrationErrorImport
+      parentRoute: typeof rootRoute
+    }
+    '/registration/success': {
+      id: '/registration/success'
+      path: '/registration/success'
+      fullPath: '/registration/success'
+      preLoaderRoute: typeof RegistrationSuccessImport
+      parentRoute: typeof rootRoute
+    }
     '/registration/': {
       id: '/registration/'
       path: '/registration'
@@ -68,12 +138,22 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/registration/cancel': typeof RegistrationCancelRoute
+  '/registration/confirm': typeof RegistrationConfirmRoute
+  '/registration/error': typeof RegistrationErrorRoute
+  '/registration/success': typeof RegistrationSuccessRoute
   '/registration': typeof RegistrationIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/registration/cancel': typeof RegistrationCancelRoute
+  '/registration/confirm': typeof RegistrationConfirmRoute
+  '/registration/error': typeof RegistrationErrorRoute
+  '/registration/success': typeof RegistrationSuccessRoute
   '/registration': typeof RegistrationIndexRoute
 }
 
@@ -81,27 +161,67 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/registration/cancel': typeof RegistrationCancelRoute
+  '/registration/confirm': typeof RegistrationConfirmRoute
+  '/registration/error': typeof RegistrationErrorRoute
+  '/registration/success': typeof RegistrationSuccessRoute
   '/registration/': typeof RegistrationIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/registration'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/logout'
+    | '/registration/cancel'
+    | '/registration/confirm'
+    | '/registration/error'
+    | '/registration/success'
+    | '/registration'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/registration'
-  id: '__root__' | '/' | '/login' | '/registration/'
+  to:
+    | '/'
+    | '/login'
+    | '/logout'
+    | '/registration/cancel'
+    | '/registration/confirm'
+    | '/registration/error'
+    | '/registration/success'
+    | '/registration'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/logout'
+    | '/registration/cancel'
+    | '/registration/confirm'
+    | '/registration/error'
+    | '/registration/success'
+    | '/registration/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
+  RegistrationCancelRoute: typeof RegistrationCancelRoute
+  RegistrationConfirmRoute: typeof RegistrationConfirmRoute
+  RegistrationErrorRoute: typeof RegistrationErrorRoute
+  RegistrationSuccessRoute: typeof RegistrationSuccessRoute
   RegistrationIndexRoute: typeof RegistrationIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
+  RegistrationCancelRoute: RegistrationCancelRoute,
+  RegistrationConfirmRoute: RegistrationConfirmRoute,
+  RegistrationErrorRoute: RegistrationErrorRoute,
+  RegistrationSuccessRoute: RegistrationSuccessRoute,
   RegistrationIndexRoute: RegistrationIndexRoute,
 }
 
@@ -117,6 +237,11 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
+        "/logout",
+        "/registration/cancel",
+        "/registration/confirm",
+        "/registration/error",
+        "/registration/success",
         "/registration/"
       ]
     },
@@ -125,6 +250,21 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/logout": {
+      "filePath": "logout.tsx"
+    },
+    "/registration/cancel": {
+      "filePath": "registration/cancel.tsx"
+    },
+    "/registration/confirm": {
+      "filePath": "registration/confirm.tsx"
+    },
+    "/registration/error": {
+      "filePath": "registration/error.tsx"
+    },
+    "/registration/success": {
+      "filePath": "registration/success.tsx"
     },
     "/registration/": {
       "filePath": "registration/index.tsx"
