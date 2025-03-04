@@ -1,29 +1,47 @@
-import { createFileRoute } from "@tanstack/react-router";
-import Input from "../components/Input";
-import { ChangeEvent, useState } from "react";
-import Loading from "../components/Loading";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import axios, { AxiosError } from "axios";
-import { API_URL } from "../main";
+import { useState, ChangeEvent } from "react";
+import Input from "../components/Input";
 import QueryError from "../components/QueryError";
-import { GoogleLogin } from "@react-oauth/google";
+import { API_URL } from "../main";
 
 export const Route = createFileRoute("/login")({
     component: RouteComponent,
-    pendingComponent: () => <Loading />,
 });
 
 function RouteComponent() {
     const [data, setData] = useState<LoginData>({} as LoginData);
     const [error, setError] = useState<string | null>(null);
+
     const loginMutation = useMutation({
         mutationFn: async () => axios.post(`${API_URL}/user/login`, data),
-        onSuccess: (res) => console.log(res),
+        onSuccess: (res) => {
+            console.log(res);
+            setError(null);
+        },
         onError: (err) => {
             if (err instanceof AxiosError) {
                 err.response && setError(err.response.data.message);
             } else {
                 setError("Wystąpił błąd podczas rejestracji");
+            }
+        },
+    });
+
+    const googleLoginMutation = useMutation({
+        mutationFn: async (credential?: string) =>
+            axios.post(`${API_URL}/user/google-login`, { token: credential }),
+        onSuccess: (res) => {
+            console.log(res);
+            setError(null);
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                err.response && setError(err.response.data.message);
+            } else {
+                setError("Wystąpił błąd podczas logowania");
             }
         },
     });
@@ -38,6 +56,11 @@ function RouteComponent() {
     const loginUser = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         loginMutation.mutate();
+    };
+
+    const googleLoginSuccess = (response: CredentialResponse) => {
+        const { credential } = response;
+        googleLoginMutation.mutate(credential);
     };
 
     return (
@@ -63,12 +86,15 @@ function RouteComponent() {
                     />
                     {error && <QueryError error={error} />}
                     <GoogleLogin
-                        onSuccess={(credentials) => console.log(credentials)}
-                        onError={() => console.log("GOOGLE ERROR")}
+                        text="signin_with"
+                        onSuccess={(response) => googleLoginSuccess(response)}
+                        onError={() =>
+                            setError("Wystąpił błąd podczas logowania")
+                        }
                     />
                     <button
                         type="submit"
-                        className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal"
+                        className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal hover:bg-blue-600 transition-[background-color] ease-in-out duration-300"
                         onClick={(event) => loginUser(event)}
                     >
                         Zaloguj się

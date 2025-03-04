@@ -1,29 +1,55 @@
-import { createFileRoute } from "@tanstack/react-router";
-import Input from "../components/Input";
-import { ChangeEvent, useState } from "react";
-import Loading from "../components/Loading";
-import axios, { AxiosError } from "axios";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "../main";
-import QueryError from "../components/QueryError";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import axios, { AxiosError } from "axios";
+import { useState, ChangeEvent } from "react";
+import Input from "../../components/Input";
+import QueryError from "../../components/QueryError";
+import { API_URL } from "../../main";
 
-export const Route = createFileRoute("/registration")({
+export const Route = createFileRoute("/registration/")({
     component: RouteComponent,
-    pendingComponent: () => <Loading />,
 });
 
 function RouteComponent() {
+    const navigate = useNavigate();
     const [data, setData] = useState<RegistrationData>({} as RegistrationData);
     const [error, setError] = useState<string | null>(null);
+
     const registrationMutation = useMutation({
         mutationFn: async () =>
             axios.post(`${API_URL}/user/registration`, data),
-        onSuccess: (res) => console.log(res),
+        onSuccess: (res) => {
+            console.log(res);
+            setError(null);
+        },
         onError: (err) => {
             if (err instanceof AxiosError) {
                 err.response && setError(err.response.data.message);
             } else {
                 setError("Wystąpił błąd podczas rejestracji");
+            }
+        },
+    });
+
+    const googleRegistrationMutation = useMutation({
+        mutationFn: async (credential?: string) =>
+            axios.post(`${API_URL}/user/google-auth/registration`, {
+                token: credential,
+            }),
+        onSuccess: (res) => {
+            const authCode = res.data.authCode;
+            if (authCode) {
+            } else {
+                setError("Wystąpił błąd podczas rejestracji");
+            }
+            setError(null);
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                err.response && setError(err.response.data.message);
+            } else {
+                setError("Wystąpił błąd podczas logowania");
             }
         },
     });
@@ -38,6 +64,11 @@ function RouteComponent() {
     const registerUser = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         registrationMutation.mutate();
+    };
+
+    const googleRegistrationSuccess = (response: CredentialResponse) => {
+        const { credential } = response;
+        googleRegistrationMutation.mutate(credential);
     };
 
     return (
@@ -69,6 +100,13 @@ function RouteComponent() {
                         onChange={handleInputChange}
                     />
                     {error && <QueryError error={error} />}
+                    <GoogleLogin
+                        text="signup_with"
+                        onSuccess={(response) =>
+                            googleRegistrationSuccess(response)
+                        }
+                        onError={() => console.log("Błąd google")}
+                    />
                     <button
                         type="submit"
                         className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal"

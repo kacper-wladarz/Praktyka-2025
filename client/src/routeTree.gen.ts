@@ -11,18 +11,11 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as RegistrationImport } from './routes/registration'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthCallbackIndexImport } from './routes/auth/callback/index'
+import { Route as RegistrationIndexImport } from './routes/registration/index'
 
 // Create/Update Routes
-
-const RegistrationRoute = RegistrationImport.update({
-  id: '/registration',
-  path: '/registration',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -36,9 +29,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthCallbackIndexRoute = AuthCallbackIndexImport.update({
-  id: '/auth/callback/',
-  path: '/auth/callback/',
+const RegistrationIndexRoute = RegistrationIndexImport.update({
+  id: '/registration/',
+  path: '/registration/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,18 +53,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/registration': {
-      id: '/registration'
+    '/registration/': {
+      id: '/registration/'
       path: '/registration'
       fullPath: '/registration'
-      preLoaderRoute: typeof RegistrationImport
-      parentRoute: typeof rootRoute
-    }
-    '/auth/callback/': {
-      id: '/auth/callback/'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackIndexImport
+      preLoaderRoute: typeof RegistrationIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -82,46 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/registration': typeof RegistrationRoute
-  '/auth/callback': typeof AuthCallbackIndexRoute
+  '/registration': typeof RegistrationIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/registration': typeof RegistrationRoute
-  '/auth/callback': typeof AuthCallbackIndexRoute
+  '/registration': typeof RegistrationIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/registration': typeof RegistrationRoute
-  '/auth/callback/': typeof AuthCallbackIndexRoute
+  '/registration/': typeof RegistrationIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/registration' | '/auth/callback'
+  fullPaths: '/' | '/login' | '/registration'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/registration' | '/auth/callback'
-  id: '__root__' | '/' | '/login' | '/registration' | '/auth/callback/'
+  to: '/' | '/login' | '/registration'
+  id: '__root__' | '/' | '/login' | '/registration/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
-  RegistrationRoute: typeof RegistrationRoute
-  AuthCallbackIndexRoute: typeof AuthCallbackIndexRoute
+  RegistrationIndexRoute: typeof RegistrationIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
-  RegistrationRoute: RegistrationRoute,
-  AuthCallbackIndexRoute: AuthCallbackIndexRoute,
+  RegistrationIndexRoute: RegistrationIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -136,8 +117,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
-        "/registration",
-        "/auth/callback/"
+        "/registration/"
       ]
     },
     "/": {
@@ -146,11 +126,8 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.tsx"
     },
-    "/registration": {
-      "filePath": "registration.tsx"
-    },
-    "/auth/callback/": {
-      "filePath": "auth/callback/index.tsx"
+    "/registration/": {
+      "filePath": "registration/index.tsx"
     }
   }
 }
