@@ -1,8 +1,14 @@
 import { Link } from "@tanstack/react-router";
+import UserOperations from "./UserOperations";
+import Profile from "./Profile";
+import { useContext } from "react";
+import { GlobalContext } from "../App";
 
 const Navbar = () => {
+    const { JWT } = useContext(GlobalContext);
+
     return (
-        <div className="appear px-4 flex flex-col md:flex-row justify-between items-center w-full md:gap-2 text-2xl text-gray-300">
+        <div className="appear px-4 flex flex-col md:flex-row items-stretch justify-between w-full md:gap-2 text-2xl text-gray-300">
             <Link to="/" className="w-full md:w-auto flex items-center gap-4">
                 <img
                     className="w-24 sm:w-32 transition-[width] duration-500 ease-in-out"
@@ -13,20 +19,7 @@ const Navbar = () => {
                     Chat AI
                 </span>
             </Link>
-            <div className="w-full md:w-auto flex flex-wrap justify-around md:justify-normal gap-8 sm:gap-4 font-extralight py-4">
-                <Link
-                    to="/login"
-                    className="px-4 hover:-translate-y-[2px] transition-[translate] duration-300 ease-in-out"
-                >
-                    Logowanie
-                </Link>
-                <Link
-                    to="/registration"
-                    className="px-4 hover:-translate-y-[2px] transition-[translate] duration-300 ease-in-out"
-                >
-                    Rejestracja
-                </Link>
-            </div>
+            {JWT ? <Profile /> : <UserOperations />}
         </div>
     );
 };

@@ -20,7 +20,7 @@ export class UserService {
 
   private generateJWT(userId: string) {
     try {
-      const options: jwt.SignOptions = { expiresIn: '4h' };
+      const options: jwt.SignOptions = { expiresIn: '1d' };
       if (!userId) {
         throw new HttpException(
           'Brak tokenu uwierzytelniajęcego',
@@ -72,15 +72,25 @@ export class UserService {
         );
       }
 
+      let id = null;
+
       await jwt.verify(token, this.jwtSecret, (error, decoded) => {
         if (error) {
           throw new HttpException(
             'Niepoprawny token uwierzytelniający',
             HttpStatus.UNAUTHORIZED,
           );
+        } else {
+          id = decoded.id;
         }
       });
-      return { jwt: token };
+
+      const { login } = await this.prisma.user.findUnique({
+        where: { id },
+        select: { login: true },
+      });
+
+      return { jwt: token, login };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -175,8 +185,39 @@ export class UserService {
   }
 
   async googleLoginUser(token: string) {
-    const payload = await this.verifyGoogleToken(token);
-    return;
+    try {
+      const payload = await this.verifyGoogleToken(token);
+      if (!payload) {
+        throw new HttpException(
+          'Wystąpił błąd podczas weryfikacji Google',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const user = await this.prisma.user.findUnique({
+        where: { login: payload.email },
+      });
+
+      if (!user || user.googleId !== payload.sub) {
+        throw new HttpException(
+          'Użytkownik nie istnieje',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const jwt = this.generateJWT(user.id);
+      return { jwt };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas weryfikacji Google',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 
   async googleRegistration(token: string) {

@@ -1,7 +1,18 @@
-import { createFileRoute, useRouterState } from "@tanstack/react-router";
+import {
+    createFileRoute,
+    redirect,
+    useRouterState,
+} from "@tanstack/react-router";
+import Loading from "../../components/Loading";
 
 export const Route = createFileRoute("/registration/error")({
+    loader: ({ location }) => {
+        if (!location.state?.message) {
+            return redirect({ to: location.state?.from || "/" });
+        }
+    },
     component: RouteComponent,
+    pendingComponent: () => <Loading />,
 });
 
 function RouteComponent() {
@@ -9,5 +20,9 @@ function RouteComponent() {
         location: { state },
     } = useRouterState();
 
-    return <div>{state.message}</div>;
+    return (
+        <div className="appear flex-1 flex flex-col justify-center items-center text-xl">
+            <span className="text-center">{state.message}</span>
+        </div>
+    );
 }

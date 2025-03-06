@@ -2,13 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_URL } from "../main";
+import Cookies from "js-cookie";
 
 const useAuth = () => {
-    const [JWT, setJWT] = useState<string | null>(localStorage.getItem("jwt"));
+    const [JWT, setJWT] = useState<string | null>(Cookies.get("jwt") || null);
+    const [userData, setUserData] = useState<UserData | null>(null);
     const { data, error, isPending } = useQuery({
         queryKey: ["auth"],
         queryFn: async () => {
-            let token = localStorage.getItem("jwt");
+            let token = Cookies.get("jwt");
             if (!token) {
                 token = "";
             }
@@ -23,23 +25,23 @@ const useAuth = () => {
         refetchOnWindowFocus: true,
         staleTime: 0,
         retry: 0,
-        retryDelay: 1000,
     });
 
     useEffect(() => {
-        console.log(data);
         if (data) {
-            localStorage.setItem("jwt", data.jwt);
+            Cookies.set("jwt", data.jwt);
             setJWT(data.jwt);
+            setUserData({ login: data.login });
         }
 
         if (error || !data) {
-            localStorage.removeItem("jwt");
+            Cookies.remove("jwt");
             setJWT(null);
+            setUserData(null);
         }
     }, [data]);
 
-    return { JWT, setJWT, isPending };
+    return { JWT, setJWT, isPending, userData };
 };
 
 export default useAuth;

@@ -5,10 +5,15 @@
     font-weight: 300;
 }
 
+body {
+    background-color: #09090b !important;
+}
+
 .appear {
     animation-name: AppearBox;
     animation-duration: 500ms;
     animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 @keyframes AppearBox {
@@ -18,4 +23,8 @@
     to {
         opacity: 1;
     }
+}
+
+.auto_height {
+    interpolate-size: allow-keywords;
 }

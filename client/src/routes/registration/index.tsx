@@ -27,7 +27,10 @@ function RouteComponent() {
         onSuccess: (res) => {
             setJWT(res.data.jwt);
             setError(null);
-            navigate({ to: "/registration/success" });
+            navigate({
+                to: "/registration/success",
+                state: { allow: true },
+            });
         },
         onError: (err) => {
             if (err instanceof AxiosError) {
@@ -50,6 +53,7 @@ function RouteComponent() {
                 navigate({
                     to: "/registration/confirm",
                     search: { auth: auth, email: email },
+                    state: { allow: true },
                 });
             } else {
                 setError("Wystąpił błąd podczas rejestracji");
@@ -119,7 +123,7 @@ function RouteComponent() {
                     />
                     <button
                         type="submit"
-                        className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal"
+                        className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal hover:bg-blue-600 transition-[background-color] ease-in-out duration-300"
                         onClick={(event) => registerUser(event)}
                     >
                         Zarejestruj się

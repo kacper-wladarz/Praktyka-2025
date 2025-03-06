@@ -2,14 +2,14 @@ import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import axios, { AxiosError } from "axios";
-import { useState, ChangeEvent, useContext } from "react";
-import Input from "../components/Input";
-import QueryError from "../components/QueryError";
-import { API_URL } from "../main";
-import Loading from "../components/Loading";
-import { GlobalContext } from "../App";
+import { useContext, useState, ChangeEvent } from "react";
+import { GlobalContext } from "../../App";
+import Input from "../../components/Input";
+import QueryError from "../../components/QueryError";
+import { API_URL } from "../../main";
+import Loading from "../../components/Loading";
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/login/")({
     component: RouteComponent,
     pendingComponent: () => <Loading />,
 });
@@ -40,10 +40,15 @@ function RouteComponent() {
         mutationFn: async (credential?: string) =>
             axios.post(`${API_URL}/user/google-login`, { token: credential }),
         onSuccess: (res) => {
-            console.log(res);
+            setJWT(res.data.jwt);
             setError(null);
+            navigate({
+                to: "/login/success",
+                state: { allow: true },
+            });
         },
         onError: (err) => {
+            setJWT(null);
             if (err instanceof AxiosError) {
                 err.response && setError(err.response.data.message);
             } else {

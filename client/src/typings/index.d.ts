@@ -1,11 +1,16 @@
 interface GlobalContextInterface {
     JWT: string | null;
     setJWT: React.Dispatch<SetStateAction<string | null>>;
+    userData: UserData | null;
 }
 
 interface LoginData {
     login: string;
     password: string;
+}
+
+interface UserData {
+    login: string;
 }
 
 interface RegistrationData {
