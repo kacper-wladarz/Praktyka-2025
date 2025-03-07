@@ -12,21 +12,28 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LogoutImport } from './routes/logout'
+import { Route as ChatLayoutImport } from './routes/_chatLayout'
 import { Route as IndexImport } from './routes/index'
 import { Route as RegistrationIndexImport } from './routes/registration/index'
 import { Route as LoginIndexImport } from './routes/login/index'
-import { Route as ChatIndexImport } from './routes/chat/index'
 import { Route as RegistrationSuccessImport } from './routes/registration/success'
 import { Route as RegistrationErrorImport } from './routes/registration/error'
 import { Route as RegistrationConfirmImport } from './routes/registration/confirm'
 import { Route as RegistrationCancelImport } from './routes/registration/cancel'
 import { Route as LoginSuccessImport } from './routes/login/success'
+import { Route as ChatLayoutChatIndexImport } from './routes/_chatLayout/chat/index'
+import { Route as ChatLayoutChatIdImport } from './routes/_chatLayout/chat/$id'
 
 // Create/Update Routes
 
 const LogoutRoute = LogoutImport.update({
   id: '/logout',
   path: '/logout',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ChatLayoutRoute = ChatLayoutImport.update({
+  id: '/_chatLayout',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -45,12 +52,6 @@ const RegistrationIndexRoute = RegistrationIndexImport.update({
 const LoginIndexRoute = LoginIndexImport.update({
   id: '/login/',
   path: '/login/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ChatIndexRoute = ChatIndexImport.update({
-  id: '/chat/',
-  path: '/chat/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -84,6 +85,18 @@ const LoginSuccessRoute = LoginSuccessImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ChatLayoutChatIndexRoute = ChatLayoutChatIndexImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => ChatLayoutRoute,
+} as any)
+
+const ChatLayoutChatIdRoute = ChatLayoutChatIdImport.update({
+  id: '/chat/$id',
+  path: '/chat/$id',
+  getParentRoute: () => ChatLayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -93,6 +106,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_chatLayout': {
+      id: '/_chatLayout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ChatLayoutImport
       parentRoute: typeof rootRoute
     }
     '/logout': {
@@ -137,13 +157,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegistrationSuccessImport
       parentRoute: typeof rootRoute
     }
-    '/chat/': {
-      id: '/chat/'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/login/': {
       id: '/login/'
       path: '/login'
@@ -158,113 +171,153 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegistrationIndexImport
       parentRoute: typeof rootRoute
     }
+    '/_chatLayout/chat/$id': {
+      id: '/_chatLayout/chat/$id'
+      path: '/chat/$id'
+      fullPath: '/chat/$id'
+      preLoaderRoute: typeof ChatLayoutChatIdImport
+      parentRoute: typeof ChatLayoutImport
+    }
+    '/_chatLayout/chat/': {
+      id: '/_chatLayout/chat/'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatLayoutChatIndexImport
+      parentRoute: typeof ChatLayoutImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface ChatLayoutRouteChildren {
+  ChatLayoutChatIdRoute: typeof ChatLayoutChatIdRoute
+  ChatLayoutChatIndexRoute: typeof ChatLayoutChatIndexRoute
+}
+
+const ChatLayoutRouteChildren: ChatLayoutRouteChildren = {
+  ChatLayoutChatIdRoute: ChatLayoutChatIdRoute,
+  ChatLayoutChatIndexRoute: ChatLayoutChatIndexRoute,
+}
+
+const ChatLayoutRouteWithChildren = ChatLayoutRoute._addFileChildren(
+  ChatLayoutRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof ChatLayoutRouteWithChildren
   '/logout': typeof LogoutRoute
   '/login/success': typeof LoginSuccessRoute
   '/registration/cancel': typeof RegistrationCancelRoute
   '/registration/confirm': typeof RegistrationConfirmRoute
   '/registration/error': typeof RegistrationErrorRoute
   '/registration/success': typeof RegistrationSuccessRoute
-  '/chat': typeof ChatIndexRoute
   '/login': typeof LoginIndexRoute
   '/registration': typeof RegistrationIndexRoute
+  '/chat/$id': typeof ChatLayoutChatIdRoute
+  '/chat': typeof ChatLayoutChatIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof ChatLayoutRouteWithChildren
   '/logout': typeof LogoutRoute
   '/login/success': typeof LoginSuccessRoute
   '/registration/cancel': typeof RegistrationCancelRoute
   '/registration/confirm': typeof RegistrationConfirmRoute
   '/registration/error': typeof RegistrationErrorRoute
   '/registration/success': typeof RegistrationSuccessRoute
-  '/chat': typeof ChatIndexRoute
   '/login': typeof LoginIndexRoute
   '/registration': typeof RegistrationIndexRoute
+  '/chat/$id': typeof ChatLayoutChatIdRoute
+  '/chat': typeof ChatLayoutChatIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_chatLayout': typeof ChatLayoutRouteWithChildren
   '/logout': typeof LogoutRoute
   '/login/success': typeof LoginSuccessRoute
   '/registration/cancel': typeof RegistrationCancelRoute
   '/registration/confirm': typeof RegistrationConfirmRoute
   '/registration/error': typeof RegistrationErrorRoute
   '/registration/success': typeof RegistrationSuccessRoute
-  '/chat/': typeof ChatIndexRoute
   '/login/': typeof LoginIndexRoute
   '/registration/': typeof RegistrationIndexRoute
+  '/_chatLayout/chat/$id': typeof ChatLayoutChatIdRoute
+  '/_chatLayout/chat/': typeof ChatLayoutChatIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | ''
     | '/logout'
     | '/login/success'
     | '/registration/cancel'
     | '/registration/confirm'
     | '/registration/error'
     | '/registration/success'
-    | '/chat'
     | '/login'
     | '/registration'
+    | '/chat/$id'
+    | '/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | ''
     | '/logout'
     | '/login/success'
     | '/registration/cancel'
     | '/registration/confirm'
     | '/registration/error'
     | '/registration/success'
-    | '/chat'
     | '/login'
     | '/registration'
+    | '/chat/$id'
+    | '/chat'
   id:
     | '__root__'
     | '/'
+    | '/_chatLayout'
     | '/logout'
     | '/login/success'
     | '/registration/cancel'
     | '/registration/confirm'
     | '/registration/error'
     | '/registration/success'
-    | '/chat/'
     | '/login/'
     | '/registration/'
+    | '/_chatLayout/chat/$id'
+    | '/_chatLayout/chat/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatLayoutRoute: typeof ChatLayoutRouteWithChildren
   LogoutRoute: typeof LogoutRoute
   LoginSuccessRoute: typeof LoginSuccessRoute
   RegistrationCancelRoute: typeof RegistrationCancelRoute
   RegistrationConfirmRoute: typeof RegistrationConfirmRoute
   RegistrationErrorRoute: typeof RegistrationErrorRoute
   RegistrationSuccessRoute: typeof RegistrationSuccessRoute
-  ChatIndexRoute: typeof ChatIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   RegistrationIndexRoute: typeof RegistrationIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatLayoutRoute: ChatLayoutRouteWithChildren,
   LogoutRoute: LogoutRoute,
   LoginSuccessRoute: LoginSuccessRoute,
   RegistrationCancelRoute: RegistrationCancelRoute,
   RegistrationConfirmRoute: RegistrationConfirmRoute,
   RegistrationErrorRoute: RegistrationErrorRoute,
   RegistrationSuccessRoute: RegistrationSuccessRoute,
-  ChatIndexRoute: ChatIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   RegistrationIndexRoute: RegistrationIndexRoute,
 }
@@ -280,19 +333,26 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_chatLayout",
         "/logout",
         "/login/success",
         "/registration/cancel",
         "/registration/confirm",
         "/registration/error",
         "/registration/success",
-        "/chat/",
         "/login/",
         "/registration/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_chatLayout": {
+      "filePath": "_chatLayout.tsx",
+      "children": [
+        "/_chatLayout/chat/$id",
+        "/_chatLayout/chat/"
+      ]
     },
     "/logout": {
       "filePath": "logout.tsx"
@@ -312,14 +372,19 @@ export const routeTree = rootRoute
     "/registration/success": {
       "filePath": "registration/success.tsx"
     },
-    "/chat/": {
-      "filePath": "chat/index.tsx"
-    },
     "/login/": {
       "filePath": "login/index.tsx"
     },
     "/registration/": {
       "filePath": "registration/index.tsx"
+    },
+    "/_chatLayout/chat/$id": {
+      "filePath": "_chatLayout/chat/$id.tsx",
+      "parent": "/_chatLayout"
+    },
+    "/_chatLayout/chat/": {
+      "filePath": "_chatLayout/chat/index.tsx",
+      "parent": "/_chatLayout"
     }
   }
 }

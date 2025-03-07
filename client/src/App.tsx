@@ -1,4 +1,4 @@
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useMemo } from "react";
 import useAuth from "./hooks/useAuth";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
@@ -10,7 +10,7 @@ export const GlobalContext = createContext<GlobalContextInterface>(
     {} as GlobalContextInterface
 );
 
-const router = createRouter({ routeTree });
+export const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
     interface Register {
@@ -21,6 +21,10 @@ declare module "@tanstack/react-router" {
 const App = () => {
     const { JWT, setJWT, isPending, userData } = useAuth();
     const queryClient = useQueryClient();
+    const reqAuth = useMemo(() => {
+        if (JWT) return { Authorization: "Bearer " + JWT };
+        return { Authorization: "Bearer " };
+    }, [JWT]);
 
     useEffect(() => {
         if (JWT) {
@@ -36,7 +40,7 @@ const App = () => {
     }
 
     return (
-        <GlobalContext.Provider value={{ JWT, setJWT, userData }}>
+        <GlobalContext.Provider value={{ JWT, setJWT, userData, reqAuth }}>
             <RouterProvider router={router} />
         </GlobalContext.Provider>
     );

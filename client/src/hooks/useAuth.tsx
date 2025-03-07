@@ -15,7 +15,7 @@ const useAuth = () => {
                 token = "";
             }
             return axios
-                .get(`${API_URL}/user/auth`, {
+                .get(`${API_URL}/auth`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },

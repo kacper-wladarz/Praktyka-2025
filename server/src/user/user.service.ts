@@ -62,48 +62,6 @@ export class UserService {
     }
   }
 
-  async userAuth(@Req() req: Request) {
-    try {
-      const token = req.headers['authorization']?.split(' ')[1];
-      if (!token) {
-        throw new HttpException(
-          'Brak tokena uwierzytelnijącego',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      let id = null;
-
-      await jwt.verify(token, this.jwtSecret, (error, decoded) => {
-        if (error) {
-          throw new HttpException(
-            'Niepoprawny token uwierzytelniający',
-            HttpStatus.UNAUTHORIZED,
-          );
-        } else {
-          id = decoded.id;
-        }
-      });
-
-      const { login } = await this.prisma.user.findUnique({
-        where: { id },
-        select: { login: true },
-      });
-
-      return { jwt: token, login };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd uwierzytelniania',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-  }
-
   async loginUser(login: string, password: string) {
     try {
       const user = await this.prisma.user.findUnique({ where: { login } });
@@ -221,6 +179,7 @@ export class UserService {
   }
 
   async googleRegistration(token: string) {
+    const authCode = v4();
     try {
       const payload = await this.verifyGoogleToken(token);
 
@@ -242,7 +201,6 @@ export class UserService {
         );
       }
 
-      const authCode = v4();
       await this.prisma.user.create({
         data: {
           login: payload.email,
@@ -253,12 +211,13 @@ export class UserService {
       });
       return { authCode, email: payload.email };
     } catch (error) {
+      await this.prisma.user.delete({ where: { authCode } });
       if (error instanceof HttpException) {
         throw error;
       } else {
         console.error(error);
         throw new HttpException(
-          'Wystąpił błąd podczas autoryzacji użytkownika',
+          'Wystąpił błąd podczas rejestracji użytkownika',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -306,6 +265,26 @@ export class UserService {
         console.error(error);
         throw new HttpException(
           'Wystąpił błąd podczas rejestracji użytkownika',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async updateLastOpenedChat(userId: string, chatId: string) {
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { lastOpenedChat: chatId },
+      });
+      return { chatId };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas otwierania czatu',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }

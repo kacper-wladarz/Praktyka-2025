@@ -3,8 +3,10 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import Navbar from "../components/Navbar";
 import { useContext } from "react";
 import { GlobalContext } from "../App";
+import NotFound from "../components/NotFound";
 
 export const Route = createRootRoute({
+    notFoundComponent: () => <NotFound />,
     component: () => {
         const navigate = useNavigate();
         const { setJWT } = useContext(GlobalContext);

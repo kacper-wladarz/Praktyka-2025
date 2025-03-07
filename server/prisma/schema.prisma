@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  login     String    @unique
-  password  String?
-  googleId  String?   @unique
-  authCode  String?   @unique
-  confirmed Boolean?
-  createdAt DateTime  @default(now())
-  folders   Folder[]
-  Chat      Chat[]
-  Message   Message[]
+  id             String    @id @default(uuid())
+  login          String    @unique
+  password       String?
+  googleId       String?   @unique
+  authCode       String?   @unique
+  confirmed      Boolean?
+  createdAt      DateTime  @default(now())
+  lastOpenedChat String?
+  folders        Folder[]
+  chats          Chat[]
+  messages       Message[]
 }
 
 model Folder {
@@ -31,30 +32,32 @@ model Folder {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
+  userId    String?
   parentId  String?
-  user      User?    @relation(fields: [userId], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
   parent    Folder?  @relation("FolderParent", fields: [parentId], references: [id])
   children  Folder[] @relation("FolderParent")
   Chat      Chat[]
 }
 
 model Chat {
-  id       String    @id @default(uuid())
-  name     String
-  userId   String
-  folderId String?
-  user     User?     @relation(fields: [userId], references: [id])
-  folder   Folder?   @relation(fields: [folderId], references: [id])
-  Message  Message[]
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String?
+  folderId  String?
+  User      User?     @relation(fields: [userId], references: [id])
+  folder    Folder?   @relation(fields: [folderId], references: [id])
+  Message   Message[]
 }
 
 model Message {
   id        String   @id @default(uuid())
   body      String
   createdAt DateTime @default(now())
-  userId    String
+  userId    String?
   chatId    String
-  user      User     @relation(fields: [userId], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
   chat      Chat     @relation(fields: [chatId], references: [id])
 }

@@ -13,6 +13,7 @@ import { LoginUserDto } from './dtos/login-user.dto';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { GoogleLoginUserDto } from './dtos/google-login-user.dto';
 import { GoogleRegistrationAuth } from './dtos/google-registration-auth.dto';
+import { UpdateLastOpenedChatDTO } from './dtos/update-last-opened-chat.dto';
 
 @Controller('user')
 export class UserController {
@@ -20,11 +21,6 @@ export class UserController {
 
   constructor(userService: UserService) {
     this.userService = userService;
-  }
-
-  @Get('auth')
-  userAuth(@Req() req) {
-    return this.userService.userAuth(req);
   }
 
   @Post('login')
@@ -59,5 +55,13 @@ export class UserController {
   @Put('google-auth/registration/confirm/:authCode')
   googleRegistrtionConfirm(@Param('authCode') authCode: string) {
     return this.userService.googleRegistrationConfirm(authCode);
+  }
+
+  @Put('last-opened-chat')
+  updateLastOpenedChat(
+    @Req() req: Request,
+    @Body() body: UpdateLastOpenedChatDTO,
+  ) {
+    return this.userService.updateLastOpenedChat(req['user'], body.id);
   }
 }
