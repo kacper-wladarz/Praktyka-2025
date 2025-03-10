@@ -1,47 +1,51 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import React, { Ref, useContext, useState } from "react";
-import { API_URL } from "../../../../main";
-import { GlobalContext } from "../../../../App";
+import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import React, { RefObject, useContext, useEffect, useState } from "react";
 import { FoldersAndChatsContext } from "../../SideBar";
+import { createRootFolder } from "../../../../api/mutations/createRootFolder";
 
-const NewRootFolder = ({ inputRef }: { inputRef: Ref<HTMLInputElement> }) => {
-    const { reqAuth } = useContext(GlobalContext);
+const NewRootFolder = ({
+    inputRef,
+}: {
+    inputRef: RefObject<HTMLInputElement | null>;
+}) => {
     const { isNewFolder, setIsNewFolder, setError } = useContext(
         FoldersAndChatsContext
     );
     const queryClient = useQueryClient();
     const [newFolder, setNewFolder] = useState<string>("");
+    const create = createRootFolder();
 
-    const folderMutation = useMutation({
-        mutationFn: async () =>
-            await axios
-                .post(
-                    `${API_URL}/folders/root`,
-                    { name: newFolder },
-                    { headers: { ...reqAuth } }
-                )
-                .then((res) => res.data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["root-folders"] });
-        },
-        onError: (error) => {
-            if (error instanceof AxiosError) {
-                error.response && setError(error.response.data.message);
-            } else {
-                setError("Wystąpił błąd");
-            }
-        },
-        onSettled: () => {
-            setNewFolder("");
-            setIsNewFolder(false);
-        },
-    });
     const createFolder = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter") {
-            folderMutation.mutate();
+            create.mutate(newFolder, {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({
+                        queryKey: ["root-folders"],
+                    });
+                },
+                onError: (error) => {
+                    if (error instanceof AxiosError) {
+                        error.response && setError(error.response.data.message);
+                    } else {
+                        setError("Wystąpił błąd");
+                    }
+                },
+                onSettled: () => {
+                    setNewFolder("");
+                    setIsNewFolder(false);
+                },
+            });
         }
     };
+
+    useEffect(() => {
+        if (isNewFolder && inputRef.current) {
+            inputRef.current.focus();
+        }
+
+        if (!isNewFolder) setNewFolder("");
+    }, [isNewFolder]);
 
     return (
         <div
@@ -49,11 +53,11 @@ const NewRootFolder = ({ inputRef }: { inputRef: Ref<HTMLInputElement> }) => {
         >
             <input
                 placeholder="Nazwa folderu"
-                autoFocus
                 id="new_folder_input"
                 className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none bg-zinc-900"
                 ref={inputRef}
                 type="text"
+                value={newFolder}
                 autoComplete="off"
                 onKeyDown={(event) => createFolder(event)}
                 onChange={(event) => setNewFolder(event.target.value)}

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import Loading from "../../components/Loading";
+import Loading from "../../assets/Loading";
 
 export const Route = createFileRoute("/login/success")({
     loader: ({ location }) => {

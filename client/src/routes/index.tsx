@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import Loading from "../components/Loading";
+import Loading from "../assets/Loading";
 import { useContext } from "react";
 import { GlobalContext } from "../App";
 

@@ -1,47 +1,49 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Ref, useContext, useState } from "react";
-import { GlobalContext } from "../../../../App";
+import { useQueryClient } from "@tanstack/react-query";
+import { RefObject, useContext, useEffect, useState } from "react";
 import { FoldersAndChatsContext } from "../../SideBar";
-import axios, { AxiosError } from "axios";
-import { API_URL } from "../../../../main";
+import { AxiosError } from "axios";
+import { createRootChat } from "../../../../api/mutations/createRootChat";
 
-const NewRootChat = ({ inputRef }: { inputRef: Ref<HTMLInputElement> }) => {
-    const { reqAuth } = useContext(GlobalContext);
+const NewRootChat = ({
+    inputRef,
+}: {
+    inputRef: RefObject<HTMLInputElement | null>;
+}) => {
+    const queryClient = useQueryClient();
     const { isNewChat, setIsNewChat, setError } = useContext(
         FoldersAndChatsContext
     );
-    const queryClient = useQueryClient();
     const [newChat, setNewChat] = useState<string>("");
+    const create = createRootChat();
 
-    const folderMutation = useMutation({
-        mutationFn: async () =>
-            await axios
-                .post(
-                    `${API_URL}/chats/root`,
-                    { name: newChat },
-                    { headers: { ...reqAuth } }
-                )
-                .then((res) => res.data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["root-chats"] });
-        },
-        onError: (error) => {
-            if (error instanceof AxiosError) {
-                error.response && setError(error.response.data.message);
-            } else {
-                setError("Wystąpił błąd");
-            }
-        },
-        onSettled: () => {
-            setNewChat("");
-            setIsNewChat(false);
-        },
-    });
     const createChat = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter") {
-            folderMutation.mutate();
+            create.mutate(newChat, {
+                onSettled: () => {
+                    queryClient.invalidateQueries({
+                        queryKey: ["root-chats"],
+                    });
+                },
+                onError: (error) => {
+                    if (error instanceof AxiosError) {
+                        error.response && setError(error.response.data.message);
+                    } else {
+                        setError("Wystąpił błąd");
+                    }
+                },
+            });
+            setNewChat("");
+            setIsNewChat(false);
         }
     };
+
+    useEffect(() => {
+        if (isNewChat && inputRef.current) {
+            inputRef.current.focus();
+        }
+
+        if (!isNewChat) setNewChat("");
+    }, [isNewChat]);
 
     return (
         <div
@@ -49,11 +51,11 @@ const NewRootChat = ({ inputRef }: { inputRef: Ref<HTMLInputElement> }) => {
         >
             <input
                 placeholder="Nazwa czatu"
-                autoFocus
                 id="new_chat_input"
                 className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none bg-zinc-900"
                 ref={inputRef}
                 type="text"
+                value={newChat}
                 autoComplete="off"
                 onChange={(event) => setNewChat(event.target.value)}
                 onKeyDown={(event) => createChat(event)}

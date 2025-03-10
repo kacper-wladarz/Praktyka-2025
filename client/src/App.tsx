@@ -2,7 +2,7 @@ import { createContext, useEffect, useMemo } from "react";
 import useAuth from "./hooks/useAuth";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import Loading from "./components/Loading";
+import Loading from "./assets/Loading";
 import Cookies from "js-cookie";
 import { useQueryClient } from "@tanstack/react-query";
 

@@ -1,21 +1,28 @@
 import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
-import { JWTOptions, OAuth2Client } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   private prisma;
-  private jwtSecret =
-    process.env.JWT_SECRET ||
-    '57a9f4703036c0d7688b14df13b694567bf990da2784735a4f4a800dca99a938c07801214e9e99fe2778d786e3fb6e1e2a61bc1571cf3fb28f20c3a384b84ffe';
+  private jwtSecret;
+  private client;
+  private googleClientId;
 
-  constructor(prismaService: PrismaService) {
+  constructor(
+    prismaService: PrismaService,
+    private configService: ConfigService,
+  ) {
+    this.jwtSecret =
+      this.configService.get('JWT_SECRET') ||
+      '57a9f4703036c0d7688b14df13b694567bf990da2784735a4f4a800dca99a938c07801214e9e99fe2778d786e3fb6e1e2a61bc1571cf3fb28f20c3a384b84ffe';
     this.prisma = prismaService;
+    this.client = new OAuth2Client(this.jwtSecret);
+    this.googleClientId = this.configService.get('GOOGLE_CLIENT_ID');
   }
 
   private generateJWT(userId: string) {
@@ -43,9 +50,9 @@ export class UserService {
 
   private async verifyGoogleToken(token: string) {
     try {
-      const ticket = await client.verifyIdToken({
+      const ticket = await this.client.verifyIdToken({
         idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: this.googleClientId,
       });
       const payload = ticket.getPayload();
       return payload;
@@ -265,6 +272,25 @@ export class UserService {
         console.error(error);
         throw new HttpException(
           'Wystąpił błąd podczas rejestracji użytkownika',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async getLastOpenedChat(userId: string) {
+    try {
+      return await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { lastOpenedChat: true },
+      });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas otwierania czatu',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }

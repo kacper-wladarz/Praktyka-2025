@@ -2,8 +2,8 @@ import { useContext, useEffect, useRef } from "react";
 import { FoldersAndChatsContext } from "../SideBar";
 import NewRootFolder from "./NewRootFolderAndChat/NewRootFolder";
 import NewRootChat from "./NewRootFolderAndChat/NewRootChat";
-import RootFoldersList from "./RootLists/RootFoldersList";
-import RootChatsList from "./RootLists/RootChatsList";
+import RootFoldersList from "./RootLists/FoldersList";
+import RootChatsList from "./RootLists/ChatsList";
 
 const FoldersAndChats = () => {
     const newRootFolderRef = useRef<HTMLInputElement>(null);
@@ -33,7 +33,7 @@ const FoldersAndChats = () => {
     }, []);
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col text-[16px]">
             <hr className="border-white opacity-50" />
             <NewRootFolder inputRef={newRootFolderRef} />
             <NewRootChat inputRef={newRootChatRef} />

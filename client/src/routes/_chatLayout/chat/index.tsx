@@ -1,17 +1,25 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useContext } from "react";
-import { GlobalContext } from "../../../App";
+import { useEffect } from "react";
+import { getLastOpenedChat } from "../../../api/queries/getLastOpenedChat";
+import Loading from "../../../assets/Loading";
 
 export const Route = createFileRoute("/_chatLayout/chat/")({
     component: RouteComponent,
+    pendingComponent: () => <Loading />,
 });
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const { JWT } = useContext(GlobalContext);
+    const { data, isPending } = getLastOpenedChat();
 
-    if (!JWT) {
-        navigate({ to: "/" });
+    useEffect(() => {
+        if (data && data.lastOpenedChat) {
+            navigate({ to: "/chat/$id", params: { id: data.lastOpenedChat } });
+        }
+    }, [data]);
+
+    if (isPending) {
+        return <Loading />;
     }
 
     return (

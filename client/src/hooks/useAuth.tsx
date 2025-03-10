@@ -1,31 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { API_URL } from "../main";
 import Cookies from "js-cookie";
+import { getAuth } from "../api/queries/getAuth";
 
 const useAuth = () => {
     const [JWT, setJWT] = useState<string | null>(Cookies.get("jwt") || null);
     const [userData, setUserData] = useState<UserData | null>(null);
-    const { data, error, isPending } = useQuery({
-        queryKey: ["auth"],
-        queryFn: async () => {
-            let token = Cookies.get("jwt");
-            if (!token) {
-                token = "";
-            }
-            return axios
-                .get(`${API_URL}/auth`, {
-                    headers: {
-                        Authorization: "Bearer " + token,
-                    },
-                })
-                .then((res) => res.data);
-        },
-        refetchOnWindowFocus: true,
-        staleTime: 0,
-        retry: 0,
-    });
+    const { data, error, isPending } = getAuth();
 
     useEffect(() => {
         if (data) {

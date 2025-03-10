@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import Navbar from "../components/Navbar";
 import { useContext } from "react";
 import { GlobalContext } from "../App";
@@ -26,7 +25,6 @@ export const Route = createRootRoute({
                     </button> */}
                     <Outlet />
                 </div>
-                <TanStackRouterDevtools />
             </>
         );
     },

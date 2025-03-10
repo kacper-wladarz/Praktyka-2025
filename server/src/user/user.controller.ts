@@ -24,13 +24,13 @@ export class UserController {
   }
 
   @Post('login')
-  login(@Body() body: LoginUserDto) {
-    return this.userService.loginUser(body.login, body.password);
+  async login(@Body() body: LoginUserDto) {
+    return await this.userService.loginUser(body.login, body.password);
   }
 
   @Post('registration')
-  registration(@Body() body: RegisterUserDto) {
-    return this.userService.registerUser(
+  async registration(@Body() body: RegisterUserDto) {
+    return await this.userService.registerUser(
       body.login,
       body.password,
       body.repeatedPassword,
@@ -38,30 +38,35 @@ export class UserController {
   }
 
   @Post('google-login')
-  googleLogin(@Body() body: GoogleLoginUserDto) {
-    return this.userService.googleLoginUser(body.token);
+  async googleLogin(@Body() body: GoogleLoginUserDto) {
+    return await this.userService.googleLoginUser(body.token);
   }
 
   @Post('google-auth/registration')
-  googleRegistration(@Body() body: GoogleRegistrationAuth) {
-    return this.userService.googleRegistration(body.token);
+  async googleRegistration(@Body() body: GoogleRegistrationAuth) {
+    return await this.userService.googleRegistration(body.token);
   }
 
   @Delete('google-auth/registration/cancel/:authCode')
-  googleRegistrationCancel(@Param('authCode') authCode: string) {
-    return this.userService.googleRegistrationCancel(authCode);
+  async googleRegistrationCancel(@Param('authCode') authCode: string) {
+    return await this.userService.googleRegistrationCancel(authCode);
   }
 
   @Put('google-auth/registration/confirm/:authCode')
-  googleRegistrtionConfirm(@Param('authCode') authCode: string) {
-    return this.userService.googleRegistrationConfirm(authCode);
+  async googleRegistrtionConfirm(@Param('authCode') authCode: string) {
+    return await this.userService.googleRegistrationConfirm(authCode);
+  }
+
+  @Get('last-opened-chat')
+  async getLastOpenedChat(@Req() req: Request) {
+    return await this.userService.getLastOpenedChat(req['user']);
   }
 
   @Put('last-opened-chat')
-  updateLastOpenedChat(
+  async pdateLastOpenedChat(
     @Req() req: Request,
     @Body() body: UpdateLastOpenedChatDTO,
   ) {
-    return this.userService.updateLastOpenedChat(req['user'], body.id);
+    return await this.userService.updateLastOpenedChat(req['user'], body.id);
   }
 }

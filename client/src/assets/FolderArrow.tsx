@@ -1,11 +1,17 @@
-const FolderArrow = ({ isOpen }: { isOpen: boolean }) => {
+const FolderArrow = ({
+    isOpen,
+    isVisible = true,
+}: {
+    isOpen: boolean;
+    isVisible?: boolean;
+}) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
             viewBox="0 0 24 24"
-            className={`${isOpen ? "-rotate-90" : "rotate-0"} transition-transform duration-300 ease-in-out`}
+            className={`${isOpen ? "-rotate-90" : "rotate-0"} transition-transform duration-300 ease-in-out ${isVisible ? "" : "opacity-0"}`}
         >
             <path
                 fill="#fff"

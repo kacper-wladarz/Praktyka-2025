@@ -13,6 +13,15 @@ interface FoldersAndChatsInterface {
     setError: React.Dispatch<SetStateAction<string | null>>;
 }
 
+interface NewStructuresContext {
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<SetStateAction<boolean>>;
+    isNewFolderOpen: boolean;
+    setIsNewFolderOpen: React.Dispatch<SetStateAction<boolean>>;
+    isNewChatOpen: boolean;
+    setIsNewChatOpen: React.Dispatch<SetStateAction<boolean>>;
+}
+
 interface LoginData {
     login: string;
     password: string;
@@ -37,6 +46,7 @@ interface Folder {
     name: string;
     userId: string;
     parentId: string;
+    type: "FOLDER";
 }
 
 interface Chat {
@@ -44,4 +54,11 @@ interface Chat {
     name: string;
     userId: string;
     folderId: string;
+    type: "CHAT";
+}
+
+interface Message {
+    id: string;
+    body: string;
+    userId: string | null;
 }

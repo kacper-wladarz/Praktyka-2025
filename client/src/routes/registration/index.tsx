@@ -6,8 +6,10 @@ import { useState, ChangeEvent, useContext } from "react";
 import Input from "../../components/Input";
 import QueryError from "../../components/QueryError";
 import { API_URL } from "../../main";
-import Loading from "../../components/Loading";
+import Loading from "../../assets/Loading";
 import { GlobalContext } from "../../App";
+import { registration } from "../../api/mutations/registration";
+import { googleRegistration } from "../../api/mutations/googleRegistration";
 
 export const Route = createFileRoute("/registration/")({
     component: RouteComponent,
@@ -17,57 +19,11 @@ export const Route = createFileRoute("/registration/")({
 function RouteComponent() {
     const navigate = useNavigate();
     const { setJWT } = useContext(GlobalContext);
-
     const [data, setData] = useState<RegistrationData>({} as RegistrationData);
     const [error, setError] = useState<string | null>(null);
 
-    const registrationMutation = useMutation({
-        mutationFn: async () =>
-            axios.post(`${API_URL}/user/registration`, data),
-        onSuccess: (res) => {
-            setJWT(res.data.jwt);
-            setError(null);
-            navigate({
-                to: "/registration/success",
-                state: { allow: true },
-            });
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                err.response && setError(err.response.data.message);
-            } else {
-                setError("Wystąpił błąd podczas rejestracji");
-            }
-        },
-    });
-
-    const googleRegistrationMutation = useMutation({
-        mutationFn: async (credential?: string) =>
-            axios.post(`${API_URL}/user/google-auth/registration`, {
-                token: credential,
-            }),
-        onSuccess: (res) => {
-            const auth = res.data.authCode;
-            if (auth) {
-                const email = res.data.email;
-                navigate({
-                    to: "/registration/confirm",
-                    search: { auth: auth, email: email },
-                    state: { allow: true },
-                });
-            } else {
-                setError("Wystąpił błąd podczas rejestracji");
-            }
-            setError(null);
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                err.response && setError(err.response.data.message);
-            } else {
-                setError("Wystąpił błąd podczas logowania");
-            }
-        },
-    });
+    const registrationMutation = registration();
+    const googleRegistrationMutation = googleRegistration();
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         setData((prev) => ({
@@ -78,12 +34,50 @@ function RouteComponent() {
 
     const registerUser = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        registrationMutation.mutate();
+        registrationMutation.mutate(data, {
+            onSuccess: (res) => {
+                setJWT(res.data.jwt);
+                setError(null);
+                navigate({
+                    to: "/registration/success",
+                    state: { allow: true },
+                });
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    err.response && setError(err.response.data.message);
+                } else {
+                    setError("Wystąpił błąd podczas rejestracji");
+                }
+            },
+        });
     };
 
     const googleRegistrationSuccess = (response: CredentialResponse) => {
         const { credential } = response;
-        googleRegistrationMutation.mutate(credential);
+        googleRegistrationMutation.mutate(credential, {
+            onSuccess: (res) => {
+                const auth = res.data.authCode;
+                if (auth) {
+                    const email = res.data.email;
+                    navigate({
+                        to: "/registration/confirm",
+                        search: { auth: auth, email: email },
+                        state: { allow: true },
+                    });
+                } else {
+                    setError("Wystąpił błąd podczas rejestracji");
+                }
+                setError(null);
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    err.response && setError(err.response.data.message);
+                } else {
+                    setError("Wystąpił błąd podczas logowania");
+                }
+            },
+        });
     };
 
     return (
@@ -119,7 +113,7 @@ function RouteComponent() {
                         onSuccess={(response) =>
                             googleRegistrationSuccess(response)
                         }
-                        onError={() => console.log("Błąd google")}
+                        onError={() => setError("Błąd Google")}
                     />
                     <button
                         type="submit"

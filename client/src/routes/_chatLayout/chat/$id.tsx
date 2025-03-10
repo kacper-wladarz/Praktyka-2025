@@ -1,40 +1,59 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import axios, { AxiosError } from "axios";
-import { API_URL } from "../../../main";
-import { useContext } from "react";
-import { GlobalContext } from "../../../App";
-import { FoldersAndChatsContext } from "../../../components/chat/SideBar";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { getSingleChat } from "../../../api/queries/getSingleChat";
+import Loading from "../../../assets/Loading";
+import { AxiosError } from "axios";
+import { updateChat } from "../../../api/mutations/lastOpenedChat";
+import { useEffect } from "react";
+import Chat from "../../../components/chat/Chat";
 
 export const Route = createFileRoute("/_chatLayout/chat/$id")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const navigate = useNavigate();
     const { id } = Route.useParams();
-    const { setError } = useContext(FoldersAndChatsContext);
-    const { reqAuth } = useContext(GlobalContext);
-    const { data } = useQuery({
-        queryKey: ["chat", id],
-        queryFn: async () =>
-            await axios
-                .get(`${API_URL}/chats/${id}`, { headers: { ...reqAuth } })
-                .then((res) => res.data)
-                .catch((err) => {
-                    if (err instanceof AxiosError) {
-                        err.response && setError(err.response.data.message);
-                    } else {
-                        setError("Wystąpił błąd podczas logowania");
-                    }
-                }),
-        retry: 0,
-    });
+    const { data, error, isPending } = getSingleChat(id);
+    const update = updateChat();
 
-    console.log(data);
+    useEffect(() => {
+        if (!id) navigate({ to: "/chat" });
+    }, [id]);
+
+    if (isPending) {
+        return <Loading />;
+    }
+
+    if (error) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                {error instanceof AxiosError && error.response
+                    ? error.response.data.message
+                    : "Wystąpił błąd"}
+            </div>
+        );
+    }
+
+    const handleClose = () => {
+        update.mutate(null, {
+            onSuccess: () => {
+                navigate({ to: "/chat" });
+            },
+        });
+    };
 
     return (
         <div className="appear flex-1 flex flex-col bg-zinc-900">
-            <div>{id}</div>
+            <div className="w-full flex items-center justify-between text-extralight px-8 py-6 shadow-[0px_0px_8px_0px_rgb(0,0,0)]">
+                <span className="text-4xl">{data.name}</span>
+                <button
+                    className="text-4xl cursor-pointer hover:bg-zinc-800 px-4 py-2 rounded-xl transition-[background] duration-300 ease-in-out"
+                    onClick={() => handleClose()}
+                >
+                    Zamknij
+                </button>
+            </div>
+            <Chat chatId={id} />
         </div>
     );
 }

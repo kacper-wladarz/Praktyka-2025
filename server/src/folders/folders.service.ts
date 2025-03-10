@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -7,6 +12,16 @@ export class FoldersService {
 
   constructor(prismaService: PrismaService) {
     this.prisma = prismaService;
+  }
+
+  private async isExist(name: string, folderId: string | null, userId: string) {
+    const isExist = await this.prisma.folder.findMany({
+      where: { AND: [{ name }, { parentId: folderId }, { userId }] },
+    });
+
+    if (isExist.length > 0) {
+      throw new ConflictException('Taki folder na tym poziomie już istnieje');
+    }
   }
 
   async getRootFolders(userId: string) {
@@ -40,19 +55,29 @@ export class FoldersService {
 
   async createRootFolder(userId: string, name: string) {
     try {
-      const isExist = await this.prisma.folder.findMany({
-        where: { AND: [{ name }, { parentId: null }] },
-      });
-
-      if (isExist.length > 0) {
-        throw new HttpException(
-          'Taki folder na tym poziomie już istnieje',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
+      await this.isExist(name, null, userId);
       await this.prisma.folder.create({
         data: { userId, name },
+      });
+      return;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas tworzenia folderu',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async createFolder(userId: string, name: string, folderId: string) {
+    try {
+      await this.isExist(name, folderId, userId);
+      await this.prisma.folder.create({
+        data: { name, parentId: folderId, userId },
       });
       return;
     } catch (error) {
