@@ -1,17 +1,22 @@
-import React from "react";
+import ReactMarkdown from "react-markdown";
+import { MathJaxContext, MathJax } from "better-react-mathjax";
+import "katex/dist/katex.min.css";
 
-const Message = ({ message }: { message: Message }) => {
-    console.log(message);
+const Message = ({ message }: { message: MessageData }) => {
     return (
-        <React.Fragment>
+        <MathJaxContext>
             {message.userId === null ? (
-                <div className="text-left max-w-5/6">{message.body}</div>
+                <div className="chat_response text-left max-w-5/6 bg-zinc-800 p-6 rounded-lg shadow-[0px_0px_12px_-4px_rgb(0,0,0)]">
+                    <MathJax>
+                        <ReactMarkdown>{message.body}</ReactMarkdown>
+                    </MathJax>
+                </div>
             ) : (
-                <div className="max-w-2/3 ml-auto bg-zinc-800 p-4 rounded-lg shadow-[0px_0px_12px_-4px_rgb(0,0,0)]">
+                <div className="max-w-2/3 ml-auto text-white bg-zinc-800 p-4 rounded-lg shadow-[0px_0px_12px_-4px_rgb(0,0,0)]">
                     {message.body}
                 </div>
             )}
-        </React.Fragment>
+        </MathJaxContext>
     );
 };
 

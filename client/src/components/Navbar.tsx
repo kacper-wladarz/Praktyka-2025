@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className="appear header px-4 flex flex-col md:flex-row items-stretch justify-between w-full md:gap-2 text-2xl text-gray-300">
             <Link to="/" className="w-full md:w-auto flex items-center gap-4">
                 <img
-                    className="w-24 sm:w-32 transition-[width] duration-500 ease-in-out"
+                    className="w-20 sm:w-28 transition-[width] duration-500 ease-in-out"
                     src="/logo-no-bg.png"
                     alt=""
                 />

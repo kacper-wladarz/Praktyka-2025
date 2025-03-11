@@ -57,7 +57,7 @@ interface Chat {
     type: "CHAT";
 }
 
-interface Message {
+interface MessageData {
     id: string;
     body: string;
     userId: string | null;

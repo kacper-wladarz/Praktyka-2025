@@ -178,12 +178,36 @@ export class ChatsService {
     try {
       const message = await this.prisma.message.create({
         data: { body: question, userId, chatId },
+        select: { id: true, body: true, userId: true },
       });
 
       if (!message)
         throw new InternalServerErrorException(
           'Wystąpił błąd podczas tworzenia wiadomości',
         );
+      return { message };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas zadawania pytania',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async generateAnswer(userId: string, chatId: string, messageId: string) {
+    try {
+      const question = await this.prisma.message.findUnique({
+        where: { userId, id: messageId, chatId },
+        select: { body: true },
+      });
+      if (!question) {
+        throw new NotFoundException('Wystąpił błąd podczas pobierania pytania');
+      }
 
       const openAIData = await this.openAIClient.chat.completions.create({
         messages: [
@@ -192,7 +216,7 @@ export class ChatsService {
             content:
               'Odpowiadaj na wszystkie pytania w sposób dokładny i szczegółowy',
           },
-          { role: 'user', content: message.body },
+          { role: 'user', content: question.body },
         ],
         model: 'gpt-4o',
         temperature: 1,
@@ -206,10 +230,12 @@ export class ChatsService {
           'Wystąpił błąd podczas generowania odpowiedzi',
         );
 
-      await this.prisma.message.create({
+      const answer = await this.prisma.message.create({
         data: { body: response, userId: null, chatId },
+        select: { id: true, body: true, userId: true },
       });
-      return;
+
+      return { answer };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

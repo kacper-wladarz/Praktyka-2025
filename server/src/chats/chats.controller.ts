@@ -49,4 +49,13 @@ export class ChatsController {
       body.question,
     );
   }
+
+  @Post(':id/messages/:messageId')
+  async generateAnswer(
+    @Param('id') id: string,
+    @Param('messageId') messageId: string,
+    @Req() req: Request,
+  ) {
+    return await this.chatsService.generateAnswer(req['user'], id, messageId);
+  }
 }

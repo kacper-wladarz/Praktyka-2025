@@ -44,10 +44,10 @@ function RouteComponent() {
 
     return (
         <div className="appear flex-1 flex flex-col bg-zinc-900">
-            <div className="w-full flex items-center justify-between text-extralight px-8 py-6 shadow-[0px_0px_8px_0px_rgb(0,0,0)]">
-                <span className="text-4xl">{data.name}</span>
+            <div className="chat_header w-full flex items-center justify-between text-extralight px-8 py-2 shadow-[0px_0px_8px_0px_rgb(0,0,0)]">
+                <span className="text-3xl">{data.name}</span>
                 <button
-                    className="text-4xl cursor-pointer hover:bg-zinc-800 px-4 py-2 rounded-xl transition-[background] duration-300 ease-in-out"
+                    className="text-3xl cursor-pointer hover:bg-zinc-800 px-4 py-2 rounded-xl transition-[background] duration-300 ease-in-out"
                     onClick={() => handleClose()}
                 >
                     Zamknij

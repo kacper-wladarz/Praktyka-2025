@@ -1,34 +1,32 @@
-import { useState } from "react";
-import { createMessage } from "../../api/mutations/createMessage";
+import { useEffect, useState } from "react";
+import { getChatMessages } from "../../api/queries/getChatMessages";
+import ChatInput from "./chat/ChatInput";
 import Messages from "./chat/Messages";
+import { generateAIAnswer } from "../../api/mutations/generateAIAnswer";
 
 const Chat = ({ chatId }: { chatId: string }) => {
-    const [newMessage, setNewMessage] = useState<string>("");
-    const createMessageMutation = createMessage();
+    const { data, isPending } = getChatMessages(chatId);
+    const [messages, setMessages] = useState(data);
+    const generateAnswer = generateAIAnswer();
 
-    const sendMessage = () => {
-        createMessageMutation.mutate({ chatId, question: newMessage });
-    };
-
-    // console.log(document.querySelector(".header")?.clientHeight);
+    useEffect(() => {
+        if (data && data.messages) {
+            setMessages(data.messages);
+        }
+    }, [data]);
 
     return (
-        <div className="flex flex-col px-[15%] py-8 bg-yellow-300 flex-1">
-            <Messages chatId={chatId} />
-            <div className="flex items-center">
-                <input
-                    className="flex-1 bg-sky-200 text-black"
-                    value={newMessage}
-                    type="text"
-                    onChange={(event) => setNewMessage(event.target.value)}
-                />
-                <button
-                    className="cursor-pointer"
-                    onClick={() => sendMessage()}
-                >
-                    Wyślij
-                </button>
-            </div>
+        <div className="flex flex-col flex-1">
+            <Messages
+                messages={messages}
+                isPending={isPending}
+                isGeneratingAnswer={generateAnswer.isPending}
+            />
+            <ChatInput
+                chatId={chatId}
+                setMessages={setMessages}
+                generateAnswer={generateAnswer}
+            />
         </div>
     );
 };
