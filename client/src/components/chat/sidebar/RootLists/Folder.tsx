@@ -4,6 +4,7 @@ import RootChat from "./Chat";
 import NewInsideFolder from "./NewInsideFolder";
 import NewInsideChat from "./NewInsideChat";
 import FolderHeader from "./FolderHeader";
+import { useDraggable } from "@dnd-kit/core";
 
 export interface NewStructuresProps {
     folderId: string;
@@ -13,14 +14,38 @@ export const NewStructuresContext = createContext<NewStructuresContext>(
     {} as NewStructuresContext
 );
 
-const Folder = ({ folder }: { folder: Folder }) => {
+interface Props {
+    folder: Folder;
+}
+
+const Folder = ({ folder }: Props) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isNewFolderOpen, setIsNewFolderOpen] = useState<boolean>(false);
     const [isNewChatOpen, setIsNewChatOpen] = useState<boolean>(false);
     const { data } = getFolderStructures({ id: folder.id, isOpen });
+    const { attributes, listeners, setNodeRef, transform, isDragging } =
+        useDraggable({
+            id: folder.id,
+            data: {
+                name: folder.name,
+                type: "FOLDER",
+            },
+        });
+
+    const style: React.CSSProperties = {
+        transform: transform
+            ? `translate(${transform.x}px, ${transform.y}px)`
+            : undefined,
+    };
 
     return (
-        <div className="w-full flex flex-col overflow-hidden">
+        <div
+            className={`w-full flex flex-col overflow-hidden`}
+            ref={setNodeRef}
+            {...listeners}
+            {...attributes}
+            style={style}
+        >
             <NewStructuresContext.Provider
                 value={{
                     isOpen,
@@ -31,21 +56,25 @@ const Folder = ({ folder }: { folder: Folder }) => {
                     setIsNewChatOpen,
                 }}
             >
-                <FolderHeader name={folder.name} />
+                <FolderHeader
+                    name={folder.name}
+                    id={folder.id}
+                    isDragging={isDragging}
+                />
                 <NewInsideFolder folderId={folder.id} />
                 <NewInsideChat folderId={folder.id} />
             </NewStructuresContext.Provider>
             <div
-                className={`ml-3 auto_height overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? "h-auto w-auto" : "h-0 w-0 delay-500"}`}
+                className={`ml-4 auto_height overflow-hidden ${isOpen ? (isDragging ? "h-0 w-0" : "h-auto w-auto opacity-100 pointer-events-auto transition-all duration-300 ease-in-out") : "h-0 w-0 delay-300 opacity-0 pointer-events-none transition-all duration-300 ease-in-out"}`}
             >
                 <div
-                    className={`w-full transition-all duration-500 ease-in-out ${isOpen ? "translate-x-0 delay-400" : "-translate-x-full"}`}
+                    className={`w-full flex flex-col gap-1 mt-1 transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 delay-200" : "-translate-x-full"}`}
                 >
                     {data &&
                         data.list.map((item: Folder | Chat) => (
                             <div
                                 key={`structure-${item.id}`}
-                                className={`w-full bg-clip-text overflow-hidden`}
+                                className={`w-full bg-clip-text`}
                             >
                                 {item.type === "FOLDER" && (
                                     <Folder folder={item as Folder} />

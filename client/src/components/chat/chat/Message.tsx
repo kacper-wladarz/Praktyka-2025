@@ -6,7 +6,7 @@ const Message = ({ message }: { message: MessageData }) => {
     return (
         <MathJaxContext>
             {message.userId === null ? (
-                <div className="chat_response text-left max-w-5/6 bg-zinc-800 p-6 rounded-lg shadow-[0px_0px_12px_-4px_rgb(0,0,0)]">
+                <div className="chat_response text-left max-w-full p-6 rounded-lg ">
                     <MathJax>
                         <ReactMarkdown>{message.body}</ReactMarkdown>
                     </MathJax>

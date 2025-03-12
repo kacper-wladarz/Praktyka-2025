@@ -29,6 +29,31 @@ body {
     interpolate-size: allow-keywords;
 }
 
+::-webkit-scrollbar {
+    width: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: #09090b;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #18181b;
+    border-radius: 10px;
+    border: 2px solid #5f5d5d;
+    min-height: 30px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: grab;
+    background-color: #555;
+}
+
+::-webkit-scrollbar-thumb:active {
+    cursor: grabbing;
+}
+
 .chat_response {
     font-weight: 200;
     color: white;
@@ -37,7 +62,7 @@ body {
 .chat_response hr {
     margin: 20px 0;
     border: none;
-    border-top: 1px solid #8f8f8f;
+    border-top: 1px solid #5f5d5d;
 }
 
 .chat_response p {
@@ -48,8 +73,22 @@ body {
 .chat_response pre {
     background-color: black;
     padding: 16px;
+    margin: 12px 0;
     border-radius: 12px;
     overflow-x: scroll;
+}
+
+.chat_response strong {
+    margin-bottom: 16px;
+}
+
+.chat_response li {
+    margin: 8px 0;
+}
+
+.chat_response :is(h1, h2, h3, h4, h5, h6) {
+    margin: 16px 0 4px 0;
+    font-size: 1.5em;
 }
 
 .dot {

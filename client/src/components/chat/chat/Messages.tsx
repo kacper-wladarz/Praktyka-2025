@@ -25,12 +25,14 @@ const Messages = ({ messages, isPending, isGeneratingAnswer }: Props) => {
     }, []);
 
     useEffect(() => {
-        if (messagesRef.current && messages.length > 0) {
-            messagesRef.current.scrollTo({
-                top: messagesRef.current.scrollHeight,
-                behavior: "smooth",
-            });
-        }
+        setTimeout(() => {
+            if (messagesRef.current && messages && messages.length > 0) {
+                messagesRef.current.scrollTo({
+                    top: messagesRef.current.scrollHeight,
+                    behavior: "smooth",
+                });
+            }
+        }, 500);
     }, [messages]);
 
     if (isPending || !height) {
@@ -45,7 +47,14 @@ const Messages = ({ messages, isPending, isGeneratingAnswer }: Props) => {
                 height: height,
             }}
         >
-            <div className="w-full flex flex-col gap-12 text-[14px]">
+            <div
+                className={`w-full flex justify-center items-center text-3xl transition-all duration-300 ease-in-out ${messages && !messages.length ? "h-auto opacity-100 flex-1" : "h-0 opacity-0"}`}
+            >
+                <span>Rozpocznij konwersację</span>
+            </div>
+            <div
+                className={`auto_height w-full flex flex-col gap-12 text-[14px] transition-all duration-300 ease-in-out ${messages && messages.length > 0 ? "h-auto opacity-100" : "h-0 opacity-0"}`}
+            >
                 {messages &&
                     messages.map((message: MessageData) => (
                         <Message

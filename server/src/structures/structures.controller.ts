@@ -1,4 +1,12 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { StructuresService } from './structures.service';
 
 @Controller('structures')
@@ -17,6 +25,26 @@ export class StructuresController {
     return await this.structuresService.getStructuresList(
       req['user'],
       folderId,
+    );
+  }
+
+  @Get('chat-path/:chatId')
+  async getChatPath(@Param('chatId') chatId: string, @Req() req: Request) {
+    return await this.structuresService.getChatPath(req['user'], chatId);
+  }
+
+  @Patch(':type/:structureId')
+  async updateStructureParentId(
+    @Param('type') type: 'CHAT' | 'FOLDER',
+    @Param('structureId') structureId: string,
+    @Body() body: { parentId: string },
+    @Req() req: Request,
+  ) {
+    return await this.structuresService.updateStructureParentId(
+      req['user'],
+      type,
+      structureId,
+      body.parentId,
     );
   }
 }

@@ -9,11 +9,14 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import OpenAI from 'openai';
+import { encoding_for_model, TiktokenModel } from 'tiktoken';
 
 @Injectable()
 export class ChatsService {
   private prisma;
   private openAIClient;
+  private openAIModel: TiktokenModel = 'gpt-4o';
+  private enc = encoding_for_model(this.openAIModel);
 
   constructor(
     prismaService: PrismaService,
@@ -24,6 +27,10 @@ export class ChatsService {
       baseURL: 'https://models.inference.ai.azure.com',
       apiKey: this.configService.get('OPEN_AI_KEY'),
     });
+  }
+
+  private openAICountTokens(text) {
+    return this.enc.decode(text).length;
   }
 
   private async isExist(name: string, folderId: string | null, userId: string) {
@@ -209,6 +216,38 @@ export class ChatsService {
         throw new NotFoundException('Wystąpił błąd podczas pobierania pytania');
       }
 
+      const messages = await this.prisma.message.findMany({
+        where: { chatId },
+        select: { body: true, userId: true },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
+
+      const convertedMessages = messages.map((message) => ({
+        role: message.userId ? 'user' : 'assistant',
+        content: message.body,
+      }));
+
+      let selectedMessages: { role: string; content: string }[] = [];
+      let totalTokens = 0;
+
+      for (let i = convertedMessages.length - 1; i >= 0; i--) {
+        const tokensInMessage =
+          this.openAICountTokens(convertedMessages[i].role) +
+          this.openAICountTokens(convertedMessages[i].content);
+
+        if (totalTokens + tokensInMessage > 4000) {
+          break;
+        }
+        totalTokens += tokensInMessage;
+        selectedMessages.push(convertedMessages[i]);
+      }
+
+      if (selectedMessages[selectedMessages.length - 1].role === 'user') {
+        selectedMessages.pop();
+      }
+
       const openAIData = await this.openAIClient.chat.completions.create({
         messages: [
           {
@@ -216,11 +255,12 @@ export class ChatsService {
             content:
               'Odpowiadaj na wszystkie pytania w sposób dokładny i szczegółowy',
           },
+          ...selectedMessages.reverse(),
           { role: 'user', content: question.body },
         ],
-        model: 'gpt-4o',
+        model: this.openAIModel,
         temperature: 1,
-        max_tokens: 512,
+        max_tokens: 4096,
         top_p: 1,
         frequency_penalty: 0.4,
       });

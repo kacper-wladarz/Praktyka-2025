@@ -1,14 +1,34 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FoldersAndChatsContext } from "../SideBar";
 import NewRootFolder from "./NewRootFolderAndChat/NewRootFolder";
 import NewRootChat from "./NewRootFolderAndChat/NewRootChat";
-import RootFoldersList from "./RootLists/FoldersList";
-import RootChatsList from "./RootLists/ChatsList";
+import FoldersList from "./RootLists/FoldersList";
+import ChatsList from "./RootLists/ChatsList";
+import {
+    DndContext,
+    DragEndEvent,
+    DragOverlay,
+    DragStartEvent,
+    MouseSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core";
+import { updateParentId } from "../../../api/mutations/updateParentId";
+import { useQueryClient } from "@tanstack/react-query";
+import FolderArrow from "../../../assets/FolderArrow";
+import RootArea from "./RootLists/RootArea";
 
 const FoldersAndChats = () => {
     const newRootFolderRef = useRef<HTMLInputElement>(null);
     const newRootChatRef = useRef<HTMLInputElement>(null);
     const { setIsNewFolder, setIsNewChat } = useContext(FoldersAndChatsContext);
+    const [draggedElement, setDraggedElement] = useState({
+        id: "",
+        type: "",
+        name: "",
+    });
+    const updateParent = updateParentId();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -32,13 +52,82 @@ const FoldersAndChats = () => {
         };
     }, []);
 
+    const handleDragStart = ({ active }: DragStartEvent) => {
+        setDraggedElement({
+            id: active.id as string,
+            type: active.data.current?.type as string,
+            name: active.data.current?.name as string,
+        });
+    };
+
+    const handleDragEnd = ({ active, over }: DragEndEvent) => {
+        if (!over) return;
+        if (active.data.current) {
+            const structureId = active.id as string;
+            const typeOfStructure = active.data.current.type;
+            const parentId = over.id as string;
+            if (parentId !== structureId) {
+                updateParent.mutate(
+                    {
+                        structureId,
+                        parentId,
+                        type: typeOfStructure,
+                    },
+                    {
+                        onSuccess: () => {
+                            queryClient.invalidateQueries({
+                                queryKey: ["root-folders"],
+                            });
+                            queryClient.invalidateQueries({
+                                queryKey: ["structures-list"],
+                                exact: false,
+                            });
+                            queryClient.invalidateQueries({
+                                queryKey: ["root-chats"],
+                            });
+                            queryClient.invalidateQueries({
+                                queryKey: ["chat-path"],
+                                exact: false,
+                            });
+                        },
+                    }
+                );
+            }
+        }
+    };
+
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: { distance: 10 },
+    });
+    const sensors = useSensors(mouseSensor);
+
     return (
-        <div className="flex flex-col text-[16px]">
+        <div className="flex flex-col">
             <hr className="border-white opacity-50" />
             <NewRootFolder inputRef={newRootFolderRef} />
             <NewRootChat inputRef={newRootChatRef} />
-            <RootFoldersList />
-            <RootChatsList />
+            <DndContext
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                sensors={sensors}
+            >
+                <RootArea />
+                <div className={`flex flex-col text-[16px] gap-1`}>
+                    <FoldersList />
+                    <ChatsList />
+                    <DragOverlay>
+                        <div className="w-full flex items-center px-2 py-[2px] bg-zinc-950 cursor-grabbing shadow-[0_0_8px_-2px_rgba(255,255,255,0.6)]">
+                            <FolderArrow
+                                isOpen={false}
+                                isVisible={draggedElement.type === "FOLDER"}
+                            />
+                            <span className="whitespace-nowrap">
+                                {draggedElement.name}
+                            </span>
+                        </div>
+                    </DragOverlay>
+                </div>
+            </DndContext>
         </div>
     );
 };

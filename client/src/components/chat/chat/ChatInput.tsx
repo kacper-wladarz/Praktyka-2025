@@ -49,21 +49,21 @@ const ChatInput = ({ chatId, setMessages, generateAnswer }: Props) => {
         );
     };
 
-    if (generateAnswer.isPending) {
-        return;
-    }
-
     return (
-        <div className="chat_input flex items-stretch pb-4 px-[15%] gap-2">
+        <div
+            className={`chat_input flex items-stretch pb-4 px-[15%] gap-2 transition-[opacity] duration-200 ease-in-out ${generateAnswer.isPending ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}`}
+        >
             <div className="flex-1 p-4 bg-zinc-700 rounded-2xl flex shadow-[0px_0px_12px_-4px_rgb(0,0,0)]">
                 <textarea
-                    className="flex-1 text-white outline-none placeholder:text-gray-400 resize-none "
+                    className="flex-1 text-white outline-none placeholder:text-gray-400 resize-none"
                     value={newMessage}
                     placeholder="Zapytaj"
                     rows={2}
                     onChange={(event) => setNewMessage(event.target.value)}
                     onKeyDown={(event) =>
-                        event.key === "Enter" && sendMessage()
+                        event.key === "Enter" &&
+                        !event.shiftKey &&
+                        sendMessage()
                     }
                 />
             </div>

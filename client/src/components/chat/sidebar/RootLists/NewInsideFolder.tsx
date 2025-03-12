@@ -23,6 +23,7 @@ const NewInsideFolder = ({ folderId }: { folderId: string }) => {
                     onSuccess: () => {
                         setIsOpen(true);
                         setIsNewFolderOpen(false);
+                        setNewFolder("");
                     },
                     onError: (err) => {
                         if (err instanceof AxiosError) {

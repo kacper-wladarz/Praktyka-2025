@@ -36,6 +36,7 @@
     "openai": "^4.86.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "tiktoken": "^1.0.20",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

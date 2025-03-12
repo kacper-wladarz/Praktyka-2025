@@ -13,7 +13,7 @@ const SideBar = () => {
     const [error, setError] = useState<string | null>(null);
 
     return (
-        <div className="flex flex-col gap-4 font-extralight">
+        <div className="flex flex-col gap-4 font-extralight z-50">
             <SidebarHeader />
             <FoldersAndChatsContext
                 value={{
