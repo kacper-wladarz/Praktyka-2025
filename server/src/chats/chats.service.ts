@@ -237,7 +237,7 @@ export class ChatsService {
           this.openAICountTokens(convertedMessages[i].role) +
           this.openAICountTokens(convertedMessages[i].content);
 
-        if (totalTokens + tokensInMessage > 4000) {
+        if (totalTokens + tokensInMessage > 8000) {
           break;
         }
         totalTokens += tokensInMessage;
@@ -247,7 +247,6 @@ export class ChatsService {
       if (selectedMessages[selectedMessages.length - 1].role === 'user') {
         selectedMessages.pop();
       }
-
       const openAIData = await this.openAIClient.chat.completions.create({
         messages: [
           {
@@ -283,6 +282,24 @@ export class ChatsService {
         console.error(error);
         throw new HttpException(
           'Wystąpił błąd podczas generowania odpowiedzi',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async deleteChat(id: string, userId: string) {
+    console.log(id, userId);
+    try {
+      await this.prisma.chat.delete({ where: { userId, id } });
+      return;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas usuwania czatu',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }

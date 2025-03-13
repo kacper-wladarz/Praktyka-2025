@@ -92,4 +92,23 @@ export class FoldersService {
       }
     }
   }
+
+  async deleteFolder(folderId: string, userId: string) {
+    try {
+      await this.prisma.folder.delete({
+        where: { userId, id: folderId },
+      });
+      return;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Wystąpił błąd podczas usuwania folderu',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 }

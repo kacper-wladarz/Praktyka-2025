@@ -53,6 +53,10 @@ export class StructuresService {
         select: { name: true, folderId: true },
       });
 
+      if (!chat) {
+        throw new NotFoundException('Nie udało się pobrać ścieżki czatu');
+      }
+
       if (chat.folderId === null) {
         return [chat.name];
       }
@@ -105,7 +109,14 @@ export class StructuresService {
           select: { name: true },
         });
         const isExist = await this.prisma.folder.findMany({
-          where: { AND: [{ parentId }, { name: element.name }] },
+          where: {
+            AND: [
+              { userId },
+              { parentId },
+              { name: element.name },
+              { id: { not: structureId } },
+            ],
+          },
         });
         if (isExist.length > 0) {
           throw new ConflictException('Taki folder w tym miejscu już istnieje');
@@ -124,7 +135,14 @@ export class StructuresService {
           select: { name: true },
         });
         const isExist = await this.prisma.chat.findMany({
-          where: { AND: [{ folderId: parentId }, { name: element.name }] },
+          where: {
+            AND: [
+              { userId },
+              { folderId: parentId },
+              { name: element.name },
+              { id: { not: structureId } },
+            ],
+          },
         });
         if (isExist.length > 0) {
           throw new ConflictException('Taki czat w tym miejscu już istnieje');

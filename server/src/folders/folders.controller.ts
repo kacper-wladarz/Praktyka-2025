@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { NewRootFolderDTO } from './dtos/new-root-folder.dto';
 import { FoldersService } from './folders.service';
 import { NewFolderDTO } from './dtos/new-folder.dto';
@@ -28,5 +36,10 @@ export class FoldersController {
       body.name,
       body.folderId,
     );
+  }
+
+  @Delete(':folderId')
+  async deleteFolder(@Param('folderId') folderId: string, @Req() req: Request) {
+    return await this.foldersService.deleteFolder(folderId, req['user']);
   }
 }

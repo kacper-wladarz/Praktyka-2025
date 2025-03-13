@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { NewRootChatDTO } from './dtos/new-root-chat.dto';
 import { NewChatDTO } from './dtos/new-chat.dto';
@@ -57,5 +66,10 @@ export class ChatsController {
     @Req() req: Request,
   ) {
     return await this.chatsService.generateAnswer(req['user'], id, messageId);
+  }
+
+  @Delete(':id')
+  async deleteChat(@Param('id') id: string, @Req() req: Request) {
+    return await this.chatsService.deleteChat(id, req['user']);
   }
 }
