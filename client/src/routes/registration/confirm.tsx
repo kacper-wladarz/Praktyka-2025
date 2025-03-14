@@ -1,8 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import Loading from "../../assets/Loading";
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import { API_URL } from "../../main";
+import { AxiosError } from "axios";
 import { useContext } from "react";
 import { GlobalContext } from "../../App";
 import { googleAuthCancel } from "../../api/mutations/googleAuthCancel";

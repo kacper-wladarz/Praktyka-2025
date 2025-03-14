@@ -4,6 +4,8 @@ import { getLastOpenedChat } from "../../../api/queries/getLastOpenedChat";
 import Loading from "../../../assets/Loading";
 import { QueryFilter } from "./$id";
 import { GlobalContext } from "../../../App";
+import SidebarArrow from "../../../assets/SidebarArrow";
+import { SidebarContext } from "../../_chatLayout";
 
 export const Route = createFileRoute("/_chatLayout/chat/")({
     component: RouteComponent,
@@ -22,6 +24,7 @@ function RouteComponent() {
     const { data, isPending } = getLastOpenedChat();
     const structureData = Route.useSearch();
     const { setStructureToDelete } = useContext(GlobalContext);
+    const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
     useEffect(() => {
         if (structureData && structureData.structureId) {
@@ -44,7 +47,15 @@ function RouteComponent() {
     }
 
     return (
-        <div className="appear flex-1 flex">
+        <div className="appear flex-1 flex flex-col">
+            <div className="chat_header flex items-center p-2">
+                <button
+                    className="cursor-pointer sidebar_button"
+                    onClick={() => setIsSidebarOpen((prev: boolean) => !prev)}
+                >
+                    <SidebarArrow isOpen={isSidebarOpen} />
+                </button>
+            </div>
             <div className="flex-1 flex justify-center px-4 py-16 bg-zinc-900">
                 <span className="text-3xl text-center tracking-wide font-extralight">
                     Wybierz czat, który chcesz otworzyć

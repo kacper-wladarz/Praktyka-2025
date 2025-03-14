@@ -1,8 +1,10 @@
 import { useContext, useState } from "react";
-import { GlobalContext } from "../App";
+import { GlobalContext, router } from "../App";
+import ChatIcon from "../assets/ChatIcon";
+import LogoutIcon from "../assets/LogoutIcon";
 
 const Profile = () => {
-    const { userData } = useContext(GlobalContext);
+    const { userData, setJWT } = useContext(GlobalContext);
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [bgImage, setBgImage] = useState(`url('/account.svg')`);
 
@@ -30,13 +32,37 @@ const Profile = () => {
     return (
         <div className="flex items-center">
             <div
-                className="bg-gray-400 bg-no-repeat bg-center bg-[length:28px] text-gray-300 rounded-full p-2 w-10 h-10 flex justify-center items-center font-medium cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-600"
+                className="bg-gray-400 bg-no-repeat bg-center bg-[length:28px] text-gray-300 rounded-full p-2 w-10 h-10 flex justify-center items-center font-medium cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-600 relative"
                 style={{
                     backgroundImage: bgImage,
                 }}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-            ></div>
+            >
+                <div
+                    className={`${isDropdownOpen ? "opacity-100 h-auto" : "opacity-0 h-0"} auto_height absolute top-full right-0 z-[9999] overflow-hidden transition-all duration-500 delay-100 ease-in-out`}
+                >
+                    <div className="my-2 bg-zinc-800 rounded-xl text-lg font-extralight overflow-hidden">
+                        <button className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out">
+                            <ChatIcon />
+                            <span>Czat</span>
+                        </button>
+                        <button
+                            className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out"
+                            onClick={() => {
+                                setJWT(null);
+                                router.navigate({
+                                    to: "/logout",
+                                    state: { allow: true },
+                                });
+                            }}
+                        >
+                            <LogoutIcon />
+                            <span>Wyloguj</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

@@ -41,7 +41,7 @@ const Messages = ({ messages, isPending, isGeneratingAnswer }: Props) => {
 
     return (
         <div
-            className="w-full max-w-full flex flex-col overflow-y-scroll py-8 px-[16%]"
+            className="w-full max-w-full flex flex-col overflow-y-scroll py-8 px-[4%] lg:px-[16%]"
             ref={messagesRef}
             style={{
                 height: height,

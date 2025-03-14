@@ -13,22 +13,17 @@ function Index() {
 
     return (
         <div className="appear flex-1 w-full flex flex-col items-center gap-12 py-16">
-            <span className="text-6xl font-light">Witaj na czacie AI</span>
-            {JWT ? (
-                <Link
-                    to="/chat"
-                    className="text-xl font-extralight text-sky-400 hover:text-sky-600 transition-[color] duration-300 ease-in-out"
-                >
-                    Przejdź do rozmowy
-                </Link>
-            ) : (
-                <Link
-                    to="/login"
-                    className="text-xl font-extralight text-sky-400 hover:text-sky-600 transition-[color] duration-300 ease-in-out"
-                >
-                    Stwórz konto lub zaloguj się, aby móc korzystać z czatu
-                </Link>
-            )}
+            <span className="text-6xl text-center font-light">
+                Witaj na czacie AI
+            </span>
+            <Link
+                to={JWT ? "/chat" : "/login"}
+                className="text-xl text-center font-extralight text-sky-400 hover:text-sky-600 transition-[color] duration-300 ease-in-out"
+            >
+                {JWT
+                    ? "Przejdź do rozmowy"
+                    : "Stwórz konto lub zaloguj się, aby móc korzystać z czatu"}
+            </Link>
         </div>
     );
 }

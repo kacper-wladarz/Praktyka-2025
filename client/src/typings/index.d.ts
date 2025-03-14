@@ -29,6 +29,11 @@ interface InputsContext {
     setOpenedInputId: React.Dispatch<SetStateAction<string | null>>;
 }
 
+interface SidebarContext {
+    isSidebarOpen: boolean;
+    setIsSidebarOpen: React.Dispatch<SetStateAction<boolean>>;
+}
+
 interface LoginData {
     login: string;
     password: string;

@@ -4,16 +4,19 @@ import { updateChat } from "../../../../api/mutations/lastOpenedChat";
 import FolderArrow from "../../../../assets/FolderArrow";
 import { useContext } from "react";
 import BinIcon from "../../../../assets/BinIcon";
+import { SidebarContext } from "../../../../routes/_chatLayout";
 
 const Chat = ({ chat }: { chat: Chat }) => {
     const update = updateChat();
     const { setChatId, setIsConfirmWindowOpen, chatId } =
         useContext(GlobalContext);
+    const { setIsSidebarOpen } = useContext(SidebarContext);
 
     const handleUpdate = (id: string) => {
         update.mutate(id, {
             onSuccess: (res) => {
                 setChatId(res.chatId);
+                setIsSidebarOpen(false);
                 router.navigate({
                     to: "/chat/$id",
                     params: { id: res.chatId },

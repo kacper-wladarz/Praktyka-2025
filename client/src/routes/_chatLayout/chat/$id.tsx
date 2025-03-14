@@ -5,6 +5,8 @@ import Chat from "../../../components/chat/Chat";
 import { getChatPath } from "../../../api/queries/getChatPath";
 import Loading from "../../../assets/Loading";
 import { GlobalContext } from "../../../App";
+import SidebarArrow from "../../../assets/SidebarArrow";
+import { SidebarContext } from "../../_chatLayout";
 
 export interface QueryFilter {
     structureId?: string;
@@ -32,6 +34,7 @@ function RouteComponent() {
     const update = updateChat();
     const { setStructureToDelete, setChatId } = useContext(GlobalContext);
     const structureData = Route.useSearch();
+    const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
 
     useEffect(() => {
         if (!id) {
@@ -60,6 +63,7 @@ function RouteComponent() {
     const handleClose = () => {
         update.mutate(null, {
             onSuccess: () => {
+                setIsSidebarOpen(false);
                 navigate({ to: "/chat" });
             },
         });
@@ -67,16 +71,24 @@ function RouteComponent() {
 
     return (
         <div className="appear w-full max-w-full flex flex-col bg-zinc-900">
-            <div className="chat_header w-full flex items-center justify-between text-extralight px-8 py-2 shadow-[0px_0px_8px_0px_rgb(0,0,0)]">
-                <span className="text-sm">
-                    {chatPath && chatPath.join(" ⭢ ")}
-                </span>
+            <div className="chat_header w-full flex gap-4 items-center text-extralight p-2 shadow-[0px_0px_8px_0px_rgb(0,0,0)]">
                 <button
-                    className="text-xl cursor-pointer hover:bg-zinc-800 px-4 py-2 rounded-xl transition-[background] duration-300 ease-in-out"
-                    onClick={() => handleClose()}
+                    className="cursor-pointer sidebar_button"
+                    onClick={() => setIsSidebarOpen((prev: boolean) => !prev)}
                 >
-                    Zamknij
+                    <SidebarArrow isOpen={isSidebarOpen} />
                 </button>
+                <div className="flex-1 flex justify-between items-center">
+                    <span className="text-sm">
+                        {chatPath && chatPath.join(" ⭢ ")}
+                    </span>
+                    <button
+                        className="text-xl cursor-pointer hover:bg-zinc-800 px-4 py-2 rounded-xl transition-[background] duration-300 ease-in-out"
+                        onClick={() => handleClose()}
+                    >
+                        Zamknij
+                    </button>
+                </div>
             </div>
             <Chat chatId={id} />
         </div>

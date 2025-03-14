@@ -138,7 +138,7 @@ const FoldersAndChats = () => {
                         <ChatsList />
                     </InputsContext.Provider>
                     <DragOverlay>
-                        <div className="w-full flex items-center px-2 py-[2px] bg-zinc-950 cursor-grabbing shadow-[0_0_8px_-2px_rgba(255,255,255,0.6)]">
+                        <div className="w-full flex items-center px-2 py-1 bg-zinc-700 cursor-grabbing">
                             <FolderArrow
                                 isOpen={false}
                                 isVisible={draggedElement.type === "FOLDER"}

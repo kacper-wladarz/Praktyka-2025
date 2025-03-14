@@ -1,7 +1,8 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import CreateSection from "./sidebar/CreateSection";
 import FoldersAndChats from "./sidebar/FoldersAndChats";
 import SidebarHeader from "./sidebar/SidebarHeader";
+import { SidebarContext } from "../../routes/_chatLayout";
 
 export const FoldersAndChatsContext = createContext<FoldersAndChatsInterface>(
     {} as FoldersAndChatsInterface
@@ -11,9 +12,38 @@ const SideBar = () => {
     const [isNewFolder, setIsNewFolder] = useState<boolean>(false);
     const [isNewChat, setIsNewChat] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const sidebar = document.querySelector("#sidebar");
+            const target = event.target as HTMLElement;
+            if (innerWidth < 1024) {
+                if (
+                    sidebar &&
+                    !sidebar.contains(event.target as Node) &&
+                    !target.className.includes("sidebar_button")
+                ) {
+                    setIsSidebarOpen(false);
+                }
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
 
     return (
-        <div className="flex flex-col gap-4 font-extralight z-50">
+        <div
+            className={`absolute lg:static h-full ${isSidebarOpen ? "max-lg:left-0 max-lg:opacity-100" : "max-lg:-left-full max-lg:opacity-0"} transition-all duration-300 ease-in-out flex flex-col gap-4 font-extralight bg-zinc-950 z-[100000]`}
+            id="sidebar"
+            style={{
+                top: `${document.querySelector(".chat_header")?.clientHeight}px`,
+            }}
+        >
             <SidebarHeader />
             <FoldersAndChatsContext
                 value={{

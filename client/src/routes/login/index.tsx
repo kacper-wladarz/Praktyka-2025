@@ -76,7 +76,7 @@ function RouteComponent() {
                 Logowanie
             </span>
             <form className="text-xl font-extralight">
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-stretch gap-6">
                     <Input
                         type="text"
                         name="login"

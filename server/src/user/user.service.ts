@@ -202,10 +202,16 @@ export class UserService {
       });
 
       if (user) {
-        throw new HttpException(
-          'Taki użytkownik juz istnieje',
-          HttpStatus.BAD_REQUEST,
-        );
+        const { confirmed } = await this.prisma.user.findUnique({
+          where: { id: user.id },
+          select: { confirmed: true },
+        });
+        if (confirmed) {
+          throw new HttpException(
+            'Taki użytkownik juz istnieje',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
       }
 
       await this.prisma.user.create({
@@ -218,7 +224,8 @@ export class UserService {
       });
       return { authCode, email: payload.email };
     } catch (error) {
-      await this.prisma.user.delete({ where: { authCode } });
+      const user = await this.prisma.user.findUnique({ where: { authCode } });
+      if (user) await this.prisma.user.delete({ where: { authCode } });
       if (error instanceof HttpException) {
         throw error;
       } else {

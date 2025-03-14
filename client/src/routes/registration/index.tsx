@@ -1,11 +1,9 @@
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useState, ChangeEvent, useContext } from "react";
 import Input from "../../components/Input";
 import QueryError from "../../components/QueryError";
-import { API_URL } from "../../main";
 import Loading from "../../assets/Loading";
 import { GlobalContext } from "../../App";
 import { registration } from "../../api/mutations/registration";
@@ -53,7 +51,7 @@ function RouteComponent() {
         });
     };
 
-    const googleRegistrationSuccess = (response: CredentialResponse) => {
+    const googleRegisterUser = (response: CredentialResponse) => {
         const { credential } = response;
         googleRegistrationMutation.mutate(credential, {
             onSuccess: (res) => {
@@ -110,9 +108,7 @@ function RouteComponent() {
                     />
                     <GoogleLogin
                         text="signup_with"
-                        onSuccess={(response) =>
-                            googleRegistrationSuccess(response)
-                        }
+                        onSuccess={(response) => googleRegisterUser(response)}
                         onError={() => setError("Błąd Google")}
                     />
                     <button

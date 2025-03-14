@@ -2,7 +2,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import Loading from "../assets/Loading";
 
 export const Route = createFileRoute("/logout")({
-    loader: ({ location }) => {
+    loader: ({ location }: { location: { state?: { allow?: boolean } } }) => {
         if (!location.state?.allow) {
             return redirect({ to: "/" });
         }

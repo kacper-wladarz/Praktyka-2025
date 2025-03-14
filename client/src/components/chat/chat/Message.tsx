@@ -6,13 +6,13 @@ const Message = ({ message }: { message: MessageData }) => {
     return (
         <MathJaxContext>
             {message.userId === null ? (
-                <div className="chat_response text-left w-full max-w-full p-6 rounded-lg ">
+                <div className="chat_response text-left w-full max-w-full rounded-lg p-2 lg:p-6">
                     <MathJax>
                         <ReactMarkdown>{message.body}</ReactMarkdown>
                     </MathJax>
                 </div>
             ) : (
-                <div className="max-w-2/3 ml-auto text-white bg-zinc-800 p-4 rounded-lg shadow-[0px_0px_12px_-4px_rgb(0,0,0)] whitespace-pre-line">
+                <div className="max-w-2/3 ml-auto text-white bg-zinc-800 p-2 lg:p-4 rounded-lg shadow-[0px_0px_12px_-4px_rgb(0,0,0)] whitespace-pre-line">
                     {message.body}
                 </div>
             )}

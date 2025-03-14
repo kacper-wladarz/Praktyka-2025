@@ -51,7 +51,7 @@ const ChatInput = ({ chatId, setMessages, generateAnswer }: Props) => {
 
     return (
         <div
-            className={`chat_input flex items-stretch pb-4 px-[15%] gap-2 transition-[opacity] duration-200 ease-in-out ${generateAnswer.isPending ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}`}
+            className={`chat_input flex items-stretch pb-4 px-[3%] lg:px-[15%] gap-2 transition-[opacity] duration-200 ease-in-out ${generateAnswer.isPending ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}`}
         >
             <div className="flex-1 p-4 bg-zinc-700 rounded-2xl flex shadow-[0px_0px_12px_-4px_rgb(0,0,0)]">
                 <textarea
