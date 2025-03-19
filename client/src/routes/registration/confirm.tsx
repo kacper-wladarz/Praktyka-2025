@@ -1,13 +1,12 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import Loading from "../../assets/Loading";
+import Loading from "@assets/Loading";
 import { AxiosError } from "axios";
-import { useContext } from "react";
-import { GlobalContext } from "../../App";
-import { googleAuthCancel } from "../../api/mutations/googleAuthCancel";
-import { googleAuthConfirm } from "../../api/mutations/googleAuthConfirm";
+import { useGoogleAuthCancel } from "@mutations/googleAuthCancel";
+import { useGoogleAuthConfirm } from "@mutations/googleAuthConfirm";
+import { useAuth } from "@contexts/AuthContext";
 
 type SearchParams = {
-    auth: string;
+    authCode: string;
     email: string;
 };
 
@@ -15,11 +14,11 @@ export const Route = createFileRoute("/registration/confirm")({
     component: RouteComponent,
     validateSearch: (search: Record<string, unknown>): SearchParams => {
         return {
-            auth: (search.auth as string) || "",
+            authCode: (search.auth as string) || "",
             email: (search.email as string) || "",
         };
     },
-    loaderDeps: ({ search: { auth, email } }) => ({ auth, email }),
+    loaderDeps: ({ search: { authCode, email } }) => ({ authCode, email }),
     loader: ({ location }) => {
         if (!location.state?.allow) {
             return redirect({ to: location.state?.from || "/" });
@@ -30,15 +29,14 @@ export const Route = createFileRoute("/registration/confirm")({
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const { setJWT } = useContext(GlobalContext);
+    const auth = useAuth();
+    const { authCode, email } = Route.useSearch();
 
-    const { auth, email } = Route.useSearch();
-
-    const cancelMutation = googleAuthCancel();
-    const confirmMutation = googleAuthConfirm();
+    const cancelMutation = useGoogleAuthCancel();
+    const confirmMutation = useGoogleAuthConfirm();
 
     const cancel = () => {
-        cancelMutation.mutate(auth, {
+        cancelMutation.mutate(authCode, {
             onSuccess: () =>
                 navigate({
                     to: "/registration/cancel",
@@ -66,9 +64,9 @@ function RouteComponent() {
     };
 
     const confirm = () => {
-        confirmMutation.mutate(auth, {
+        confirmMutation.mutate(authCode, {
             onSuccess: (res) => {
-                setJWT(res.data.jwt);
+                auth.login(res.data.jwt);
                 navigate({
                     to: "/registration/success",
                     state: { allow: true },
@@ -110,6 +108,9 @@ function RouteComponent() {
                 <button
                     className="flex-1 whitespace-nowrap px-4 py-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal hover:bg-blue-600 transition-[background-color] ease-in-out duration-300"
                     onClick={() => confirm()}
+                    disabled={
+                        cancelMutation.isPending || confirmMutation.isPending
+                    }
                 >
                     Stwórz konto
                 </button>

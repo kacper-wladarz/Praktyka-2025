@@ -1,10 +1,14 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
-import Navbar from "../components/Navbar";
-import NotFound from "../components/NotFound";
-import Confirm from "../components/Confirm";
-import DeleteWindow from "../components/chat/DeleteWindow";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import Navbar from "@components/Navbar";
+import Confirm from "@components/Confirm";
+import DeleteWindow from "@components/chat/DeleteWindow";
+import NotFound from "@components/NotFound";
 
-export const Route = createRootRoute({
+interface RouterContext {
+    auth: AuthContext;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
     notFoundComponent: () => <NotFound />,
     component: () => {
         return (

@@ -1,16 +1,15 @@
 import { useDraggable } from "@dnd-kit/core";
-import { GlobalContext, router } from "../../../../App";
-import { updateChat } from "../../../../api/mutations/lastOpenedChat";
-import FolderArrow from "../../../../assets/FolderArrow";
-import { useContext } from "react";
-import BinIcon from "../../../../assets/BinIcon";
-import { SidebarContext } from "../../../../routes/_chatLayout";
+import { router } from "@/App";
+import FolderArrow from "@assets/FolderArrow";
+import BinIcon from "@assets/BinIcon";
+import { useGlobalContext } from "@contexts/GlobalContext";
+import { useSidebarContext } from "@contexts/SidebarContext";
+import { useUpdateChat } from "@mutations/lastOpenedChat";
 
 const Chat = ({ chat }: { chat: Chat }) => {
-    const update = updateChat();
-    const { setChatId, setIsConfirmWindowOpen, chatId } =
-        useContext(GlobalContext);
-    const { setIsSidebarOpen } = useContext(SidebarContext);
+    const update = useUpdateChat();
+    const { setChatId, setIsConfirmWindowOpen, chatId } = useGlobalContext();
+    const { setIsSidebarOpen } = useSidebarContext();
 
     const handleUpdate = (id: string) => {
         update.mutate(id, {
@@ -51,7 +50,6 @@ const Chat = ({ chat }: { chat: Chat }) => {
     return (
         <div
             className={`w-full flex justify-between bg-zinc-950 hover:bg-zinc-800 transition-all duration-200 ease-in-out`}
-            key={`root-folder-${chat.id}`}
             ref={setNodeRef}
             {...listeners}
             {...attributes}

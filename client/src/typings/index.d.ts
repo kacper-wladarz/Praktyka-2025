@@ -1,8 +1,4 @@
-interface GlobalContextInterface {
-    JWT: string | null;
-    setJWT: React.Dispatch<SetStateAction<string | null>>;
-    userData: UserData | null;
-    reqAuth: reqAuth;
+interface GlobalContext {
     isConfirmWindowOpen: boolean;
     setIsConfirmWindowOpen: React.Dispatch<SetStateAction<boolean>>;
     structureToDelete: StructureToDelete;
@@ -11,7 +7,15 @@ interface GlobalContextInterface {
     setChatId: React.Dispatch<SetStateAction<string | null>>;
 }
 
-interface FoldersAndChatsInterface {
+interface AuthContext {
+    isAuthenticated: boolen;
+    JWT: string | null;
+    user: UserData | null;
+    logout: () => void;
+    login: (jwt: string) => void;
+}
+
+interface FoldersAndChats {
     isNewFolder: boolean;
     setIsNewFolder: React.Dispatch<SetStateAction<boolean>>;
     isNewChat: boolean;
@@ -79,4 +83,22 @@ interface StructureToDelete {
     id: string;
     name: string;
     type: "FOLDER" | "CHAT";
+}
+
+interface ChatQueryFilter {
+    structureId?: string;
+    name?: string;
+    type?: "FOLDER" | "CHAT";
+}
+
+interface FolderItem {
+    id: string;
+    name: string;
+    type: "FOLDER";
+}
+
+interface ChatItem {
+    id: string;
+    name: string;
+    type: "CHAT";
 }

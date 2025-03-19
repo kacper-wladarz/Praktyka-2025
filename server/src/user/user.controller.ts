@@ -28,6 +28,11 @@ export class UserController {
     return await this.userService.loginUser(body.login, body.password);
   }
 
+  @Get('/data')
+  getUserData(@Req() req: Request) {
+    return { login: req['login'] };
+  }
+
   @Post('registration')
   async registration(@Body() body: RegisterUserDto) {
     return await this.userService.registerUser(

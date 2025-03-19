@@ -1,15 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useContext, useEffect } from "react";
-import { getLastOpenedChat } from "../../../api/queries/getLastOpenedChat";
-import Loading from "../../../assets/Loading";
-import { QueryFilter } from "./$id";
-import { GlobalContext } from "../../../App";
-import SidebarArrow from "../../../assets/SidebarArrow";
-import { SidebarContext } from "../../_chatLayout";
+import { useEffect } from "react";
+import Loading from "@assets/Loading";
+import SidebarArrow from "@assets/SidebarArrow";
+import { useGlobalContext } from "@contexts/GlobalContext";
+import { useSidebarContext } from "@contexts/SidebarContext";
+import { useLastOpenedChat } from "@queries/getLastOpenedChat";
 
 export const Route = createFileRoute("/_chatLayout/chat/")({
     component: RouteComponent,
-    validateSearch: (search: Record<string, unknown>): QueryFilter => {
+    validateSearch: (search: Record<string, unknown>): ChatQueryFilter => {
         return {
             structureId: search.structureId as string,
             name: search.name as string,
@@ -21,10 +20,10 @@ export const Route = createFileRoute("/_chatLayout/chat/")({
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const { data, isPending } = getLastOpenedChat();
+    const { data, isPending } = useLastOpenedChat();
     const structureData = Route.useSearch();
-    const { setStructureToDelete } = useContext(GlobalContext);
-    const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
+    const { setStructureToDelete } = useGlobalContext();
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
 
     useEffect(() => {
         if (structureData && structureData.structureId) {
@@ -48,7 +47,7 @@ function RouteComponent() {
 
     return (
         <div className="appear flex-1 flex flex-col">
-            <div className="chat_header flex items-center p-2">
+            <div className={`chat_header flex items-center py-2`}>
                 <button
                     className="cursor-pointer sidebar_button"
                     onClick={() => setIsSidebarOpen((prev: boolean) => !prev)}

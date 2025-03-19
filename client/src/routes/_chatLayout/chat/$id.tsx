@@ -1,21 +1,15 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { updateChat } from "../../../api/mutations/lastOpenedChat";
-import { useContext, useEffect } from "react";
-import Chat from "../../../components/chat/Chat";
-import { getChatPath } from "../../../api/queries/getChatPath";
-import Loading from "../../../assets/Loading";
-import { GlobalContext } from "../../../App";
-import SidebarArrow from "../../../assets/SidebarArrow";
-import { SidebarContext } from "../../_chatLayout";
-
-export interface QueryFilter {
-    structureId?: string;
-    name?: string;
-    type?: "FOLDER" | "CHAT";
-}
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import Chat from "@components/chat/Chat";
+import Loading from "@assets/Loading";
+import SidebarArrow from "@assets/SidebarArrow";
+import { useGlobalContext } from "@contexts/GlobalContext";
+import { useSidebarContext } from "@contexts/SidebarContext";
+import { useChatPath } from "@queries/getChatPath";
+import { useUpdateChat } from "@mutations/lastOpenedChat";
 
 export const Route = createFileRoute("/_chatLayout/chat/$id")({
-    validateSearch: (search: Record<string, unknown>): QueryFilter => {
+    validateSearch: (search: Record<string, unknown>): ChatQueryFilter => {
         return {
             structureId: search.structureId as string,
             name: search.name as string,
@@ -29,26 +23,15 @@ export const Route = createFileRoute("/_chatLayout/chat/$id")({
 function RouteComponent() {
     const navigate = useNavigate();
     const { id } = Route.useParams();
-    const { data: chatPath, error } = getChatPath(id);
-    const setLastOpenedChat = updateChat();
-    const update = updateChat();
-    const { setStructureToDelete, setChatId } = useContext(GlobalContext);
+    const { data: chatPath, error } = useChatPath(id);
+    const setLastOpenedChat = useUpdateChat();
+    const { setStructureToDelete } = useGlobalContext();
     const structureData = Route.useSearch();
-    const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
 
-    useEffect(() => {
-        if (!id) {
-            navigate({ to: "/chat" });
-            return;
-        }
-        if (error) {
-            navigate({ to: "/chat" });
-            setLastOpenedChat.mutate(null);
-            setChatId(null);
-            return;
-        }
-        setChatId(id);
-    }, [id, error]);
+    if (error || !id) {
+        throw notFound();
+    }
 
     useEffect(() => {
         if (structureData && structureData.structureId) {
@@ -61,7 +44,7 @@ function RouteComponent() {
     }, [structureData]);
 
     const handleClose = () => {
-        update.mutate(null, {
+        setLastOpenedChat.mutate(null, {
             onSuccess: () => {
                 setIsSidebarOpen(false);
                 navigate({ to: "/chat" });

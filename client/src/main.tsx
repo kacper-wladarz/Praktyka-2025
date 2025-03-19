@@ -3,9 +3,9 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import App from "./App";
+import { AuthContextProvider } from "@contexts/AuthContext";
 
-const queryClient = new QueryClient();
-export const API_URL = "http://localhost:3000";
+export const queryClient = new QueryClient();
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
@@ -13,7 +13,9 @@ if (!rootElement.innerHTML) {
     root.render(
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
             <QueryClientProvider client={queryClient}>
-                <App />
+                <AuthContextProvider>
+                    <App />
+                </AuthContextProvider>
             </QueryClientProvider>
         </GoogleOAuthProvider>
     );

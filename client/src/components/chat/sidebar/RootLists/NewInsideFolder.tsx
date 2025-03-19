@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NewStructuresContext } from "./Folder";
-import { createFolder } from "../../../../api/mutations/createFolder";
-import { FoldersAndChatsContext } from "../../SideBar";
+import React, { useEffect, useState } from "react";
 import { AxiosError } from "axios";
-import { useQueryClient } from "@tanstack/react-query";
 import { UUID } from "crypto";
-import { InputsContext } from "../FoldersAndChats";
-import RightArrow from "../../../../assets/RightArrow";
+import RightArrow from "@assets/RightArrow";
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { useNewStructuresContext } from "@contexts/NewStructuresContext";
+import { useInputsContext } from "@contexts/InputsContext";
+import { useCreateFolder } from "@mutations/createFolder";
+import { queryClient } from "@/main";
 
 interface Props {
     folderId: string;
@@ -14,12 +14,11 @@ interface Props {
 }
 
 const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
-    const { setIsOpen } = useContext(NewStructuresContext);
+    const { setIsOpen } = useNewStructuresContext();
     const [newFolder, setNewFolder] = useState<string>("");
-    const { setError } = useContext(FoldersAndChatsContext);
-    const { openedInputId, setOpenedInputId } = useContext(InputsContext);
-    const createNewFolder = createFolder();
-    const queryClient = useQueryClient();
+    const { setError } = useFoldersAndChatsContext();
+    const { openedInputId, setOpenedInputId } = useInputsContext();
+    const createNewFolder = useCreateFolder();
 
     const handleCreateKeyDown = (
         event: React.KeyboardEvent<HTMLInputElement>
@@ -33,10 +32,18 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
         createNewFolder.mutate(
             { newFolder, id: folderId },
             {
-                onSuccess: () => {
+                onSuccess: (res) => {
                     setIsOpen(true);
                     setOpenedInputId(null);
                     setNewFolder("");
+                    queryClient.setQueryData(
+                        ["folders", folderId],
+                        ({ list: data }: { list: FolderItem[] }) => {
+                            if (!data)
+                                return { list: [{ ...res.data.folder }] };
+                            return { list: [res.data.folder, ...data] };
+                        }
+                    );
                 },
                 onError: (err) => {
                     if (err instanceof AxiosError) {
@@ -44,11 +51,6 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
                     } else {
                         setError("Wystąpił błąd podczas tworzenia czatu");
                     }
-                },
-                onSettled: () => {
-                    queryClient.invalidateQueries({
-                        queryKey: ["structures-list"],
-                    });
                 },
             }
         );
@@ -65,7 +67,7 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
 
     return (
         <div
-            className={`auto_height bg-zinc-900 flex items-stretch ${openedInputId === newFolderId ? "h-auto opacity-100" : "h-0 ocity-0"} overflow-hidden transition-all duration-300 ease-in-out`}
+            className={`auto_height bg-zinc-900 flex items-stretch ${openedInputId === newFolderId ? "h-auto opacity-100" : "h-0 opacity-0"} overflow-hidden transition-all duration-300 ease-in-out`}
         >
             <input
                 className="w-full px-2 py-1 text-white font-semilight outline-none border border-[rgba(255,255,255,0.5)]"
@@ -79,6 +81,7 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
             <button
                 className="px-1 border border-l-0 border-[rgba(255,255,255,0.5)] cursor-pointer hover:bg-zinc-800 transition-[background] duration-300 ease-in-out"
                 onClick={() => create()}
+                disabled={createNewFolder.isPending}
             >
                 <RightArrow />
             </button>

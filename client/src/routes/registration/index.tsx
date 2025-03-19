@@ -1,13 +1,14 @@
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AxiosError } from "axios";
-import { useState, ChangeEvent, useContext } from "react";
-import Input from "../../components/Input";
-import QueryError from "../../components/QueryError";
-import Loading from "../../assets/Loading";
-import { GlobalContext } from "../../App";
-import { registration } from "../../api/mutations/registration";
-import { googleRegistration } from "../../api/mutations/googleRegistration";
+import { useState, ChangeEvent } from "react";
+import Input from "@components/Input";
+import QueryError from "@components/QueryError";
+import Loading from "@assets/Loading";
+import { useRegistration } from "@mutations/registration";
+import { useGoogleRegistration } from "@mutations/googleRegistration";
+import { useAuth } from "@contexts/AuthContext";
+import Logged from "@components/Logged";
 
 export const Route = createFileRoute("/registration/")({
     component: RouteComponent,
@@ -16,12 +17,11 @@ export const Route = createFileRoute("/registration/")({
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const { setJWT } = useContext(GlobalContext);
     const [data, setData] = useState<RegistrationData>({} as RegistrationData);
     const [error, setError] = useState<string | null>(null);
-
-    const registrationMutation = registration();
-    const googleRegistrationMutation = googleRegistration();
+    const auth = useAuth();
+    const registrationMutation = useRegistration();
+    const googleRegistrationMutation = useGoogleRegistration();
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         setData((prev) => ({
@@ -34,7 +34,7 @@ function RouteComponent() {
         event.preventDefault();
         registrationMutation.mutate(data, {
             onSuccess: (res) => {
-                setJWT(res.data.jwt);
+                auth.login(res.data.jwt);
                 setError(null);
                 navigate({
                     to: "/registration/success",
@@ -60,7 +60,7 @@ function RouteComponent() {
                     const email = res.data.email;
                     navigate({
                         to: "/registration/confirm",
-                        search: { auth: auth, email: email },
+                        search: { authCode: auth, email: email },
                         state: { allow: true },
                     });
                 } else {
@@ -77,6 +77,10 @@ function RouteComponent() {
             },
         });
     };
+
+    if (auth.isAuthenticated) {
+        return <Logged />;
+    }
 
     return (
         <div className="appear flex-1 w-full flex flex-col justify-center items-center gap-8">
@@ -115,6 +119,10 @@ function RouteComponent() {
                         type="submit"
                         className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-normal hover:bg-blue-600 transition-[background-color] ease-in-out duration-300"
                         onClick={(event) => registerUser(event)}
+                        disabled={
+                            registrationMutation.isPending ||
+                            googleRegistrationMutation.isPending
+                        }
                     >
                         Zarejestruj się
                     </button>

@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
+import { api } from "../axios";
 
-export const googleLogin = () => {
+export const useGoogleLogin = () => {
     return useMutation({
         mutationFn: async (credential?: string) =>
-            axios.post(`${API_URL}/user/google-login`, { token: credential }),
+            api.post(`/user/google-login`, {
+                token: credential,
+            }),
     });
 };

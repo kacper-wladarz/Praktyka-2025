@@ -3,7 +3,7 @@ import {
     redirect,
     useRouterState,
 } from "@tanstack/react-router";
-import Loading from "../../assets/Loading";
+import Loading from "@assets/Loading";
 
 export const Route = createFileRoute("/registration/error")({
     loader: ({ location }) => {

@@ -1,20 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
-import { useContext } from "react";
-import { GlobalContext } from "../../App";
+import { api } from "../axios";
 
-export const getChatMessages = (chatId: string) => {
-    const { reqAuth } = useContext(GlobalContext);
-
+export const useChatMessages = (chatId: string) => {
     const { data, error, isPending } = useQuery({
-        queryKey: ["chatMessages", chatId],
+        queryKey: ["chats", chatId, "messages"],
+        placeholderData: [],
         queryFn: async () =>
-            await axios
-                .get(`${API_URL}/chats/${chatId}/messages`, {
-                    headers: { ...reqAuth },
-                })
-                .then((res) => res.data),
+            await api.get(`/chats/${chatId}/messages`).then((res) => res.data),
     });
 
     return { data, error, isPending };

@@ -1,18 +1,11 @@
-import { createContext, useState } from "react";
-import { getFolderStructures } from "../../../../api/queries/getFolderStructures";
+import { useState } from "react";
 import RootChat from "./Chat";
 import NewInsideFolder from "./NewInsideFolder";
 import NewInsideChat from "./NewInsideChat";
 import FolderHeader from "./FolderHeader";
 import { useDraggable } from "@dnd-kit/core";
-
-export interface NewStructuresProps {
-    folderId: string;
-}
-
-export const NewStructuresContext = createContext<NewStructuresContext>(
-    {} as NewStructuresContext
-);
+import { NewStructuresContextProvider } from "@contexts/NewStructuresContext";
+import { useFolderStructures } from "@queries/getFolderStructures";
 
 interface Props {
     folder: Folder;
@@ -20,7 +13,7 @@ interface Props {
 
 const Folder = ({ folder }: Props) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const { data } = getFolderStructures({ id: folder.id, isOpen });
+    const { data } = useFolderStructures({ id: folder.id, isOpen });
     const { attributes, listeners, setNodeRef, transform, isDragging } =
         useDraggable({
             id: folder.id,
@@ -46,8 +39,8 @@ const Folder = ({ folder }: Props) => {
             {...attributes}
             style={style}
         >
-            <NewStructuresContext.Provider
-                value={{
+            <NewStructuresContextProvider
+                props={{
                     isOpen,
                     setIsOpen,
                 }}
@@ -64,7 +57,7 @@ const Folder = ({ folder }: Props) => {
                     newFolderId={newFolderId}
                 />
                 <NewInsideChat folderId={folder.id} newChatId={newChatId} />
-            </NewStructuresContext.Provider>
+            </NewStructuresContextProvider>
             <div
                 className={`ml-4 auto_height overflow-hidden ${isOpen ? (isDragging ? "h-0 w-0" : "h-auto w-auto opacity-100 pointer-events-auto transition-all duration-300 ease-in-out") : "h-0 w-0 delay-300 opacity-0 pointer-events-none transition-all duration-300 ease-in-out"}`}
             >

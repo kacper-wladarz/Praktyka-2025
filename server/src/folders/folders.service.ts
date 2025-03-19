@@ -28,18 +28,10 @@ export class FoldersService {
     try {
       const folders = await this.prisma.folder.findMany({
         where: { AND: [{ userId }, { parentId: null }] },
+        select: { id: true, name: true },
         orderBy: { createdAt: 'desc' },
       });
-      return {
-        folders: [
-          ...folders.map((folder) => ({
-            id: folder.id,
-            name: folder.name,
-            userId: folder.userId,
-            parentId: folder.parentId,
-          })),
-        ],
-      };
+      return { folders };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -56,10 +48,11 @@ export class FoldersService {
   async createRootFolder(userId: string, name: string) {
     try {
       await this.isExist(name, null, userId);
-      await this.prisma.folder.create({
+      const folder = await this.prisma.folder.create({
         data: { userId, name },
+        select: { id: true, name: true },
       });
-      return;
+      return { folder };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -76,10 +69,11 @@ export class FoldersService {
   async createFolder(userId: string, name: string, folderId: string) {
     try {
       await this.isExist(name, folderId, userId);
-      await this.prisma.folder.create({
+      const folder = await this.prisma.folder.create({
         data: { name, parentId: folderId, userId },
+        select: { id: true, name: true },
       });
-      return;
+      return { folder: { ...folder, type: 'FOLDER' } };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

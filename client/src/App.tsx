@@ -1,20 +1,22 @@
-import { createContext, useEffect, useMemo, useState } from "react";
-import useAuth from "./hooks/useAuth";
+import { useState } from "react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import Loading from "./assets/Loading";
-import Cookies from "js-cookie";
-import { useQueryClient } from "@tanstack/react-query";
+import { GlobalContextProvider } from "@contexts/GlobalContext";
+import { useAuth } from "@contexts/AuthContext";
 
-export const GlobalContext = createContext<GlobalContextInterface>(
-    {} as GlobalContextInterface
-);
-
-export const router = createRouter({ routeTree });
+export const router = createRouter({
+    routeTree,
+    context: { auth: undefined! },
+});
 
 declare module "@tanstack/react-router" {
     interface Register {
         router: typeof router;
+    }
+    interface HistoryState {
+        allow?: boolean;
+        from?: string;
+        message?: string;
     }
 }
 
@@ -24,33 +26,11 @@ const App = () => {
     const [structureToDelete, setStructureToDelete] =
         useState<StructureToDelete>({} as StructureToDelete);
     const [chatId, setChatId] = useState<string | null>(null);
-    const { JWT, setJWT, isPending, userData } = useAuth();
-    const queryClient = useQueryClient();
-    const reqAuth = useMemo(() => {
-        if (JWT) return { Authorization: "Bearer " + JWT };
-        return { Authorization: "Bearer " };
-    }, [JWT]);
-
-    useEffect(() => {
-        if (JWT) {
-            Cookies.set("jwt", JWT, { expires: 1 });
-        } else {
-            Cookies.remove("jwt");
-        }
-        queryClient.invalidateQueries({ queryKey: ["auth"] });
-    }, [JWT]);
-
-    if (isPending) {
-        return <Loading />;
-    }
+    const auth = useAuth();
 
     return (
-        <GlobalContext.Provider
-            value={{
-                JWT,
-                setJWT,
-                userData,
-                reqAuth,
+        <GlobalContextProvider
+            props={{
                 isConfirmWindowOpen,
                 setIsConfirmWindowOpen,
                 structureToDelete,
@@ -59,8 +39,8 @@ const App = () => {
                 setChatId,
             }}
         >
-            <RouterProvider router={router} />
-        </GlobalContext.Provider>
+            <RouterProvider router={router} context={{ auth }} />
+        </GlobalContextProvider>
     );
 };
 export default App;

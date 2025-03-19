@@ -1,40 +1,46 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { RefObject, useContext, useEffect, useState } from "react";
-import { FoldersAndChatsContext } from "../../SideBar";
+import { RefObject, useEffect, useState } from "react";
 import { AxiosError } from "axios";
-import { createRootChat } from "../../../../api/mutations/createRootChat";
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { useCreateRootChat } from "@mutations/createRootChat";
+import RightArrow from "@assets/RightArrow";
+import { queryClient } from "@/main";
 
 const NewRootChat = ({
     inputRef,
 }: {
     inputRef: RefObject<HTMLInputElement | null>;
 }) => {
-    const queryClient = useQueryClient();
-    const { isNewChat, setIsNewChat, setError } = useContext(
-        FoldersAndChatsContext
-    );
+    const { isNewChat, setIsNewChat, setError } = useFoldersAndChatsContext();
     const [newChat, setNewChat] = useState<string>("");
-    const create = createRootChat();
+    const create = useCreateRootChat();
 
-    const createChat = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter") {
-            create.mutate(newChat, {
-                onSettled: () => {
-                    queryClient.invalidateQueries({
-                        queryKey: ["root-chats"],
-                    });
-                },
-                onError: (error) => {
-                    if (error instanceof AxiosError) {
-                        error.response && setError(error.response.data.message);
-                    } else {
-                        setError("Wystąpił błąd");
-                    }
-                },
-            });
-            setNewChat("");
-            setIsNewChat(false);
+            createChat();
         }
+    };
+
+    const createChat = () => {
+        create.mutate(newChat, {
+            onSuccess: (res) => {
+                queryClient.setQueryData(
+                    ["chats", "root"],
+                    ({ chats }: { chats: ChatItem[] }) => {
+                        if (!chats) return { chats: [...chats] };
+                        return { chats: [res.data.folder, ...chats] };
+                    }
+                );
+            },
+            onError: (error) => {
+                if (error instanceof AxiosError) {
+                    error.response && setError(error.response.data.message);
+                } else {
+                    setError("Wystąpił błąd");
+                }
+            },
+        });
+        setNewChat("");
+        setIsNewChat(false);
     };
 
     useEffect(() => {
@@ -57,9 +63,16 @@ const NewRootChat = ({
                 type="text"
                 value={newChat}
                 autoComplete="off"
+                onKeyDown={(event) => handleKeyDown(event)}
                 onChange={(event) => setNewChat(event.target.value)}
-                onKeyDown={(event) => createChat(event)}
             />
+            <button
+                className="px-1 border border-l-0 border-[rgba(255,255,255,0.5)] cursor-pointer hover:bg-zinc-800 transition-[background] duration-300 ease-in-out"
+                onClick={() => createChat()}
+                disabled={create.isPending}
+            >
+                <RightArrow />
+            </button>
         </div>
     );
 };

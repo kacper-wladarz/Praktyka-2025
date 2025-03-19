@@ -1,12 +1,12 @@
-import { SetStateAction, useState } from "react";
-import { createMessage } from "../../../api/mutations/createMessage";
+import { useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
-import SendIcon from "../../../assets/SendIcon";
+import SendIcon from "@assets/SendIcon";
+import { useCreateMessage } from "@mutations/createMessage";
+import { queryClient } from "@/main";
 
 interface Props {
     chatId: string;
-    setMessages: React.Dispatch<SetStateAction<MessageData[]>>;
     generateAnswer: UseMutationResult<
         AxiosResponse<any, any>,
         Error,
@@ -15,9 +15,24 @@ interface Props {
     >;
 }
 
-const ChatInput = ({ chatId, setMessages, generateAnswer }: Props) => {
+const ChatInput = ({ chatId, generateAnswer }: Props) => {
     const [newMessage, setNewMessage] = useState<string>("");
-    const createMessageMutation = createMessage();
+    const createMessageMutation = useCreateMessage();
+
+    const updateMessages = (id: string, body: string, userId: string) => {
+        queryClient.setQueryData(
+            ["chats", chatId, "messages"],
+            ({ messages }: { messages: MessageData[] }) => {
+                if (!messages)
+                    return {
+                        messages: [{ id, body, userId }],
+                    };
+                return {
+                    messages: [...messages, { id, body, userId }],
+                };
+            }
+        );
+    };
 
     const sendMessage = () => {
         createMessageMutation.mutate(
@@ -27,23 +42,17 @@ const ChatInput = ({ chatId, setMessages, generateAnswer }: Props) => {
                     setNewMessage("");
                 },
                 onSuccess: (res) => {
-                    {
-                        const { id, body, userId } = res.data.message;
-                        setMessages((prev) => [...prev, { id, body, userId }]);
-                        generateAnswer.mutate(
-                            { chatId, messageId: id },
-                            {
-                                onSuccess: (res) => {
-                                    const { id, body, userId } =
-                                        res.data.answer;
-                                    setMessages((prev) => [
-                                        ...prev,
-                                        { id, body, userId },
-                                    ]);
-                                },
-                            }
-                        );
-                    }
+                    const { id, body, userId } = res.data.message;
+                    updateMessages(id, body, userId);
+                    generateAnswer.mutate(
+                        { chatId, messageId: id },
+                        {
+                            onSuccess: (res) => {
+                                const { id, body, userId } = res.data.answer;
+                                updateMessages(id, body, userId);
+                            },
+                        }
+                    );
                 },
             }
         );
@@ -69,6 +78,7 @@ const ChatInput = ({ chatId, setMessages, generateAnswer }: Props) => {
             </div>
             <button
                 className="cursor-pointer bg-zinc-700 p-4 rounded-2xl shadow-[0px_0px_12px_-4px_rgb(0,0,0)] hover:bg-zinc-600 transition-[background] duration-300 ease-in-out"
+                disabled={createMessageMutation.isPending}
                 onClick={() => sendMessage()}
             >
                 <SendIcon />

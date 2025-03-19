@@ -26,19 +26,18 @@ export class ChatsController {
     return await this.chatsService.getRootChats(req['user']);
   }
 
-  @Get(':id')
-  async getChat(@Param('id') id: string, @Req() req: Request) {
-    return await this.chatsService.getChat(req['user'], id);
-  }
-
   @Post('root')
   async reateRootChat(@Req() req: Request, @Body() body: NewRootChatDTO) {
     return await this.chatsService.createRootChat(req['user'], body.name);
   }
 
-  @Post('')
+  @Post()
   async createChat(@Req() req: Request, @Body() body: NewChatDTO) {
-    await this.chatsService.createChat(req['user'], body.name, body.folderId);
+    return await this.chatsService.createChat(
+      req['user'],
+      body.name,
+      body.folderId,
+    );
   }
 
   @Get(':id/messages')

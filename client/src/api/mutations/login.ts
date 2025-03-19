@@ -1,10 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
+import { api } from "../axios";
 
-export const login = () => {
+export const useLogin = () => {
     return useMutation({
-        mutationFn: async (data: UserData) =>
-            axios.post(`${API_URL}/user/login`, data),
+        mutationFn: async (data: UserData) => api.post(`/user/login`, data),
     });
 };

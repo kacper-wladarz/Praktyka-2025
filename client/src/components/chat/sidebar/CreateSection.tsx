@@ -1,10 +1,8 @@
-import { useContext } from "react";
-import { FoldersAndChatsContext } from "../SideBar";
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
 
 const CreateSection = () => {
-    const { isNewFolder, setIsNewFolder, isNewChat, setIsNewChat } = useContext(
-        FoldersAndChatsContext
-    );
+    const { isNewFolder, setIsNewFolder, isNewChat, setIsNewChat } =
+        useFoldersAndChatsContext();
 
     return (
         <div className="flex flex-col gap-1">

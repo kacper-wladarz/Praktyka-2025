@@ -29,9 +29,9 @@ export class FoldersController {
     return await this.foldersService.createRootFolder(req['user'], body.name);
   }
 
-  @Post('')
+  @Post()
   async createFolder(@Req() req: Request, @Body() body: NewFolderDTO) {
-    await this.foldersService.createFolder(
+    return await this.foldersService.createFolder(
       req['user'],
       body.name,
       body.folderId,

@@ -43,66 +43,14 @@ export class ChatsService {
     }
   }
 
-  async getChat(userId: string, chatId: string) {
-    try {
-      const chat = await this.prisma.chat.findUnique({
-        where: { id: chatId, userId },
-        select: {
-          id: true,
-          name: true,
-          Message: {
-            orderBy: {
-              createdAt: 'asc',
-            },
-            select: {
-              id: true,
-              body: true,
-              createdAt: true,
-            },
-          },
-        },
-      });
-      if (!chat) {
-        await this.prisma.user.update({
-          where: { id: userId },
-          data: { lastOpenedChat: null },
-        });
-        throw new NotFoundException('Czat nie istnieje');
-      }
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: { lastOpenedChat: chatId },
-      });
-      return { ...chat };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas otwierania czatu',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-  }
-
   async getRootChats(userId: string) {
     try {
       const chats = await this.prisma.chat.findMany({
         where: { AND: [{ userId }, { folderId: null }] },
         orderBy: { createdAt: 'desc' },
+        select: { id: true, name: true },
       });
-      return {
-        chats: [
-          ...chats.map((chat) => ({
-            id: chat.id,
-            name: chat.name,
-            userId: chat.userId,
-            parentId: chat.folderId,
-          })),
-        ],
-      };
+      return { chats };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -119,10 +67,11 @@ export class ChatsService {
   async createRootChat(userId: string, name: string) {
     try {
       await this.isExist(name, null, userId);
-      await this.prisma.chat.create({
+      const chat = await this.prisma.chat.create({
         data: { userId, name },
+        select: { id: true, name: true },
       });
-      return;
+      return { chat };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -139,10 +88,10 @@ export class ChatsService {
   async createChat(userId: string, name: string, folderId: string) {
     try {
       await this.isExist(name, folderId, userId);
-      await this.prisma.chat.create({
+      const chat = await this.prisma.chat.create({
         data: { userId, name, folderId },
       });
-      return;
+      return { chat: { ...chat, type: 'CHAT' } };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -156,7 +105,7 @@ export class ChatsService {
     }
   }
 
-  async getMessages(chatId) {
+  async getMessages(chatId: string) {
     try {
       const messages = await this.prisma.message.findMany({
         where: { chatId },
@@ -289,7 +238,6 @@ export class ChatsService {
   }
 
   async deleteChat(id: string, userId: string) {
-    console.log(id, userId);
     try {
       await this.prisma.chat.delete({ where: { userId, id } });
       return;

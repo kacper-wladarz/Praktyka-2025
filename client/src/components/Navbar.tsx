@@ -1,14 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import UserOperations from "./UserOperations";
 import Profile from "./Profile";
-import { useContext } from "react";
-import { GlobalContext } from "../App";
+import { useAuth } from "@contexts/AuthContext";
 
 const Navbar = () => {
-    const { JWT } = useContext(GlobalContext);
+    const auth = useAuth();
 
     return (
-        <div className="appear header flex gap-2 flex-wrap px-4 justify-between w-full md:gap-2 text-2xl text-gray-300 z-[1000]">
+        <div className="appear header flex gap-2 flex-wrap px-4 justify-between w-full md:gap-2 text-2xl text-gray-300 z-40">
             <div className="flex-1 flex flex-col md:flex-row items-stretch">
                 <Link
                     to="/"
@@ -23,9 +22,9 @@ const Navbar = () => {
                         Chat AI
                     </span>
                 </Link>
-                {!JWT && <UserOperations />}
+                {!auth.isAuthenticated && <UserOperations />}
             </div>
-            {JWT && <Profile />}
+            {auth.isAuthenticated && <Profile />}
         </div>
     );
 };

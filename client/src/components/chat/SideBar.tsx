@@ -1,18 +1,15 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CreateSection from "./sidebar/CreateSection";
 import FoldersAndChats from "./sidebar/FoldersAndChats";
 import SidebarHeader from "./sidebar/SidebarHeader";
-import { SidebarContext } from "../../routes/_chatLayout";
-
-export const FoldersAndChatsContext = createContext<FoldersAndChatsInterface>(
-    {} as FoldersAndChatsInterface
-);
+import { useSidebarContext } from "@contexts/SidebarContext";
+import { FoldersAndChatsContextProvider } from "@contexts/FoldersAndChatsContext";
 
 const SideBar = () => {
     const [isNewFolder, setIsNewFolder] = useState<boolean>(false);
     const [isNewChat, setIsNewChat] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -38,15 +35,15 @@ const SideBar = () => {
 
     return (
         <div
-            className={`absolute lg:static h-full ${isSidebarOpen ? "max-lg:left-0 max-lg:opacity-100" : "max-lg:-left-full max-lg:opacity-0"} transition-all duration-300 ease-in-out flex flex-col gap-4 font-extralight bg-zinc-950 z-[100000]`}
+            className={`absolute lg:static h-full ${isSidebarOpen ? "max-lg:left-0 max-lg:opacity-100" : "max-lg:-left-full max-lg:opacity-0"} transition-all duration-300 ease-in-out flex flex-col gap-4 font-extralight bg-zinc-950 z-50`}
             id="sidebar"
             style={{
                 top: `${document.querySelector(".chat_header")?.clientHeight}px`,
             }}
         >
             <SidebarHeader />
-            <FoldersAndChatsContext
-                value={{
+            <FoldersAndChatsContextProvider
+                props={{
                     isNewFolder,
                     isNewChat,
                     setIsNewFolder,
@@ -81,7 +78,7 @@ const SideBar = () => {
                     <span>{error}</span>
                 </div>
                 <FoldersAndChats />
-            </FoldersAndChatsContext>
+            </FoldersAndChatsContextProvider>
         </div>
     );
 };

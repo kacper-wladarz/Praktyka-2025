@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import Loading from "../../assets/Loading";
+import Loading from "@assets/Loading";
 
 export const Route = createFileRoute("/login/success")({
     loader: ({ location }) => {
@@ -16,10 +16,10 @@ function RouteComponent() {
         <div className="appear flex-1 flex flex-col justify-center items-center gap-6 text-xl">
             <span className="text-center">Pomyślnie zalogowano</span>
             <Link
-                to="/"
+                to="/chat"
                 className="text-center cursor pointer text-sky-400 hover:text-sky-600 transition-[color] duration-300 ease-in-out"
             >
-                Przejdź na stronę główną
+                Przejdź do czatu
             </Link>
         </div>
     );

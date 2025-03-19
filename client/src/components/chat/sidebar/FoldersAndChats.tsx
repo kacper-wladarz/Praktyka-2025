@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { FoldersAndChatsContext } from "../SideBar";
+import { useEffect, useRef, useState } from "react";
 import NewRootFolder from "./NewRootFolderAndChat/NewRootFolder";
 import NewRootChat from "./NewRootFolderAndChat/NewRootChat";
 import FoldersList from "./RootLists/FoldersList";
@@ -13,25 +12,24 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import { updateParentId } from "../../../api/mutations/updateParentId";
-import { useQueryClient } from "@tanstack/react-query";
-import FolderArrow from "../../../assets/FolderArrow";
+import FolderArrow from "@assets/FolderArrow";
 import RootArea from "./RootLists/RootArea";
-
-export const InputsContext = createContext<InputsContext>({} as InputsContext);
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { InputsContextProvider } from "@contexts/InputsContext";
+import { useUpdateParentId } from "@mutations/updateParentId";
+import { queryClient } from "@/main";
 
 const FoldersAndChats = () => {
     const newRootFolderRef = useRef<HTMLInputElement>(null);
     const newRootChatRef = useRef<HTMLInputElement>(null);
-    const { setIsNewFolder, setIsNewChat } = useContext(FoldersAndChatsContext);
+    const { setIsNewFolder, setIsNewChat } = useFoldersAndChatsContext();
     const [openedInputId, setOpenedInputId] = useState<string | null>(null);
     const [draggedElement, setDraggedElement] = useState({
         id: "",
         type: "",
         name: "",
     });
-    const updateParent = updateParentId();
-    const queryClient = useQueryClient();
+    const updateParent = useUpdateParentId();
 
     useEffect(() => {
         const handleMouseDownOutside = (event: MouseEvent) => {
@@ -91,17 +89,11 @@ const FoldersAndChats = () => {
                     {
                         onSuccess: () => {
                             queryClient.invalidateQueries({
-                                queryKey: ["root-folders"],
-                            });
-                            queryClient.invalidateQueries({
-                                queryKey: ["structures-list"],
+                                queryKey: ["folders"],
                                 exact: false,
                             });
                             queryClient.invalidateQueries({
-                                queryKey: ["root-chats"],
-                            });
-                            queryClient.invalidateQueries({
-                                queryKey: ["chat-path"],
+                                queryKey: ["chats"],
                                 exact: false,
                             });
                         },
@@ -128,15 +120,15 @@ const FoldersAndChats = () => {
             >
                 <RootArea />
                 <div className={`flex flex-col text-[16px] gap-1`}>
-                    <InputsContext.Provider
-                        value={{
+                    <InputsContextProvider
+                        props={{
                             openedInputId,
                             setOpenedInputId,
                         }}
                     >
                         <FoldersList />
                         <ChatsList />
-                    </InputsContext.Provider>
+                    </InputsContextProvider>
                     <DragOverlay>
                         <div className="w-full flex items-center px-2 py-1 bg-zinc-700 cursor-grabbing">
                             <FolderArrow

@@ -1,20 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useContext } from "react";
-import { GlobalContext } from "../../App";
-import { API_URL } from "../../main";
+import { api } from "../axios";
 
-export const getRootChats = () => {
-    const { reqAuth } = useContext(GlobalContext);
-
+export const useRootChats = () => {
     const { data, error, isPending } = useQuery({
-        queryKey: ["root-chats"],
+        queryKey: ["chats", "root"],
         queryFn: async () =>
-            await axios
-                .get(`${API_URL}/chats/list/root`, {
-                    headers: { ...reqAuth },
-                })
-                .then((res) => res.data),
+            await api.get(`/chats/list/root`).then((res) => res.data),
     });
 
     return { data, error, isPending };

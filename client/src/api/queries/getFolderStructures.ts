@@ -1,25 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
-import { useContext } from "react";
-import { GlobalContext } from "../../App";
+import { api } from "../axios";
 
-export const getFolderStructures = ({
-    id,
-    isOpen,
-}: {
+interface Props {
     id: string;
     isOpen: boolean;
-}) => {
-    const { reqAuth } = useContext(GlobalContext);
+}
 
+export const useFolderStructures = ({ id, isOpen }: Props) => {
     const { data } = useQuery({
-        queryKey: ["structures-list", id],
+        queryKey: ["folders", id],
         queryFn: async () =>
-            await axios
-                .get(`${API_URL}/structures/list?folder-id=${id}`, {
-                    headers: { ...reqAuth },
-                })
+            await api
+                .get(`/structures/list?folder-id=${id}`)
                 .then((res) => res.data),
         retry: 0,
         enabled: !!isOpen,

@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NewStructuresContext } from "./Folder";
-import { createChat } from "../../../../api/mutations/createChat";
-import { useQueryClient } from "@tanstack/react-query";
-import { FoldersAndChatsContext } from "../../SideBar";
+import React, { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { UUID } from "crypto";
-import { InputsContext } from "../FoldersAndChats";
-import RightArrow from "../../../../assets/RightArrow";
+import RightArrow from "@assets/RightArrow";
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { useNewStructuresContext } from "@contexts/NewStructuresContext";
+import { useInputsContext } from "@contexts/InputsContext";
+import { useCreateChat } from "@mutations/createChat";
+import { queryClient } from "@/main";
 
 interface Props {
     folderId: string;
@@ -14,12 +14,11 @@ interface Props {
 }
 
 const NewInsideChat = ({ folderId, newChatId }: Props) => {
-    const { setIsOpen } = useContext(NewStructuresContext);
-    const { setError } = useContext(FoldersAndChatsContext);
-    const { openedInputId, setOpenedInputId } = useContext(InputsContext);
+    const { setIsOpen } = useNewStructuresContext();
+    const { setError } = useFoldersAndChatsContext();
+    const { openedInputId, setOpenedInputId } = useInputsContext();
     const [newChat, setNewChat] = useState<string>("");
-    const createNewChat = createChat();
-    const queryClient = useQueryClient();
+    const createNewChat = useCreateChat();
 
     const handleCreateKeyDown = (
         event: React.KeyboardEvent<HTMLInputElement>
@@ -33,10 +32,17 @@ const NewInsideChat = ({ folderId, newChatId }: Props) => {
         createNewChat.mutate(
             { newChat, id: folderId },
             {
-                onSuccess: () => {
+                onSuccess: (res) => {
                     setIsOpen(true);
                     setOpenedInputId(null);
                     setNewChat("");
+                    queryClient.setQueryData(
+                        ["folders", folderId],
+                        ({ list }: { list: (Folder | Chat)[] }) => {
+                            if (!list) return { list: [...list] };
+                            return { list: [...list, res.data.chat] };
+                        }
+                    );
                 },
                 onError: (err) => {
                     if (err instanceof AxiosError) {
@@ -44,11 +50,6 @@ const NewInsideChat = ({ folderId, newChatId }: Props) => {
                     } else {
                         setError("Wystąpił błąd podczas tworzenia czatu");
                     }
-                },
-                onSettled: () => {
-                    queryClient.invalidateQueries({
-                        queryKey: ["structures-list"],
-                    });
                 },
             }
         );
@@ -79,6 +80,7 @@ const NewInsideChat = ({ folderId, newChatId }: Props) => {
             <button
                 className="px-1 border border-l-0 border-[rgba(255,255,255,0.5)] cursor-pointer hover:bg-zinc-800 transition-[background] duration-300 ease-in-out"
                 onClick={() => create()}
+                disabled={createNewChat.isPending}
             >
                 <RightArrow />
             </button>

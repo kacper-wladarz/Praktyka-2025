@@ -1,21 +1,22 @@
-import { useContext, useState } from "react";
-import { GlobalContext, router } from "../App";
-import ChatIcon from "../assets/ChatIcon";
-import LogoutIcon from "../assets/LogoutIcon";
+import { useState } from "react";
+import { router } from "../App";
+import ChatIcon from "@assets/ChatIcon";
+import LogoutIcon from "@assets/LogoutIcon";
+import { useAuth } from "@contexts/AuthContext";
 
 const Profile = () => {
-    const { userData, setJWT } = useContext(GlobalContext);
+    const auth = useAuth();
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [bgImage, setBgImage] = useState(`url('/account.svg')`);
 
     const svg = `
-    <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <text
-        x="50%" y="50%" font-size="80" font-family="Poppins, sans-serif" font-weight="400" text-anchor="middle" dy=".3em" fill="white">
-        ${userData?.login.charAt(0).toUpperCase()}
-      </text>
-    </svg>
-  `;
+        <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <text
+            x="50%" y="50%" font-size="80" font-family="Poppins, sans-serif" font-weight="400" text-anchor="middle" dy=".3em" fill="white">
+            ${auth.user?.login.charAt(0).toUpperCase()}
+          </text>
+        </svg>
+      `;
 
     const encodedSvg = encodeURIComponent(svg);
 
@@ -29,6 +30,14 @@ const Profile = () => {
         setIsDropdownOpen(false);
     };
 
+    const logout = () => {
+        auth.logout();
+        router.navigate({
+            to: "/logout",
+            state: { allow: true },
+        });
+    };
+
     return (
         <div className="flex items-center">
             <div
@@ -40,22 +49,19 @@ const Profile = () => {
                 onMouseLeave={handleMouseLeave}
             >
                 <div
-                    className={`${isDropdownOpen ? "opacity-100 h-auto" : "opacity-0 h-0"} auto_height absolute top-full right-0 z-[9999] overflow-hidden transition-all duration-500 delay-100 ease-in-out`}
+                    className={`${isDropdownOpen ? "opacity-100 h-auto" : "opacity-0 h-0"} auto_height absolute top-full right-0 z-40 overflow-hidden transition-all duration-500 delay-100 ease-in-out`}
                 >
                     <div className="my-2 bg-zinc-800 rounded-xl text-lg font-extralight overflow-hidden">
-                        <button className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out">
+                        <button
+                            className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out"
+                            onClick={() => router.navigate({ to: "/chat" })}
+                        >
                             <ChatIcon />
                             <span>Czat</span>
                         </button>
                         <button
                             className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out"
-                            onClick={() => {
-                                setJWT(null);
-                                router.navigate({
-                                    to: "/logout",
-                                    state: { allow: true },
-                                });
-                            }}
+                            onClick={() => logout()}
                         >
                             <LogoutIcon />
                             <span>Wyloguj</span>

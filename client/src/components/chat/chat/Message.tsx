@@ -1,6 +1,5 @@
 import ReactMarkdown from "react-markdown";
 import { MathJaxContext, MathJax } from "better-react-mathjax";
-import "katex/dist/katex.min.css";
 
 const Message = ({ message }: { message: MessageData }) => {
     return (

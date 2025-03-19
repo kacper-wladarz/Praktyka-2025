@@ -1,12 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
+import { api } from "../axios";
 
-export const googleAuthCancel = () => {
+export const useGoogleAuthCancel = () => {
     return useMutation({
         mutationFn: async (auth: string) =>
-            axios.delete(
-                `${API_URL}/user/google-auth/registration/cancel/${auth}`
-            ),
+            api.delete(`/user/google-auth/registration/cancel/${auth}`),
     });
 };

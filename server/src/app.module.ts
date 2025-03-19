@@ -28,6 +28,7 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         'auth',
+        'user/data',
         'user/last-opened-chat',
         'folders',
         'chats',

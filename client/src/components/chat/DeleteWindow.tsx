@@ -1,15 +1,14 @@
-import { useContext } from "react";
-import { GlobalContext, router } from "../../App";
-import { deleteFolder } from "../../api/mutations/deleteFolder";
-import { useQueryClient } from "@tanstack/react-query";
-import { deleteChat } from "../../api/mutations/deleteChat";
+import { router } from "@/App";
+import { useGlobalContext } from "@contexts/GlobalContext";
+import { useDeleteChat } from "@mutations/deleteChat";
+import { useDeleteFolder } from "@mutations/deleteFolder";
+import { queryClient } from "@/main";
 
 const DeleteWindow = () => {
-    const deleteFolderMutation = deleteFolder();
-    const deleteChatMutation = deleteChat();
-    const queryClient = useQueryClient();
+    const deleteFolderMutation = useDeleteFolder();
+    const deleteChatMutation = useDeleteChat();
     const { setIsConfirmWindowOpen, structureToDelete, chatId } =
-        useContext(GlobalContext);
+        useGlobalContext();
 
     const cancelDelete = () => {
         setIsConfirmWindowOpen(false);
@@ -18,17 +17,11 @@ const DeleteWindow = () => {
 
     const refetchStructures = () => {
         queryClient.invalidateQueries({
-            queryKey: ["root-folders"],
-        });
-        queryClient.invalidateQueries({
-            queryKey: ["structures-list"],
+            queryKey: ["folders"],
             exact: false,
         });
         queryClient.invalidateQueries({
-            queryKey: ["root-chats"],
-        });
-        queryClient.invalidateQueries({
-            queryKey: ["chat-path"],
+            queryKey: ["chats"],
             exact: false,
         });
     };
@@ -93,6 +86,10 @@ const DeleteWindow = () => {
                 <button
                     className="bg-red-600 px-3 py-2 rounded-2xl cursor-pointer hover:bg-red-700 transition-[background] duration-300 ease-in-out"
                     onClick={() => confirmDelete()}
+                    disabled={
+                        deleteChatMutation.isPending ||
+                        deleteFolderMutation.isPending
+                    }
                 >
                     Usuń
                 </button>

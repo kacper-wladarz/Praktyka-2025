@@ -1,19 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
-import { useContext } from "react";
-import { GlobalContext } from "../../App";
+import { api } from "../axios";
 
-export const createRootFolder = () => {
-    const { reqAuth } = useContext(GlobalContext);
+export const useCreateRootFolder = () => {
     return useMutation({
         mutationFn: async (newFolder: string) =>
-            await axios
-                .post(
-                    `${API_URL}/folders/root`,
-                    { name: newFolder },
-                    { headers: { ...reqAuth } }
-                )
-                .then((res) => res.data),
+            await api.post(`/folders/root`, { name: newFolder }),
     });
 };

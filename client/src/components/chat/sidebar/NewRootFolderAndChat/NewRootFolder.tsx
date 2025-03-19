@@ -1,42 +1,52 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import React, { RefObject, useContext, useEffect, useState } from "react";
-import { FoldersAndChatsContext } from "../../SideBar";
-import { createRootFolder } from "../../../../api/mutations/createRootFolder";
+import React, { RefObject, useEffect, useState } from "react";
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { useCreateRootFolder } from "@mutations/createRootFolder";
+import RightArrow from "@assets/RightArrow";
+import { queryClient } from "@/main";
 
 const NewRootFolder = ({
     inputRef,
 }: {
     inputRef: RefObject<HTMLInputElement | null>;
 }) => {
-    const { isNewFolder, setIsNewFolder, setError } = useContext(
-        FoldersAndChatsContext
-    );
-    const queryClient = useQueryClient();
+    const { isNewFolder, setIsNewFolder, setError } =
+        useFoldersAndChatsContext();
     const [newFolder, setNewFolder] = useState<string>("");
-    const create = createRootFolder();
+    const create = useCreateRootFolder();
 
-    const createFolder = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter") {
-            create.mutate(newFolder, {
-                onSuccess: () => {
-                    queryClient.invalidateQueries({
-                        queryKey: ["root-folders"],
-                    });
-                },
-                onError: (error) => {
-                    if (error instanceof AxiosError) {
-                        error.response && setError(error.response.data.message);
-                    } else {
-                        setError("Wystąpił błąd");
-                    }
-                },
-                onSettled: () => {
-                    setNewFolder("");
-                    setIsNewFolder(false);
-                },
-            });
+            createFolder();
         }
+    };
+
+    const createFolder = () => {
+        create.mutate(newFolder, {
+            onSuccess: (res) => {
+                queryClient.setQueryData(
+                    ["folders", "root"],
+                    ({ folders }: { folders: FolderItem[] }) => {
+                        if (!folders) return { folders: [...res.data.folder] };
+                        return {
+                            folders: [res.data.folder, ...folders],
+                        };
+                    }
+                );
+            },
+            onError: (error) => {
+                console.log(error);
+                if (error instanceof AxiosError) {
+                    error.response && setError(error.response.data.message);
+                } else {
+                    setError("Wystąpił błąd");
+                }
+            },
+            onSettled: () => {
+                setNewFolder("");
+                setIsNewFolder(false);
+            },
+        });
     };
 
     useEffect(() => {
@@ -49,19 +59,26 @@ const NewRootFolder = ({
 
     return (
         <div
-            className={`auto_height ${isNewFolder ? "h-auto opacity-100" : "h-0 opacity-0"} transition-[height,opacity] duration-300 ease-in-out overflow-hidden`}
+            className={`auto_height ${isNewFolder ? "h-auto opacity-100" : "h-0 opacity-0"} flex items-stretch bg-zinc-900 transition-[height,opacity] duration-300 ease-in-out overflow-hidden`}
         >
             <input
                 placeholder="Nazwa folderu"
                 id="new_folder_input"
-                className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none bg-zinc-900"
+                className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none"
                 ref={inputRef}
                 type="text"
                 value={newFolder}
                 autoComplete="off"
-                onKeyDown={(event) => createFolder(event)}
+                onKeyDown={(event) => handleKeyDown(event)}
                 onChange={(event) => setNewFolder(event.target.value)}
             />
+            <button
+                className="px-1 border border-l-0 border-[rgba(255,255,255,0.5)] cursor-pointer hover:bg-zinc-800 transition-[background] duration-300 ease-in-out"
+                onClick={() => createFolder()}
+                disabled={create.isPending}
+            >
+                <RightArrow />
+            </button>
         </div>
     );
 };

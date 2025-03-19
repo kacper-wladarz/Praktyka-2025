@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Loading from "../../../assets/Loading";
+import Loading from "@assets/Loading";
 import Message from "./Message";
 
 interface Props {

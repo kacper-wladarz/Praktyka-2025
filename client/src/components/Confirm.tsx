@@ -1,13 +1,12 @@
-import { ReactNode, useContext } from "react";
-import { GlobalContext } from "../App";
+import { ReactNode } from "react";
+import { useGlobalContext } from "@contexts/GlobalContext";
 
 interface Props {
     children: ReactNode;
 }
 
 const Confirm = ({ children }: Props) => {
-    const { isConfirmWindowOpen, setIsConfirmWindowOpen } =
-        useContext(GlobalContext);
+    const { isConfirmWindowOpen, setIsConfirmWindowOpen } = useGlobalContext();
 
     return (
         <div

@@ -1,12 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../main";
+import { api } from "../axios";
 
-export const googleAuthConfirm = () => {
+export const useGoogleAuthConfirm = () => {
     return useMutation({
         mutationFn: async (auth: string) =>
-            axios.put(
-                `${API_URL}/user/google-auth/registration/confirm/${auth}`
-            ),
+            api.put(`/user/google-auth/registration/confirm/${auth}`),
     });
 };

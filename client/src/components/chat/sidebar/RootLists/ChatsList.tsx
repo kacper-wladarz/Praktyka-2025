@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
-import { getRootChats } from "../../../../api/queries/getRootChats";
-import { FoldersAndChatsContext } from "../../SideBar";
+import React from "react";
 import Chat from "./Chat";
+import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { useRootChats } from "@queries/getRootChats";
 
 const ChatsList = () => {
-    const { setError } = useContext(FoldersAndChatsContext);
-    const { data, error } = getRootChats();
+    const { setError } = useFoldersAndChatsContext();
+    const { data, error } = useRootChats();
 
     if (error) setError(error.message);
 

@@ -1,13 +1,13 @@
-import { useContext } from "react";
-import FolderArrow from "../../../../assets/FolderArrow";
-import NewChatIcon from "../../../../assets/NewChatIcon";
-import NewFolderIcon from "../../../../assets/NewFolderIcon";
-import { NewStructuresContext } from "./Folder";
+import FolderArrow from "@assets/FolderArrow";
+import NewChatIcon from "@assets/NewChatIcon";
+import NewFolderIcon from "@assets/NewFolderIcon";
 import { useDroppable } from "@dnd-kit/core";
-import BinIcon from "../../../../assets/BinIcon";
-import { GlobalContext, router } from "../../../../App";
-import { InputsContext } from "../FoldersAndChats";
+import BinIcon from "@assets/BinIcon";
+import { router } from "@/App";
 import { UUID } from "crypto";
+import { useGlobalContext } from "@contexts/GlobalContext";
+import { useNewStructuresContext } from "@contexts/NewStructuresContext";
+import { useInputsContext } from "@contexts/InputsContext";
 
 interface Props {
     id: string;
@@ -24,9 +24,9 @@ const FolderHeader = ({
     newFolderId,
     newChatId,
 }: Props) => {
-    const { isOpen, setIsOpen } = useContext(NewStructuresContext);
-    const { setIsConfirmWindowOpen, chatId } = useContext(GlobalContext);
-    const { setOpenedInputId, openedInputId } = useContext(InputsContext);
+    const { isOpen, setIsOpen } = useNewStructuresContext();
+    const { setIsConfirmWindowOpen, chatId } = useGlobalContext();
+    const { setOpenedInputId, openedInputId } = useInputsContext();
     const { setNodeRef, isOver } = useDroppable({
         id: id,
     });

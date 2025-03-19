@@ -1,20 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useContext } from "react";
-import { GlobalContext } from "../../App";
-import { API_URL } from "../../main";
+import { api } from "../axios";
 
-export const getRootFolders = () => {
-    const { reqAuth } = useContext(GlobalContext);
-
+export const useRootFolders = () => {
     const { data, error, isPending } = useQuery({
-        queryKey: ["root-folders"],
+        queryKey: ["folders", "root"],
         queryFn: async () =>
-            await axios
-                .get(`${API_URL}/folders/list/root`, {
-                    headers: { ...reqAuth },
-                })
-                .then((res) => res.data),
+            await api.get(`/folders/list/root`).then((res) => res.data),
     });
 
     return { data, error, isPending };
