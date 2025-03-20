@@ -17,7 +17,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
                     <DeleteWindow />
                 </Confirm>
                 <Navbar />
-                <hr className="border-white" />
+                <hr className="border-white opacity-50" />
                 <div className="appear w-full flex-1 flex flex-col text-sky-200">
                     <Outlet />
                 </div>

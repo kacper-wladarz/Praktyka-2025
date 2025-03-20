@@ -7,7 +7,8 @@
             "@contexts/*": ["src/contexts/*"],
             "@components/*": ["src/components/*"],
             "@queries/*": ["src/api/queries/*"],
-            "@mutations/*": ["src/api/mutations/*"]
+            "@mutations/*": ["src/api/mutations/*"],
+            "@utils/*": ["src/utils/*"]
         },
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
         "target": "ES2020",

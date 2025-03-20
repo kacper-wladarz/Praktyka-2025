@@ -7,6 +7,7 @@ import { useNewStructuresContext } from "@contexts/NewStructuresContext";
 import { useInputsContext } from "@contexts/InputsContext";
 import { useCreateChat } from "@mutations/createChat";
 import { queryClient } from "@/main";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     folderId: string;
@@ -19,6 +20,7 @@ const NewInsideChat = ({ folderId, newChatId }: Props) => {
     const { openedInputId, setOpenedInputId } = useInputsContext();
     const [newChat, setNewChat] = useState<string>("");
     const createNewChat = useCreateChat();
+    const { t } = useTranslation();
 
     const handleCreateKeyDown = (
         event: React.KeyboardEvent<HTMLInputElement>
@@ -71,7 +73,7 @@ const NewInsideChat = ({ folderId, newChatId }: Props) => {
             <input
                 className="w-full px-2 py-1 text-white font-semilight outline-none border border-[rgba(255,255,255,0.5)]"
                 type="text"
-                placeholder="Nazwa czatu"
+                placeholder={t("sidebar.newChatPlaceholder")}
                 value={newChat}
                 onChange={(event) => setNewChat(event.target.value)}
                 onKeyDown={(event) => handleCreateKeyDown(event)}

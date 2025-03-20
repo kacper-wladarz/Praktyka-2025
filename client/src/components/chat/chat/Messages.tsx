@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Loading from "@assets/Loading";
 import Message from "./Message";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     messages: MessageData[];
@@ -11,6 +12,7 @@ interface Props {
 const Messages = ({ messages, isPending, isGeneratingAnswer }: Props) => {
     const [height, setHeight] = useState<string | null>(null);
     const messagesRef = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const headerHeight = document.querySelector(".header")?.clientHeight;
@@ -50,7 +52,7 @@ const Messages = ({ messages, isPending, isGeneratingAnswer }: Props) => {
             <div
                 className={`w-full flex justify-center items-center text-3xl transition-all duration-300 ease-in-out ${messages && !messages.length ? "h-auto opacity-100 flex-1" : "h-0 opacity-0"}`}
             >
-                <span>Rozpocznij konwersację</span>
+                <span>{t("chat.startConversation")}</span>
             </div>
             <div
                 className={`auto_height w-full max-w-full flex flex-col gap-12 text-[14px] transition-[height,opacity] duration-300 ease-in-out ${messages && messages.length > 0 ? "h-auto opacity-100" : "h-0 opacity-0"}`}

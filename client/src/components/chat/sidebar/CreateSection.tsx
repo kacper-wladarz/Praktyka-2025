@@ -1,13 +1,15 @@
 import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
+import { useTranslation } from "react-i18next";
 
 const CreateSection = () => {
+    const { t } = useTranslation();
     const { isNewFolder, setIsNewFolder, isNewChat, setIsNewChat } =
         useFoldersAndChatsContext();
 
     return (
         <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center px-4">
-                <span>Nowy folder</span>
+                <span>{t("sidebar.newFolder")}</span>
                 <button
                     className="rounded-full p-1 not-disabled:cursor-pointer not-disabled:hover:bg-[rgba(255,255,255,0.2)] transition-[background] duration-300 ease-in-out"
                     onClick={() =>
@@ -30,7 +32,7 @@ const CreateSection = () => {
                 </button>
             </div>
             <div className="flex justify-between items-center gap-2 px-4">
-                <span>Nowy czat</span>
+                <span>{t("sidebar.newChat")}</span>
                 <button
                     className="rounded-full p-1 not-disabled:cursor-pointer not-disabled:hover:bg-[rgba(255,255,255,0.2)] transition-[background] duration-300 ease-in-out"
                     onClick={() =>

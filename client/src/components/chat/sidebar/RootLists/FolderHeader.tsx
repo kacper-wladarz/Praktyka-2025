@@ -1,4 +1,3 @@
-import FolderArrow from "@assets/FolderArrow";
 import NewChatIcon from "@assets/NewChatIcon";
 import NewFolderIcon from "@assets/NewFolderIcon";
 import { useDroppable } from "@dnd-kit/core";
@@ -8,6 +7,7 @@ import { UUID } from "crypto";
 import { useGlobalContext } from "@contexts/GlobalContext";
 import { useNewStructuresContext } from "@contexts/NewStructuresContext";
 import { useInputsContext } from "@contexts/InputsContext";
+import OpenArrow from "@assets/OpenArrow";
 
 interface Props {
     id: string;
@@ -49,7 +49,7 @@ const FolderHeader = ({
                 className="w-full flex items-center gap-1 px-2 cursor-grab  "
                 onClick={() => setIsOpen((prev: boolean) => !prev)}
             >
-                <FolderArrow isOpen={isOpen} />
+                <OpenArrow isOpen={isOpen} />
                 <span className="py-[2px] whitespace-nowrap">{name}</span>
             </button>
             <div className="h-full flex items-stretch gap-1 px-2 cursor-grab">

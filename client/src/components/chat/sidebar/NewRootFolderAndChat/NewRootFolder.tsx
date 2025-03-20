@@ -4,6 +4,7 @@ import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
 import { useCreateRootFolder } from "@mutations/createRootFolder";
 import RightArrow from "@assets/RightArrow";
 import { queryClient } from "@/main";
+import { useTranslation } from "react-i18next";
 
 const NewRootFolder = ({
     inputRef,
@@ -14,6 +15,7 @@ const NewRootFolder = ({
         useFoldersAndChatsContext();
     const [newFolder, setNewFolder] = useState<string>("");
     const create = useCreateRootFolder();
+    const { t } = useTranslation();
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter") {
@@ -62,7 +64,7 @@ const NewRootFolder = ({
             className={`auto_height ${isNewFolder ? "h-auto opacity-100" : "h-0 opacity-0"} flex items-stretch bg-zinc-900 transition-[height,opacity] duration-300 ease-in-out overflow-hidden`}
         >
             <input
-                placeholder="Nazwa folderu"
+                placeholder={t("sidebar.newFolderPlaceholder")}
                 id="new_folder_input"
                 className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none"
                 ref={inputRef}

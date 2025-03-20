@@ -4,6 +4,7 @@ import { AxiosResponse } from "axios";
 import SendIcon from "@assets/SendIcon";
 import { useCreateMessage } from "@mutations/createMessage";
 import { queryClient } from "@/main";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     chatId: string;
@@ -18,6 +19,7 @@ interface Props {
 const ChatInput = ({ chatId, generateAnswer }: Props) => {
     const [newMessage, setNewMessage] = useState<string>("");
     const createMessageMutation = useCreateMessage();
+    const { t } = useTranslation();
 
     const updateMessages = (id: string, body: string, userId: string) => {
         queryClient.setQueryData(
@@ -66,7 +68,7 @@ const ChatInput = ({ chatId, generateAnswer }: Props) => {
                 <textarea
                     className="flex-1 text-white outline-none placeholder:text-gray-400 resize-none"
                     value={newMessage}
-                    placeholder="Zapytaj"
+                    placeholder={t("chat.chatInputPlaceholder")}
                     rows={2}
                     onChange={(event) => setNewMessage(event.target.value)}
                     onKeyDown={(event) =>

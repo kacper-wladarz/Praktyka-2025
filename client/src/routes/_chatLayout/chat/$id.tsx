@@ -1,4 +1,4 @@
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import Chat from "@components/chat/Chat";
 import Loading from "@assets/Loading";
@@ -7,6 +7,7 @@ import { useGlobalContext } from "@contexts/GlobalContext";
 import { useSidebarContext } from "@contexts/SidebarContext";
 import { useChatPath } from "@queries/getChatPath";
 import { useUpdateChat } from "@mutations/lastOpenedChat";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_chatLayout/chat/$id")({
     validateSearch: (search: Record<string, unknown>): ChatQueryFilter => {
@@ -28,10 +29,11 @@ function RouteComponent() {
     const { setStructureToDelete } = useGlobalContext();
     const structureData = Route.useSearch();
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
+    const { t } = useTranslation();
 
-    if (error || !id) {
-        throw notFound();
-    }
+    useEffect(() => {
+        if (error || !id) navigate({ to: "/chat" });
+    }, [error, id]);
 
     useEffect(() => {
         if (structureData && structureData.structureId) {
@@ -69,7 +71,7 @@ function RouteComponent() {
                         className="text-xl cursor-pointer hover:bg-zinc-800 px-4 py-2 rounded-xl transition-[background] duration-300 ease-in-out"
                         onClick={() => handleClose()}
                     >
-                        Zamknij
+                        {t("chat.closeButton")}
                     </button>
                 </div>
             </div>

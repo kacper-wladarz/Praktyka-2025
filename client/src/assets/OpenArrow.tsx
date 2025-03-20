@@ -1,4 +1,4 @@
-const FolderArrow = ({
+const OpenArrow = ({
     isOpen,
     isVisible = true,
 }: {
@@ -21,4 +21,4 @@ const FolderArrow = ({
     );
 };
 
-export default FolderArrow;
+export default OpenArrow;

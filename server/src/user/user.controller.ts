@@ -28,7 +28,7 @@ export class UserController {
     return await this.userService.loginUser(body.login, body.password);
   }
 
-  @Get('/data')
+  @Get('data')
   getUserData(@Req() req: Request) {
     return { login: req['login'] };
   }

@@ -12,12 +12,12 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import FolderArrow from "@assets/FolderArrow";
 import RootArea from "./RootLists/RootArea";
 import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
 import { InputsContextProvider } from "@contexts/InputsContext";
 import { useUpdateParentId } from "@mutations/updateParentId";
 import { queryClient } from "@/main";
+import OpenArrow from "@/assets/OpenArrow";
 
 const FoldersAndChats = () => {
     const newRootFolderRef = useRef<HTMLInputElement>(null);
@@ -131,7 +131,7 @@ const FoldersAndChats = () => {
                     </InputsContextProvider>
                     <DragOverlay>
                         <div className="w-full flex items-center px-2 py-1 bg-zinc-700 cursor-grabbing">
-                            <FolderArrow
+                            <OpenArrow
                                 isOpen={false}
                                 isVisible={draggedElement.type === "FOLDER"}
                             />

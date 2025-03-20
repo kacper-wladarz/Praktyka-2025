@@ -14,6 +14,7 @@ export default defineConfig({
             "@contexts": path.resolve(__dirname, "./src/contexts"),
             "@components": path.resolve(__dirname, "./src/components"),
             "@queries": path.resolve(__dirname, "./src/api/queries"),
+            "@utils": path.resolve(__dirname, "./src/utils"),
         },
     },
     plugins: [

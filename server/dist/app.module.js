@@ -18,6 +18,8 @@ const auth_middleware_1 = require("./auth/auth.middleware");
 const chats_module_1 = require("./chats/chats.module");
 const structures_module_1 = require("./structures/structures.module");
 const config_1 = require("@nestjs/config");
+const nestjs_i18n_1 = require("nestjs-i18n");
+const path = require("path");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -35,6 +37,14 @@ exports.AppModule = AppModule = __decorate([
             chats_module_1.ChatsModule,
             structures_module_1.StructuresModule,
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            nestjs_i18n_1.I18nModule.forRoot({
+                fallbackLanguage: 'en',
+                loaderOptions: {
+                    path: path.join(__dirname, '/i18n/'),
+                    watch: true,
+                },
+                resolvers: [new nestjs_i18n_1.HeaderResolver(['x-lang'])],
+            }),
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, prisma_service_1.PrismaService],

@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import SideBar from "@components/chat/SideBar";
 import { SidebarContextProvider } from "@contexts/SidebarContext";
+
 export const Route = createFileRoute("/_chatLayout")({
     beforeLoad: ({ context }) => {
         if (!context.auth.isAuthenticated) {

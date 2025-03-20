@@ -1,0 +1,57 @@
+{
+    "navbar": {
+        "login": "Log in",
+        "registration": "Registration",
+        "profile": {
+            "chat": "Chat",
+            "logout": "Log out"
+        }
+    },
+    "login": {
+        "header": "Login",
+        "loginInputPlaceholder": "Login",
+        "passwordInputPlaceholder": "Password",
+        "confirmButton": "Log in",
+        "success": {
+            "text": "You have successfully logged in",
+            "link": "Go to chat"
+        }
+    },
+    "logout": {
+        "text": "Logged out",
+        "link": "Back to login"
+    },
+    "registration": {
+        "header": "Registration",
+        "loginInputPlaceholder": "Login",
+        "passwordInputPlaceholder": "Password",
+        "repeatPasswordInputPlaceholder": "Repeat password",
+        "confirmButton": "Register",
+        "success": {
+            "text": "Account created successfully",
+            "link": "Go to chat"
+        },
+        "confirm": {
+            "cancelButton": "Cancel",
+            "confirmButton": "Create an account"
+        },
+        "cancel": {
+            "text": "Go back to registration"
+        }
+    },
+    "chat": {
+        "sidebar": {},
+        "closeButton": "Close",
+        "startConversation": "Start a conversation",
+        "selectChat": "Select the chat you want to open",
+        "chatInputPlaceholder": "Ask..."
+    },
+    "sidebar": {
+        "header": "Folders and chats",
+        "newFolder": "New folder",
+        "newChat": "New chat",
+        "newFolderPlaceholder": "Folder name",
+        "newChatPlaceholder": "Chat name",
+        "rootArea": "Main folder"
+    }
+}

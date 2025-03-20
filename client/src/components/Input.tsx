@@ -16,7 +16,7 @@ function Input({ type, name, placeholder, autoComplete, onChange }: Props) {
             autoComplete={autoComplete}
             placeholder={placeholder}
             onChange={(event) => onChange && onChange(event)}
-            className="px-3 py-2 rounded-md border border-white outline-none"
+            className="px-3 py-2 rounded-lg border border-white outline-none"
         />
     );
 }

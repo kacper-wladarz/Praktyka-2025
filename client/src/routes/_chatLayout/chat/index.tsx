@@ -5,6 +5,7 @@ import SidebarArrow from "@assets/SidebarArrow";
 import { useGlobalContext } from "@contexts/GlobalContext";
 import { useSidebarContext } from "@contexts/SidebarContext";
 import { useLastOpenedChat } from "@queries/getLastOpenedChat";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_chatLayout/chat/")({
     component: RouteComponent,
@@ -24,6 +25,7 @@ function RouteComponent() {
     const structureData = Route.useSearch();
     const { setStructureToDelete } = useGlobalContext();
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (structureData && structureData.structureId) {
@@ -57,7 +59,7 @@ function RouteComponent() {
             </div>
             <div className="flex-1 flex justify-center px-4 py-16 bg-zinc-900">
                 <span className="text-3xl text-center tracking-wide font-extralight">
-                    Wybierz czat, który chcesz otworzyć
+                    {t("chat.selectChat")}
                 </span>
             </div>
         </div>

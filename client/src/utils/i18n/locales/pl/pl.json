@@ -1,0 +1,57 @@
+{
+    "navbar": {
+        "login": "Logowanie",
+        "registration": "Rejestracja",
+        "profile": {
+            "chat": "Czat",
+            "logout": "Wyloguj"
+        }
+    },
+    "login": {
+        "header": "Logowanie",
+        "loginInputPlaceholder": "Login",
+        "passwordInputPlaceholder": "Hasło",
+        "confirmButton": "Zaloguj się",
+        "success": {
+            "text": "Pomyślnie zalogowano",
+            "link": "Przejdź do czatu"
+        }
+    },
+    "logout": {
+        "text": "Wylogowano",
+        "link": "Wróć do logowania"
+    },
+    "registration": {
+        "header": "Rejestracja",
+        "loginInputPlaceholder": "Login",
+        "passwordInputPlaceholder": "Hasło",
+        "repeatPasswordInputPlaceholder": "Powtórz hasło",
+        "confirmButton": "Zarejestruj się",
+        "success": {
+            "text": "Pomyślnie stworzono konto",
+            "link": "Przejdź na stronę główną"
+        },
+        "confirm": {
+            "cancelButton": "Anuluj",
+            "confirmButton": "Stwórz konto"
+        },
+        "cancel": {
+            "text": "Przejdź z powrotem do rejestracji"
+        }
+    },
+    "chat": {
+        "sidebar": {},
+        "closeButton": "Zamknij",
+        "startConversation": "Rozpocznij konwersację",
+        "selectChat": "Wybierz czat, który chcesz otworzyć",
+        "chatInputPlaceholder": "Zapytaj..."
+    },
+    "sidebar": {
+        "header": "Foldery i czaty",
+        "newFolder": "Nowy folder",
+        "newChat": "Nowy czat",
+        "newFolderPlaceholder": "Nazwa folderu",
+        "newChatPlaceholder": "Nazwa czatu",
+        "rootArea": "Główny folder"
+    }
+}

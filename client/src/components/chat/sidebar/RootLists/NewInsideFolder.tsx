@@ -7,6 +7,7 @@ import { useNewStructuresContext } from "@contexts/NewStructuresContext";
 import { useInputsContext } from "@contexts/InputsContext";
 import { useCreateFolder } from "@mutations/createFolder";
 import { queryClient } from "@/main";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     folderId: string;
@@ -19,6 +20,7 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
     const { setError } = useFoldersAndChatsContext();
     const { openedInputId, setOpenedInputId } = useInputsContext();
     const createNewFolder = useCreateFolder();
+    const { t } = useTranslation();
 
     const handleCreateKeyDown = (
         event: React.KeyboardEvent<HTMLInputElement>
@@ -72,7 +74,7 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
             <input
                 className="w-full px-2 py-1 text-white font-semilight outline-none border border-[rgba(255,255,255,0.5)]"
                 type="text"
-                placeholder="Nazwa folderu"
+                placeholder={t("sidebar.newFolderPlaceholder")}
                 value={newFolder}
                 onChange={(event) => setNewFolder(event.target.value)}
                 onKeyDown={(event) => handleCreateKeyDown(event)}

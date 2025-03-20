@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import App from "./App";
 import { AuthContextProvider } from "@contexts/AuthContext";
+import "@utils/i18n/index";
 
 export const queryClient = new QueryClient();
 

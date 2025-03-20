@@ -1,10 +1,10 @@
 import { useDraggable } from "@dnd-kit/core";
 import { router } from "@/App";
-import FolderArrow from "@assets/FolderArrow";
 import BinIcon from "@assets/BinIcon";
 import { useGlobalContext } from "@contexts/GlobalContext";
 import { useSidebarContext } from "@contexts/SidebarContext";
 import { useUpdateChat } from "@mutations/lastOpenedChat";
+import OpenArrow from "@assets/OpenArrow";
 
 const Chat = ({ chat }: { chat: Chat }) => {
     const update = useUpdateChat();
@@ -59,7 +59,7 @@ const Chat = ({ chat }: { chat: Chat }) => {
                 className={`w-full flex overflow-hidden cursor-grab items-center gap-1 px-2 font-semilight`}
                 onClick={() => handleUpdate(chat.id)}
             >
-                <FolderArrow isOpen={false} isVisible={false} />
+                <OpenArrow isOpen={false} isVisible={false} />
                 <span className="py-[2px] whitespace-nowrap">{chat.name}</span>
             </button>
             <div className="flex gap-1 px-2">

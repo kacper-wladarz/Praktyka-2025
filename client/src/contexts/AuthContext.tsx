@@ -22,23 +22,24 @@ export const AuthContextProvider = ({ children }: Props) => {
     const [JWT, setJWT] = useState<string | null>(getCookie("jwt"));
     const [user, setUser] = useState<UserData | null>(null);
     const isAuthenticated = !!JWT;
+
     const { data, error } = useQuery({
         queryKey: ["auth"],
         placeholderData: null,
         queryFn: async () => {
             return api.get(`/auth`).then((res) => res.data);
         },
-        refetchOnWindowFocus: true,
+        enabled: isAuthenticated,
         staleTime: 0,
         retry: 0,
     });
 
     const { data: userData } = useQuery({
         queryKey: ["user", "data"],
+        placeholderData: { login: "" },
         queryFn: async () =>
             await api.get("/user/data").then((res) => res.data),
-        enabled: !!JWT,
-        refetchOnWindowFocus: true,
+        enabled: isAuthenticated,
         staleTime: 0,
         retry: 0,
     });
@@ -50,11 +51,13 @@ export const AuthContextProvider = ({ children }: Props) => {
                 expires.setDate(expires.getDate() + 1);
                 setCookie("jwt", data.jwt, expires.toUTCString());
                 setJWT(data.jwt);
+                setUser({ login: data.login });
             }
 
             if (error || data === undefined) {
                 removeCookie("jwt");
                 setJWT(null);
+                setUser(null);
             }
         }
     }, [data]);
@@ -67,7 +70,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 
     const logout = () => {
         setJWT(null);
-        queryClient.invalidateQueries({ queryKey: ["user", "data"] });
+        setUser(null);
         removeCookie("jwt");
     };
 

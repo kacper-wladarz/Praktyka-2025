@@ -109,6 +109,7 @@ export class UserService {
     repeatedPassword: string,
   ) {
     try {
+      console.log(login, password);
       const user = await this.prisma.user.findUnique({ where: { login } });
       if (user) {
         throw new HttpException(
@@ -211,6 +212,12 @@ export class UserService {
             'Taki użytkownik juz istnieje',
             HttpStatus.BAD_REQUEST,
           );
+        } else {
+          await this.prisma.user.update({
+            where: { login: user.login },
+            data: { authCode },
+          });
+          return { authCode, email: user.login };
         }
       }
 
@@ -222,10 +229,9 @@ export class UserService {
           confirmed: false,
         },
       });
+
       return { authCode, email: payload.email };
     } catch (error) {
-      const user = await this.prisma.user.findUnique({ where: { authCode } });
-      if (user) await this.prisma.user.delete({ where: { authCode } });
       if (error instanceof HttpException) {
         throw error;
       } else {

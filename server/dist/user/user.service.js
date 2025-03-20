@@ -89,6 +89,7 @@ let UserService = class UserService {
     }
     async registerUser(login, password, repeatedPassword) {
         try {
+            console.log(login, password);
             const user = await this.prisma.user.findUnique({ where: { login } });
             if (user) {
                 throw new common_1.HttpException('Taki użytkownik juz istnieje', common_1.HttpStatus.BAD_REQUEST);
@@ -156,6 +157,13 @@ let UserService = class UserService {
                 if (confirmed) {
                     throw new common_1.HttpException('Taki użytkownik juz istnieje', common_1.HttpStatus.BAD_REQUEST);
                 }
+                else {
+                    await this.prisma.user.update({
+                        where: { login: user.login },
+                        data: { authCode },
+                    });
+                    return { authCode, email: user.login };
+                }
             }
             await this.prisma.user.create({
                 data: {
@@ -168,9 +176,6 @@ let UserService = class UserService {
             return { authCode, email: payload.email };
         }
         catch (error) {
-            const user = await this.prisma.user.findUnique({ where: { authCode } });
-            if (user)
-                await this.prisma.user.delete({ where: { authCode } });
             if (error instanceof common_1.HttpException) {
                 throw error;
             }

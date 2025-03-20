@@ -9,6 +9,13 @@ import { AuthMiddleware } from './auth/auth.middleware';
 import { ChatsModule } from './chats/chats.module';
 import { StructuresModule } from './structures/structures.module';
 import { ConfigModule } from '@nestjs/config';
+import {
+  AcceptLanguageResolver,
+  HeaderResolver,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -18,6 +25,14 @@ import { ConfigModule } from '@nestjs/config';
     ChatsModule,
     StructuresModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [new HeaderResolver(['x-lang'])],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
