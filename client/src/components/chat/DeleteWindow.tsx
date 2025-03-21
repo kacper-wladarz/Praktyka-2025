@@ -42,13 +42,17 @@ const DeleteWindow = () => {
                 break;
             case "CHAT":
                 deleteChatMutation.mutate(structureToDelete.id, {
-                    onSuccess: () => {
+                    onSuccess: (res) => {
                         setIsConfirmWindowOpen(false);
                         refetchStructures();
-                        router.navigate({
-                            to: "/chat/$id",
-                            params: { id: chatId || "" },
-                        });
+                        if (res.data.close) {
+                            router.navigate({ to: "/chat" });
+                        } else {
+                            router.navigate({
+                                to: "/chat/$id",
+                                params: { id: chatId || "" },
+                            });
+                        }
                     },
                 });
                 break;

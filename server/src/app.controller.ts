@@ -7,7 +7,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(@I18n() i18n: I18nContext) {
-    return i18n.t('test.hello');
+  getHello() {
+    return this.appService.getHello();
   }
 }

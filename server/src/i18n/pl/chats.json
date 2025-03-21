@@ -1,0 +1,13 @@
+{
+  "error": {
+    "chatExists": "Taki czat na tym poziomie już istnieje",
+    "creatingError": "Wystąpił błąd podczas tworzenia wiadomości",
+    "questionNotFound": "Nie znaleziono pytania",
+    "generatingAnswerError": "Wystąpił błąd podczas generowania odpowiedzi"
+  },
+  "DTO": {
+    "emptyName": "Nazwa nie może być pusta",
+    "emptyMessage": "Wiadomość nie może być pusta",
+    "creatingError": "Wystąpił błąd podczas tworzenia czatu"
+  }
+}

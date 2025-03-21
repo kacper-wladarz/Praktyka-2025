@@ -1,0 +1,13 @@
+{
+  "error": {
+    "chatExists": "Such a chat already exists at this level",
+    "creatingError": "An error occurred while creating the message",
+    "questionNotFound": "Question not found",
+    "generatingAnswerError": "An error occurred while generating the answer"
+  },
+  "DTO": {
+    "emptyName": "The name cannot be empty",
+    "emptyMessage": "The message cannot be empty",
+    "creatingError": "An error occurred while creating the chat"
+  }
+}

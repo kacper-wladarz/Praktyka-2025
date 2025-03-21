@@ -15,7 +15,8 @@
         "success": {
             "text": "You have successfully logged in",
             "link": "Go to chat"
-        }
+        },
+        "googleError": "An error occurred while logging in with Google"
     },
     "logout": {
         "text": "Logged out",
@@ -37,7 +38,8 @@
         },
         "cancel": {
             "text": "Go back to registration"
-        }
+        },
+        "googleError": "An error occured while signing up with Google"
     },
     "chat": {
         "sidebar": {},

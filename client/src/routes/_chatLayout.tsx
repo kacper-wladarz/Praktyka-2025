@@ -1,7 +1,9 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SideBar from "@components/chat/SideBar";
 import { SidebarContextProvider } from "@contexts/SidebarContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { router } from "@/App";
 
 export const Route = createFileRoute("/_chatLayout")({
     beforeLoad: ({ context }) => {
@@ -14,6 +16,13 @@ export const Route = createFileRoute("/_chatLayout")({
 
 function RouteComponent() {
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.navigate({ to: "/" });
+        }
+    }, [isAuthenticated]);
 
     return (
         <SidebarContextProvider props={{ isSidebarOpen, setIsSidebarOpen }}>

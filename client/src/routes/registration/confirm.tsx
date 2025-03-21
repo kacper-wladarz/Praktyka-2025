@@ -1,6 +1,5 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import Loading from "@assets/Loading";
-import { AxiosError } from "axios";
 import { useGoogleAuthCancel } from "@mutations/googleAuthCancel";
 import { useGoogleAuthConfirm } from "@mutations/googleAuthConfirm";
 import { useAuth } from "@contexts/AuthContext";
@@ -43,24 +42,13 @@ function RouteComponent() {
                     to: "/registration/cancel",
                     state: { allow: true },
                 }),
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    err.response &&
-                        navigate({
-                            to: "/registration/error",
-                            state: {
-                                message: err.response.data.message,
-                            },
-                        });
-                } else {
-                    navigate({
-                        to: "/registration/error",
-                        state: {
-                            message: "Wystąpił błąd podczas anulowania",
-                        },
-                    });
-                }
-            },
+            onError: (err) =>
+                navigate({
+                    to: "/registration/error",
+                    state: {
+                        message: err.message,
+                    },
+                }),
         });
     };
 
@@ -73,24 +61,13 @@ function RouteComponent() {
                     state: { allow: true },
                 });
             },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    err.response &&
-                        navigate({
-                            to: "/registration/error",
-                            state: {
-                                message: err.response.data.message,
-                            },
-                        });
-                } else {
-                    navigate({
-                        to: "/registration/error",
-                        state: {
-                            message: "Wystąpił błąd podczas rejestracji",
-                        },
-                    });
-                }
-            },
+            onError: (err) =>
+                navigate({
+                    to: "/registration/error",
+                    state: {
+                        message: err.message,
+                    },
+                }),
         });
     };
 

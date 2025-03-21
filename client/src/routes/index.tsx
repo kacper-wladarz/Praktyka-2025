@@ -83,16 +83,13 @@ function Index() {
                         autoComplete="current-password"
                         onChange={handleInputChange}
                     />
-                    {error && <QueryError error={error} />}
                     <GoogleLogin
                         text="signin_with"
                         locale={i18n.language}
                         width={260}
                         logo_alignment="center"
                         onSuccess={(response) => googleLoginSuccess(response)}
-                        onError={() =>
-                            setError("Wystąpił błąd podczas logowania")
-                        }
+                        onError={() => setError(i18n.t("login.googleError"))}
                     />
                     <button
                         type="submit"
@@ -105,6 +102,7 @@ function Index() {
                     >
                         {t("login.confirmButton")}
                     </button>
+                    {error && <QueryError error={error} />}
                 </div>
             </form>
         </div>

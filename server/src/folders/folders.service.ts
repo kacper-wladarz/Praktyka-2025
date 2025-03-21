@@ -1,18 +1,13 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FoldersService {
-  private prisma;
-
-  constructor(prismaService: PrismaService) {
-    this.prisma = prismaService;
-  }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly i18n: I18nService,
+  ) {}
 
   private async isExist(name: string, folderId: string | null, userId: string) {
     const isExist = await this.prisma.folder.findMany({
@@ -20,89 +15,41 @@ export class FoldersService {
     });
 
     if (isExist.length > 0) {
-      throw new ConflictException('Taki folder na tym poziomie już istnieje');
+      throw new ConflictException(this.i18n.t('folders.error.folderExist'));
     }
   }
 
   async getRootFolders(userId: string) {
-    try {
-      const folders = await this.prisma.folder.findMany({
-        where: { AND: [{ userId }, { parentId: null }] },
-        select: { id: true, name: true },
-        orderBy: { createdAt: 'desc' },
-      });
-      return { folders };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas pobierania folderów',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    const folders = await this.prisma.folder.findMany({
+      where: { AND: [{ userId }, { parentId: null }] },
+      select: { id: true, name: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return { folders };
   }
 
   async createRootFolder(userId: string, name: string) {
-    try {
-      await this.isExist(name, null, userId);
-      const folder = await this.prisma.folder.create({
-        data: { userId, name },
-        select: { id: true, name: true },
-      });
-      return { folder };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas tworzenia folderu',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    await this.isExist(name, null, userId);
+    const folder = await this.prisma.folder.create({
+      data: { userId, name },
+      select: { id: true, name: true },
+    });
+    return { folder };
   }
 
   async createFolder(userId: string, name: string, folderId: string) {
-    try {
-      await this.isExist(name, folderId, userId);
-      const folder = await this.prisma.folder.create({
-        data: { name, parentId: folderId, userId },
-        select: { id: true, name: true },
-      });
-      return { folder: { ...folder, type: 'FOLDER' } };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas tworzenia folderu',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    await this.isExist(name, folderId, userId);
+    const folder = await this.prisma.folder.create({
+      data: { name, parentId: folderId, userId },
+      select: { id: true, name: true },
+    });
+    return { folder: { ...folder, type: 'FOLDER' } };
   }
 
   async deleteFolder(folderId: string, userId: string) {
-    try {
-      await this.prisma.folder.delete({
-        where: { userId, id: folderId },
-      });
-      return;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas usuwania folderu',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    await this.prisma.folder.delete({
+      where: { userId, id: folderId },
+    });
+    return;
   }
 }

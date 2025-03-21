@@ -18,7 +18,10 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response) {
-            return Promise.reject({ message: error.response.data.message });
+            if (typeof error.response.data.message === "string") {
+                return Promise.reject({ message: error.response.data.message });
+            }
+            return Promise.reject({ message: error.response.data.message[0] });
         }
 
         return Promise.reject(error);

@@ -105,7 +105,9 @@ function RouteComponent() {
                         locale={i18n.language}
                         logo_alignment="center"
                         onSuccess={(response) => googleRegisterUser(response)}
-                        onError={() => setError("Błąd Google")}
+                        onError={() =>
+                            setError(i18n.t("registration.googleError"))
+                        }
                     />
                     <button
                         type="submit"

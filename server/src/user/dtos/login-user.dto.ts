@@ -1,10 +1,18 @@
-import { IsEmail, IsEmpty, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class LoginUserDto {
-  @IsNotEmpty({ message: 'Błędne dane logowania' })
-  @IsEmail({}, { message: 'Błędne dane logowania' })
+  @IsNotEmpty({
+    message: i18nValidationMessage('user.DTO.incorrectLoginCredentials'),
+  })
+  @IsEmail(
+    {},
+    { message: i18nValidationMessage('user.DTO.incorrectLoginCredentials') },
+  )
   login: string;
 
-  @IsNotEmpty({ message: 'Błędne dane logowania' })
+  @IsNotEmpty({
+    message: i18nValidationMessage('user.DTO.incorrectLoginCredentials'),
+  })
   password: string;
 }

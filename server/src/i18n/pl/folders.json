@@ -1,0 +1,9 @@
+{
+  "error": {
+    "folderExist": "Taki folder na tym poziomie już istnieje"
+  },
+  "DTO": {
+    "emptyName": "Nazwa nie może być pusta",
+    "creatingError": "Wystąpił błąd podczas tworzenia folderu"
+  }
+}

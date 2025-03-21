@@ -1,9 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class NewChatDTO {
-  @IsNotEmpty({ message: 'Nazwa nie może być pusta' })
+  @IsNotEmpty({ message: i18nValidationMessage('chats.DTO.emptyName') })
   name: string;
 
-  @IsNotEmpty({ message: 'Wystąpił błąd podczas tworzenia czatu' })
+  @IsNotEmpty({ message: i18nValidationMessage('chats.DTO.creatingError') })
   folderId: string;
 }

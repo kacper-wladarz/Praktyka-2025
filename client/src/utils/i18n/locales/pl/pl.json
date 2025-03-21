@@ -15,7 +15,8 @@
         "success": {
             "text": "Pomyślnie zalogowano",
             "link": "Przejdź do czatu"
-        }
+        },
+        "googleError": "Wystąpił błąd podczas logowania przez Google"
     },
     "logout": {
         "text": "Wylogowano",
@@ -37,7 +38,8 @@
         },
         "cancel": {
             "text": "Przejdź z powrotem do rejestracji"
-        }
+        },
+        "googleError": "Wystąpił błąd podczas rejestracji przez Google"
     },
     "chat": {
         "sidebar": {},

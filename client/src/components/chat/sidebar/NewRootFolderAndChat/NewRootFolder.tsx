@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import React, { RefObject, useEffect, useState } from "react";
 import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
 import { useCreateRootFolder } from "@mutations/createRootFolder";
@@ -9,7 +8,7 @@ import { useTranslation } from "react-i18next";
 const NewRootFolder = ({
     inputRef,
 }: {
-    inputRef: RefObject<HTMLInputElement | null>;
+    inputRef: RefObject<HTMLDivElement | null>;
 }) => {
     const { isNewFolder, setIsNewFolder, setError } =
         useFoldersAndChatsContext();
@@ -36,14 +35,7 @@ const NewRootFolder = ({
                     }
                 );
             },
-            onError: (error) => {
-                console.log(error);
-                if (error instanceof AxiosError) {
-                    error.response && setError(error.response.data.message);
-                } else {
-                    setError("Wystąpił błąd");
-                }
-            },
+            onError: (error) => setError(error.message),
             onSettled: () => {
                 setNewFolder("");
                 setIsNewFolder(false);
@@ -62,12 +54,12 @@ const NewRootFolder = ({
     return (
         <div
             className={`auto_height ${isNewFolder ? "h-auto opacity-100" : "h-0 opacity-0"} flex items-stretch bg-zinc-900 transition-[height,opacity] duration-300 ease-in-out overflow-hidden`}
+            ref={inputRef}
         >
             <input
                 placeholder={t("sidebar.newFolderPlaceholder")}
                 id="new_folder_input"
                 className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none"
-                ref={inputRef}
                 type="text"
                 value={newFolder}
                 autoComplete="off"

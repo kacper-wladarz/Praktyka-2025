@@ -32,7 +32,10 @@ function RouteComponent() {
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (error || !id) navigate({ to: "/chat" });
+        if (error || !id) {
+            navigate({ to: "/chat" });
+            setLastOpenedChat.mutate(null);
+        }
     }, [error, id]);
 
     useEffect(() => {

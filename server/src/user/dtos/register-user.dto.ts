@@ -1,14 +1,26 @@
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class RegisterUserDto {
-  @IsNotEmpty({ message: 'Błędne dane rejestracji' })
-  @IsEmail({}, { message: 'Błędne dane rejestracji' })
+  @IsNotEmpty({
+    message: i18nValidationMessage('user.DTO.incorrectRegistrationData'),
+  })
+  @IsEmail(
+    {},
+    { message: i18nValidationMessage('user.DTO.incorrectRegistrationData') },
+  )
   login: string;
 
-  @IsNotEmpty({ message: 'Błędne dane rejestracji' })
-  @MinLength(8, { message: 'Hasło musi mieć conajmniej 8 znaków' })
+  @IsNotEmpty({
+    message: i18nValidationMessage('user.DTO.incorrectRegistrationData'),
+  })
+  @MinLength(8, {
+    message: i18nValidationMessage('user.DTO.minPasswordLength'),
+  })
   password: string;
 
-  @IsNotEmpty({ message: 'Błędne dane rejestracji' })
+  @IsNotEmpty({
+    message: i18nValidationMessage('user.DTO.incorrectRegistrationData'),
+  })
   repeatedPassword: string;
 }

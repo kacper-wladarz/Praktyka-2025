@@ -1,9 +1,9 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
   @Get()
-  auth(@Req() req: Request) {
+  async auth(@Req() req: Request) {
     return { jwt: req['jwt'], login: req['login'] };
   }
 }

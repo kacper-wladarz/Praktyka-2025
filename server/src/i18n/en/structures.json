@@ -1,0 +1,9 @@
+{
+  "error": {
+    "chatPathError": "Failed to retrieve chat path",
+    "folderExists": "Such a folder already exists in this location",
+    "folderNotExist": "Folder does not exist",
+    "chatExists": "Such a chat already exists in this location",
+    "chatNotExist": "Chat does not exist"
+  }
+}

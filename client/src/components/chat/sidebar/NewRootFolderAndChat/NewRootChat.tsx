@@ -1,5 +1,4 @@
 import { RefObject, useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
 import { useCreateRootChat } from "@mutations/createRootChat";
 import RightArrow from "@assets/RightArrow";
@@ -9,7 +8,7 @@ import { useTranslation } from "react-i18next";
 const NewRootChat = ({
     inputRef,
 }: {
-    inputRef: RefObject<HTMLInputElement | null>;
+    inputRef: RefObject<HTMLDivElement | null>;
 }) => {
     const { isNewChat, setIsNewChat, setError } = useFoldersAndChatsContext();
     const [newChat, setNewChat] = useState<string>("");
@@ -29,17 +28,11 @@ const NewRootChat = ({
                     ["chats", "root"],
                     ({ chats }: { chats: ChatItem[] }) => {
                         if (!chats) return { chats: [...chats] };
-                        return { chats: [res.data.folder, ...chats] };
+                        return { chats: [res.data.chat, ...chats] };
                     }
                 );
             },
-            onError: (error) => {
-                if (error instanceof AxiosError) {
-                    error.response && setError(error.response.data.message);
-                } else {
-                    setError("Wystąpił błąd");
-                }
-            },
+            onError: (error) => setError(error.message),
         });
         setNewChat("");
         setIsNewChat(false);
@@ -56,12 +49,12 @@ const NewRootChat = ({
     return (
         <div
             className={`auto_height ${isNewChat ? "h-auto" : "h-0"} flex items-stretch transition-[height] duration-300 ease-in-out overflow-hidden`}
+            ref={inputRef}
         >
             <input
                 placeholder={t("sidebar.newChatPlaceholder")}
                 id="new_chat_input"
                 className="w-full px-4 py-1 text-white font-semilight border border-[rgba(255,255,255,0.5)] outline-none bg-zinc-900"
-                ref={inputRef}
                 type="text"
                 value={newChat}
                 autoComplete="off"

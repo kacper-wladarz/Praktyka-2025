@@ -1,0 +1,9 @@
+{
+  "error": {
+    "chatPathError": "Nie udało się pobrać ścieżki czatu",
+    "folderExists": "Taki folder w tym miejscu już istnieje",
+    "folderNotExist": "Folder nie istnieje",
+    "chatExists": "Taki czat w tym miejscu już istnieje",
+    "chatNotExist": "Czat nie istnieje"
+  }
+}

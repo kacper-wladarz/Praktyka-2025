@@ -1,106 +1,73 @@
-import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class UserService {
-  private prisma;
   private jwtSecret;
   private client;
   private googleClientId;
 
   constructor(
-    prismaService: PrismaService,
+    private readonly prisma: PrismaService,
+    private readonly i18n: I18nService,
     private configService: ConfigService,
   ) {
     this.jwtSecret =
       this.configService.get('JWT_SECRET') ||
       '57a9f4703036c0d7688b14df13b694567bf990da2784735a4f4a800dca99a938c07801214e9e99fe2778d786e3fb6e1e2a61bc1571cf3fb28f20c3a384b84ffe';
-    this.prisma = prismaService;
     this.client = new OAuth2Client(this.jwtSecret);
     this.googleClientId = this.configService.get('GOOGLE_CLIENT_ID');
   }
 
   private generateJWT(userId: string) {
-    try {
-      const options: jwt.SignOptions = { expiresIn: '1d' };
-      if (!userId) {
-        throw new HttpException(
-          'Brak tokenu uwierzytelniajęcego',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-      return jwt.sign({ id: userId }, this.jwtSecret, options);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    const options: jwt.SignOptions = { expiresIn: '1d' };
+    if (!userId) {
+      throw new UnauthorizedException(this.i18n.t('user.error.noAuthToken'));
     }
+    return jwt.sign({ id: userId }, this.jwtSecret, options);
   }
 
   private async verifyGoogleToken(token: string) {
-    try {
-      const ticket = await this.client.verifyIdToken({
-        idToken: token,
-        audience: this.googleClientId,
-      });
-      const payload = ticket.getPayload();
-      return payload;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas weryfikacji użytkownika przez Google',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    const ticket = await this.client.verifyIdToken({
+      idToken: token,
+      audience: this.googleClientId,
+    });
+    const payload = ticket.getPayload();
+    return payload;
   }
 
   async loginUser(login: string, password: string) {
-    try {
-      const user = await this.prisma.user.findUnique({ where: { login } });
+    const user = await this.prisma.user.findUnique({ where: { login } });
 
-      if (!user) {
-        throw new HttpException(
-          'Błędne dane logowania',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        throw new HttpException(
-          'Błędne dane logowania',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const jwt = this.generateJWT(user.id);
-      return { jwt };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas logowania',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    if (!user) {
+      throw new UnauthorizedException(
+        this.i18n.t('user.error.incorrectLoginCredentials'),
+      );
     }
+
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.password as string,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException(
+        this.i18n.t('user.error.incorrectLoginCredentials'),
+      );
+    }
+
+    const jwt = this.generateJWT(user.id);
+    return { jwt };
   }
 
   async registerUser(
@@ -108,225 +75,149 @@ export class UserService {
     password: string,
     repeatedPassword: string,
   ) {
-    try {
-      console.log(login, password);
-      const user = await this.prisma.user.findUnique({ where: { login } });
-      if (user) {
-        throw new HttpException(
-          'Taki użytkownik juz istnieje',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      if (password !== repeatedPassword) {
-        throw new HttpException(
-          'Hasła muszą być takie same',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      const hashedPassword = await bcrypt.hash(
-        password,
-        await bcrypt.genSalt(10),
-      );
-
-      const createdUser = await this.prisma.user.create({
-        data: { login, password: hashedPassword },
-      });
-
-      const jwt = this.generateJWT(createdUser.id);
-
-      return { jwt };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas rejestracji',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    const user = await this.prisma.user.findUnique({ where: { login } });
+    if (user) {
+      throw new BadRequestException(this.i18n.t('user.error.userExists'));
     }
+
+    if (password !== repeatedPassword) {
+      throw new BadRequestException(this.i18n.t('user.error.samePassword'));
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      password,
+      await bcrypt.genSalt(10),
+    );
+
+    const createdUser = await this.prisma.user.create({
+      data: { login, password: hashedPassword },
+    });
+
+    const jwt = this.generateJWT(createdUser.id);
+
+    return { jwt };
   }
 
   async googleLoginUser(token: string) {
-    try {
-      const payload = await this.verifyGoogleToken(token);
-      if (!payload) {
-        throw new HttpException(
-          'Wystąpił błąd podczas weryfikacji Google',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const user = await this.prisma.user.findUnique({
-        where: { login: payload.email },
-      });
-
-      if (!user || user.googleId !== payload.sub) {
-        throw new HttpException(
-          'Użytkownik nie istnieje',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const jwt = this.generateJWT(user.id);
-      return { jwt };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas weryfikacji Google',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    const payload = await this.verifyGoogleToken(token);
+    if (!payload) {
+      throw new UnauthorizedException(
+        this.i18n.t('user.error.googleVerification'),
+      );
     }
+
+    const user = await this.prisma.user.findUnique({
+      where: { login: payload.email },
+    });
+
+    if (!user || user.googleId !== payload.sub) {
+      throw new NotFoundException(this.i18n.t('user.error.userNotExists'));
+    }
+
+    const jwt = this.generateJWT(user.id);
+    return { jwt };
   }
 
   async googleRegistration(token: string) {
     const authCode = v4();
-    try {
-      const payload = await this.verifyGoogleToken(token);
+    const payload = await this.verifyGoogleToken(token);
 
-      if (!payload) {
-        throw new HttpException(
-          'Wystąpił błąd podczas weryfikacji użytkownika przez Google',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
+    if (!payload) {
+      throw new UnauthorizedException(
+        this.i18n.t('user.error.googleVerification'),
+      );
+    }
 
-      const user = await this.prisma.user.findUnique({
-        where: { login: payload.email },
+    const user = await this.prisma.user.findUnique({
+      where: { login: payload.email },
+    });
+
+    if (user) {
+      const tempUser = await this.prisma.user.findUnique({
+        where: { id: user.id },
+        select: { confirmed: true },
       });
-
-      if (user) {
-        const { confirmed } = await this.prisma.user.findUnique({
-          where: { id: user.id },
-          select: { confirmed: true },
-        });
-        if (confirmed) {
-          throw new HttpException(
-            'Taki użytkownik juz istnieje',
-            HttpStatus.BAD_REQUEST,
-          );
-        } else {
-          await this.prisma.user.update({
-            where: { login: user.login },
-            data: { authCode },
-          });
-          return { authCode, email: user.login };
-        }
-      }
-
-      await this.prisma.user.create({
-        data: {
-          login: payload.email,
-          authCode,
-          googleId: payload.sub,
-          confirmed: false,
-        },
-      });
-
-      return { authCode, email: payload.email };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
+      if (tempUser?.confirmed) {
+        throw new BadRequestException(this.i18n.t('user.error.userExists'));
       } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas rejestracji użytkownika',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        await this.prisma.user.update({
+          where: { login: user.login },
+          data: { authCode },
+        });
+        return { authCode, email: user.login };
       }
     }
+
+    await this.prisma.user.create({
+      data: {
+        login: payload.email,
+        authCode,
+        googleId: payload.sub,
+        confirmed: false,
+      },
+    });
+
+    return { authCode, email: payload.email };
   }
 
   async googleRegistrationCancel(authCode: string) {
-    try {
-      if (!authCode) {
-        throw new HttpException(
-          'Wymagany jest kod autoryzacji',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      await this.prisma.user.delete({ where: { authCode } });
-      return { message: 'Pomyślnie anulowano rejestrację' };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas anulowania rejestracji użytkownika',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    if (!authCode) {
+      throw new BadRequestException(this.i18n.t('user.error.authCodeRequired'));
     }
+    await this.prisma.user.delete({ where: { authCode } });
+    return { message: this.i18n.t('user.success.registrationCanceled') };
   }
 
   async googleRegistrationConfirm(authCode: string) {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { authCode },
-      });
-      const jwt = this.generateJWT(user.id);
-      await this.prisma.user.update({
-        where: { authCode },
-        data: { authCode: null, confirmed: true },
-      });
-      return { jwt };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas rejestracji użytkownika',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    const user = await this.prisma.user.findUnique({
+      where: { authCode },
+    });
+    if (!user) {
+      throw new BadRequestException(
+        this.i18n.t('user.error.registrationError'),
+      );
     }
+    const jwt = this.generateJWT(user.id);
+    await this.prisma.user.update({
+      where: { authCode },
+      data: { authCode: null, confirmed: true },
+    });
+    return { jwt };
   }
 
   async getLastOpenedChat(userId: string) {
-    try {
-      return await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { lastOpenedChat: true },
-      });
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas otwierania czatu',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, lastOpenedChat: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException(this.i18n.t('user.error.userNotFound'));
     }
+
+    if (!user.lastOpenedChat) {
+      return { chatId: null };
+    }
+
+    const chat = await this.prisma.chat.findUnique({
+      where: { id: user.lastOpenedChat },
+    });
+    if (chat) {
+      return { chatId: chat.id };
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { lastOpenedChat: null },
+    });
+    return;
   }
 
   async updateLastOpenedChat(userId: string, chatId: string) {
-    try {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: { lastOpenedChat: chatId },
-      });
-      return { chatId };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      } else {
-        console.error(error);
-        throw new HttpException(
-          'Wystąpił błąd podczas otwierania czatu',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { lastOpenedChat: chatId },
+    });
+    return { chatId };
   }
 }

@@ -1,9 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class NewFolderDTO {
-  @IsNotEmpty({ message: 'Nazwa nie może być pusta' })
+  @IsNotEmpty({ message: i18nValidationMessage('folders.DTO.emptyName') })
   name: string;
 
-  @IsNotEmpty({ message: 'Wystąpił błąd podczas tworzenia folderu' })
+  @IsNotEmpty({ message: i18nValidationMessage('folders.DTO.creatingError') })
   folderId: string;
 }

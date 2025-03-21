@@ -1,3 +1,4 @@
+import { api } from "@/api/axios";
 import OpenArrow from "@/assets/OpenArrow";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,10 @@ const LngSelection = () => {
     const changeLng = (lng: string) => {
         i18n.changeLanguage(lng || "pl");
         localStorage.setItem("lng", lng || "pl");
+        api.interceptors.request.use((config) => {
+            config.headers["X-lang"] = lng || "pl";
+            return config;
+        });
     };
 
     return (

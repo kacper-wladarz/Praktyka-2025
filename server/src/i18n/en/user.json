@@ -1,0 +1,22 @@
+{
+  "error": {
+    "noAuthToken": "No authentication token",
+    "incorrectLoginCredentials": "Incorrect login credentials",
+    "userExists": "Such a user already exists",
+    "samePasswords": "Passwords must be the same",
+    "userNotExists": "Such a user does not exist",
+    "googleVerification": "An error occurred during Google verification",
+    "authCodeRequired": "Authorization code is required",
+    "registrationError": "An error occurred during registration"
+  },
+  "success": {
+    "registrationCanceled": "Registration successfully canceled"
+  },
+  "DTO": {
+    "incorrectRegistrationData": "Incorrect registration data",
+    "minPasswordLength": "Password must be at least 8 characters long",
+    "incorrectLoginCredentials": "Incorrect login credentials",
+    "registrationError": "An error occurred during registration",
+    "loginError": "An error occurred during login"
+  }
+}

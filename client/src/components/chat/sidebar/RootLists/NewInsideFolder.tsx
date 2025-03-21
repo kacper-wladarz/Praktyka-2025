@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { UUID } from "crypto";
 import RightArrow from "@assets/RightArrow";
 import { useFoldersAndChatsContext } from "@contexts/FoldersAndChatsContext";
@@ -47,13 +46,7 @@ const NewInsideFolder = ({ folderId, newFolderId }: Props) => {
                         }
                     );
                 },
-                onError: (err) => {
-                    if (err instanceof AxiosError) {
-                        err.response && setError(err.response.data.message);
-                    } else {
-                        setError("Wystąpił błąd podczas tworzenia czatu");
-                    }
-                },
+                onError: (err) => setError(err.message),
             }
         );
     };

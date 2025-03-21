@@ -20,8 +20,8 @@ import { queryClient } from "@/main";
 import OpenArrow from "@/assets/OpenArrow";
 
 const FoldersAndChats = () => {
-    const newRootFolderRef = useRef<HTMLInputElement>(null);
-    const newRootChatRef = useRef<HTMLInputElement>(null);
+    const newRootFolderRef = useRef<HTMLDivElement>(null);
+    const newRootChatRef = useRef<HTMLDivElement>(null);
     const { setIsNewFolder, setIsNewChat } = useFoldersAndChatsContext();
     const [openedInputId, setOpenedInputId] = useState<string | null>(null);
     const [draggedElement, setDraggedElement] = useState({
@@ -49,7 +49,7 @@ const FoldersAndChats = () => {
             const target = event.target as HTMLElement;
             if (
                 target.id !== openedInputId &&
-                target.className &&
+                typeof target.className === "string" &&
                 !target.className.includes("new_button")
             ) {
                 setOpenedInputId(null);
