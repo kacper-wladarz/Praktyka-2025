@@ -4,6 +4,7 @@ import ChatIcon from "@assets/ChatIcon";
 import LogoutIcon from "@assets/LogoutIcon";
 import { useAuth } from "@contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import DashboardIcon from "@/assets/DashboardIcon";
 
 const Profile = () => {
     const auth = useAuth();
@@ -21,7 +22,6 @@ const Profile = () => {
       `;
 
     const encodedSvg = encodeURIComponent(svg);
-
     const handleMouseEnter = () => {
         setBgImage(`url('data:image/svg+xml;charset=UTF-8,${encodedSvg}')`);
         setIsDropdownOpen(true);
@@ -40,6 +40,21 @@ const Profile = () => {
         });
     };
 
+    const handleChatClick = () => {
+        setIsDropdownOpen(false);
+        router.navigate({ to: "/chat" });
+    };
+
+    const handleDashboardClick = () => {
+        setIsDropdownOpen(false);
+        router.navigate({ to: "/dashboard" });
+    };
+
+    const handleLogoutClick = () => {
+        setIsDropdownOpen(false);
+        logout();
+    };
+
     return (
         <div className="flex items-center">
             <div
@@ -55,15 +70,24 @@ const Profile = () => {
                 >
                     <div className="my-2 bg-zinc-800 rounded-xl text-lg font-extralight overflow-hidden whitespace-nowrap">
                         <button
-                            className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out"
-                            onClick={() => router.navigate({ to: "/chat" })}
+                            className="profile_option"
+                            onClick={() => handleChatClick()}
                         >
                             <ChatIcon />
                             <span>{t("navbar.profile.chat")}</span>
                         </button>
+                        {auth.user?.role === "ADMIN" && (
+                            <button
+                                className="profile_option"
+                                onClick={() => handleDashboardClick()}
+                            >
+                                <DashboardIcon />
+                                <span>{t("navbar.profile.dashboard")}</span>
+                            </button>
+                        )}
                         <button
-                            className="w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out"
-                            onClick={() => logout()}
+                            className="profile_option"
+                            onClick={() => handleLogoutClick()}
                         >
                             <LogoutIcon />
                             <span>{t("navbar.profile.logout")}</span>

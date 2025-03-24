@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext } from "react";
 
-export const GlobalContext = createContext<GlobalContext | null>(null);
+const GlobalContext = createContext<GlobalContext | null>(null);
 
 interface Props {
     children: ReactNode;

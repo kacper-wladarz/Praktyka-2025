@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as NotFoundImport } from './routes/not-found'
+import { Route as DashboardLayoutImport } from './routes/_dashboardLayout'
 import { Route as ChatLayoutImport } from './routes/_chatLayout'
 import { Route as SplatImport } from './routes/$'
 import { Route as IndexImport } from './routes/index'
@@ -22,7 +23,13 @@ import { Route as RegistrationErrorImport } from './routes/registration/error'
 import { Route as RegistrationConfirmImport } from './routes/registration/confirm'
 import { Route as RegistrationCancelImport } from './routes/registration/cancel'
 import { Route as LoginSuccessImport } from './routes/login/success'
+import { Route as DashboardLayoutDashboardIndexImport } from './routes/_dashboardLayout/dashboard/index'
 import { Route as ChatLayoutChatIndexImport } from './routes/_chatLayout/chat/index'
+import { Route as DashboardLayoutDashboardUsersImport } from './routes/_dashboardLayout/dashboard/users'
+import { Route as DashboardLayoutDashboardStatsImport } from './routes/_dashboardLayout/dashboard/stats'
+import { Route as DashboardLayoutDashboardSettingsImport } from './routes/_dashboardLayout/dashboard/settings'
+import { Route as DashboardLayoutDashboardCreateImport } from './routes/_dashboardLayout/dashboard/create'
+import { Route as DashboardLayoutDashboardAiImport } from './routes/_dashboardLayout/dashboard/ai'
 import { Route as ChatLayoutChatIdImport } from './routes/_chatLayout/chat/$id'
 
 // Create/Update Routes
@@ -30,6 +37,11 @@ import { Route as ChatLayoutChatIdImport } from './routes/_chatLayout/chat/$id'
 const NotFoundRoute = NotFoundImport.update({
   id: '/not-found',
   path: '/not-found',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardLayoutRoute = DashboardLayoutImport.update({
+  id: '/_dashboardLayout',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -92,11 +104,54 @@ const LoginSuccessRoute = LoginSuccessImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardLayoutDashboardIndexRoute =
+  DashboardLayoutDashboardIndexImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
 const ChatLayoutChatIndexRoute = ChatLayoutChatIndexImport.update({
   id: '/chat/',
   path: '/chat/',
   getParentRoute: () => ChatLayoutRoute,
 } as any)
+
+const DashboardLayoutDashboardUsersRoute =
+  DashboardLayoutDashboardUsersImport.update({
+    id: '/dashboard/users',
+    path: '/dashboard/users',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardStatsRoute =
+  DashboardLayoutDashboardStatsImport.update({
+    id: '/dashboard/stats',
+    path: '/dashboard/stats',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardSettingsRoute =
+  DashboardLayoutDashboardSettingsImport.update({
+    id: '/dashboard/settings',
+    path: '/dashboard/settings',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardCreateRoute =
+  DashboardLayoutDashboardCreateImport.update({
+    id: '/dashboard/create',
+    path: '/dashboard/create',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardAiRoute = DashboardLayoutDashboardAiImport.update(
+  {
+    id: '/dashboard/ai',
+    path: '/dashboard/ai',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any,
+)
 
 const ChatLayoutChatIdRoute = ChatLayoutChatIdImport.update({
   id: '/chat/$id',
@@ -127,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof ChatLayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/_dashboardLayout': {
+      id: '/_dashboardLayout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof DashboardLayoutImport
       parentRoute: typeof rootRoute
     }
     '/not-found': {
@@ -192,12 +254,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatLayoutChatIdImport
       parentRoute: typeof ChatLayoutImport
     }
+    '/_dashboardLayout/dashboard/ai': {
+      id: '/_dashboardLayout/dashboard/ai'
+      path: '/dashboard/ai'
+      fullPath: '/dashboard/ai'
+      preLoaderRoute: typeof DashboardLayoutDashboardAiImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/create': {
+      id: '/_dashboardLayout/dashboard/create'
+      path: '/dashboard/create'
+      fullPath: '/dashboard/create'
+      preLoaderRoute: typeof DashboardLayoutDashboardCreateImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/settings': {
+      id: '/_dashboardLayout/dashboard/settings'
+      path: '/dashboard/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardLayoutDashboardSettingsImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/stats': {
+      id: '/_dashboardLayout/dashboard/stats'
+      path: '/dashboard/stats'
+      fullPath: '/dashboard/stats'
+      preLoaderRoute: typeof DashboardLayoutDashboardStatsImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/users': {
+      id: '/_dashboardLayout/dashboard/users'
+      path: '/dashboard/users'
+      fullPath: '/dashboard/users'
+      preLoaderRoute: typeof DashboardLayoutDashboardUsersImport
+      parentRoute: typeof DashboardLayoutImport
+    }
     '/_chatLayout/chat/': {
       id: '/_chatLayout/chat/'
       path: '/chat'
       fullPath: '/chat'
       preLoaderRoute: typeof ChatLayoutChatIndexImport
       parentRoute: typeof ChatLayoutImport
+    }
+    '/_dashboardLayout/dashboard/': {
+      id: '/_dashboardLayout/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardLayoutDashboardIndexImport
+      parentRoute: typeof DashboardLayoutImport
     }
   }
 }
@@ -218,10 +322,32 @@ const ChatLayoutRouteWithChildren = ChatLayoutRoute._addFileChildren(
   ChatLayoutRouteChildren,
 )
 
+interface DashboardLayoutRouteChildren {
+  DashboardLayoutDashboardAiRoute: typeof DashboardLayoutDashboardAiRoute
+  DashboardLayoutDashboardCreateRoute: typeof DashboardLayoutDashboardCreateRoute
+  DashboardLayoutDashboardSettingsRoute: typeof DashboardLayoutDashboardSettingsRoute
+  DashboardLayoutDashboardStatsRoute: typeof DashboardLayoutDashboardStatsRoute
+  DashboardLayoutDashboardUsersRoute: typeof DashboardLayoutDashboardUsersRoute
+  DashboardLayoutDashboardIndexRoute: typeof DashboardLayoutDashboardIndexRoute
+}
+
+const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
+  DashboardLayoutDashboardAiRoute: DashboardLayoutDashboardAiRoute,
+  DashboardLayoutDashboardCreateRoute: DashboardLayoutDashboardCreateRoute,
+  DashboardLayoutDashboardSettingsRoute: DashboardLayoutDashboardSettingsRoute,
+  DashboardLayoutDashboardStatsRoute: DashboardLayoutDashboardStatsRoute,
+  DashboardLayoutDashboardUsersRoute: DashboardLayoutDashboardUsersRoute,
+  DashboardLayoutDashboardIndexRoute: DashboardLayoutDashboardIndexRoute,
+}
+
+const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
+  DashboardLayoutRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
-  '': typeof ChatLayoutRouteWithChildren
+  '': typeof DashboardLayoutRouteWithChildren
   '/not-found': typeof NotFoundRoute
   '/login/success': typeof LoginSuccessRoute
   '/registration/cancel': typeof RegistrationCancelRoute
@@ -231,13 +357,19 @@ export interface FileRoutesByFullPath {
   '/logout': typeof LogoutIndexRoute
   '/registration': typeof RegistrationIndexRoute
   '/chat/$id': typeof ChatLayoutChatIdRoute
+  '/dashboard/ai': typeof DashboardLayoutDashboardAiRoute
+  '/dashboard/create': typeof DashboardLayoutDashboardCreateRoute
+  '/dashboard/settings': typeof DashboardLayoutDashboardSettingsRoute
+  '/dashboard/stats': typeof DashboardLayoutDashboardStatsRoute
+  '/dashboard/users': typeof DashboardLayoutDashboardUsersRoute
   '/chat': typeof ChatLayoutChatIndexRoute
+  '/dashboard': typeof DashboardLayoutDashboardIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
-  '': typeof ChatLayoutRouteWithChildren
+  '': typeof DashboardLayoutRouteWithChildren
   '/not-found': typeof NotFoundRoute
   '/login/success': typeof LoginSuccessRoute
   '/registration/cancel': typeof RegistrationCancelRoute
@@ -247,7 +379,13 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutIndexRoute
   '/registration': typeof RegistrationIndexRoute
   '/chat/$id': typeof ChatLayoutChatIdRoute
+  '/dashboard/ai': typeof DashboardLayoutDashboardAiRoute
+  '/dashboard/create': typeof DashboardLayoutDashboardCreateRoute
+  '/dashboard/settings': typeof DashboardLayoutDashboardSettingsRoute
+  '/dashboard/stats': typeof DashboardLayoutDashboardStatsRoute
+  '/dashboard/users': typeof DashboardLayoutDashboardUsersRoute
   '/chat': typeof ChatLayoutChatIndexRoute
+  '/dashboard': typeof DashboardLayoutDashboardIndexRoute
 }
 
 export interface FileRoutesById {
@@ -255,6 +393,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/_chatLayout': typeof ChatLayoutRouteWithChildren
+  '/_dashboardLayout': typeof DashboardLayoutRouteWithChildren
   '/not-found': typeof NotFoundRoute
   '/login/success': typeof LoginSuccessRoute
   '/registration/cancel': typeof RegistrationCancelRoute
@@ -264,7 +403,13 @@ export interface FileRoutesById {
   '/logout/': typeof LogoutIndexRoute
   '/registration/': typeof RegistrationIndexRoute
   '/_chatLayout/chat/$id': typeof ChatLayoutChatIdRoute
+  '/_dashboardLayout/dashboard/ai': typeof DashboardLayoutDashboardAiRoute
+  '/_dashboardLayout/dashboard/create': typeof DashboardLayoutDashboardCreateRoute
+  '/_dashboardLayout/dashboard/settings': typeof DashboardLayoutDashboardSettingsRoute
+  '/_dashboardLayout/dashboard/stats': typeof DashboardLayoutDashboardStatsRoute
+  '/_dashboardLayout/dashboard/users': typeof DashboardLayoutDashboardUsersRoute
   '/_chatLayout/chat/': typeof ChatLayoutChatIndexRoute
+  '/_dashboardLayout/dashboard/': typeof DashboardLayoutDashboardIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -282,7 +427,13 @@ export interface FileRouteTypes {
     | '/logout'
     | '/registration'
     | '/chat/$id'
+    | '/dashboard/ai'
+    | '/dashboard/create'
+    | '/dashboard/settings'
+    | '/dashboard/stats'
+    | '/dashboard/users'
     | '/chat'
+    | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,12 +448,19 @@ export interface FileRouteTypes {
     | '/logout'
     | '/registration'
     | '/chat/$id'
+    | '/dashboard/ai'
+    | '/dashboard/create'
+    | '/dashboard/settings'
+    | '/dashboard/stats'
+    | '/dashboard/users'
     | '/chat'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/_chatLayout'
+    | '/_dashboardLayout'
     | '/not-found'
     | '/login/success'
     | '/registration/cancel'
@@ -312,7 +470,13 @@ export interface FileRouteTypes {
     | '/logout/'
     | '/registration/'
     | '/_chatLayout/chat/$id'
+    | '/_dashboardLayout/dashboard/ai'
+    | '/_dashboardLayout/dashboard/create'
+    | '/_dashboardLayout/dashboard/settings'
+    | '/_dashboardLayout/dashboard/stats'
+    | '/_dashboardLayout/dashboard/users'
     | '/_chatLayout/chat/'
+    | '/_dashboardLayout/dashboard/'
   fileRoutesById: FileRoutesById
 }
 
@@ -320,6 +484,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   ChatLayoutRoute: typeof ChatLayoutRouteWithChildren
+  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
   NotFoundRoute: typeof NotFoundRoute
   LoginSuccessRoute: typeof LoginSuccessRoute
   RegistrationCancelRoute: typeof RegistrationCancelRoute
@@ -334,6 +499,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   ChatLayoutRoute: ChatLayoutRouteWithChildren,
+  DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
   NotFoundRoute: NotFoundRoute,
   LoginSuccessRoute: LoginSuccessRoute,
   RegistrationCancelRoute: RegistrationCancelRoute,
@@ -357,6 +523,7 @@ export const routeTree = rootRoute
         "/",
         "/$",
         "/_chatLayout",
+        "/_dashboardLayout",
         "/not-found",
         "/login/success",
         "/registration/cancel",
@@ -378,6 +545,17 @@ export const routeTree = rootRoute
       "children": [
         "/_chatLayout/chat/$id",
         "/_chatLayout/chat/"
+      ]
+    },
+    "/_dashboardLayout": {
+      "filePath": "_dashboardLayout.tsx",
+      "children": [
+        "/_dashboardLayout/dashboard/ai",
+        "/_dashboardLayout/dashboard/create",
+        "/_dashboardLayout/dashboard/settings",
+        "/_dashboardLayout/dashboard/stats",
+        "/_dashboardLayout/dashboard/users",
+        "/_dashboardLayout/dashboard/"
       ]
     },
     "/not-found": {
@@ -408,9 +586,33 @@ export const routeTree = rootRoute
       "filePath": "_chatLayout/chat/$id.tsx",
       "parent": "/_chatLayout"
     },
+    "/_dashboardLayout/dashboard/ai": {
+      "filePath": "_dashboardLayout/dashboard/ai.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/create": {
+      "filePath": "_dashboardLayout/dashboard/create.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/settings": {
+      "filePath": "_dashboardLayout/dashboard/settings.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/stats": {
+      "filePath": "_dashboardLayout/dashboard/stats.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/users": {
+      "filePath": "_dashboardLayout/dashboard/users.tsx",
+      "parent": "/_dashboardLayout"
+    },
     "/_chatLayout/chat/": {
       "filePath": "_chatLayout/chat/index.tsx",
       "parent": "/_chatLayout"
+    },
+    "/_dashboardLayout/dashboard/": {
+      "filePath": "_dashboardLayout/dashboard/index.tsx",
+      "parent": "/_dashboardLayout"
     }
   }
 }

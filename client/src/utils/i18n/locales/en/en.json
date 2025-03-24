@@ -4,6 +4,7 @@
         "registration": "Registration",
         "profile": {
             "chat": "Chat",
+            "dashboard": "Dashboard",
             "logout": "Log out"
         }
     },
@@ -16,7 +17,11 @@
             "text": "You have successfully logged in",
             "link": "Go to chat"
         },
-        "googleError": "An error occurred while logging in with Google"
+        "googleError": "An error occurred while logging in with Google",
+        "validation": {
+            "invalidLogin": "Invalid login",
+            "minPassword": "Password must be at least 8 characters long"
+        }
     },
     "logout": {
         "text": "Logged out",
@@ -39,7 +44,12 @@
         "cancel": {
             "text": "Go back to registration"
         },
-        "googleError": "An error occured while signing up with Google"
+        "googleError": "An error occured while signing up with Google",
+        "validation": {
+            "invalidLogin": "Invalid login",
+            "minPassword": "Password must be at least 8 characters long",
+            "minRepeatedPassword": "Password must be at least 8 characters long"
+        }
     },
     "chat": {
         "sidebar": {},

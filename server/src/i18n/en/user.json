@@ -4,10 +4,10 @@
     "incorrectLoginCredentials": "Incorrect login credentials",
     "userExists": "Such a user already exists",
     "samePasswords": "Passwords must be the same",
-    "userNotExists": "Such a user does not exist",
     "googleVerification": "An error occurred during Google verification",
     "authCodeRequired": "Authorization code is required",
-    "registrationError": "An error occurred during registration"
+    "registrationError": "An error occurred during registration",
+    "userNotFound": "Such a user does not exist"
   },
   "success": {
     "registrationCanceled": "Registration successfully canceled"

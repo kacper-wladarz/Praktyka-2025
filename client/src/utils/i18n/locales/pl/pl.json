@@ -4,6 +4,7 @@
         "registration": "Rejestracja",
         "profile": {
             "chat": "Czat",
+            "dashboard": "Panel",
             "logout": "Wyloguj"
         }
     },
@@ -16,7 +17,11 @@
             "text": "Pomyślnie zalogowano",
             "link": "Przejdź do czatu"
         },
-        "googleError": "Wystąpił błąd podczas logowania przez Google"
+        "googleError": "Wystąpił błąd podczas logowania przez Google",
+        "validation": {
+            "invalidLogin": "Niepoprawny login",
+            "minPassword": "Hasło musi mieć co najmniej 8 znaków"
+        }
     },
     "logout": {
         "text": "Wylogowano",
@@ -39,7 +44,12 @@
         "cancel": {
             "text": "Przejdź z powrotem do rejestracji"
         },
-        "googleError": "Wystąpił błąd podczas rejestracji przez Google"
+        "googleError": "Wystąpił błąd podczas rejestracji przez Google",
+        "validation": {
+            "invalidLogin": "Niepoprawny login",
+            "minPassword": "Hasło musi mieć co najmniej 8 znaków",
+            "minRepeatedPassword": "Hasło musi mieć co najmniej 8 znaków"
+        }
     },
     "chat": {
         "sidebar": {},

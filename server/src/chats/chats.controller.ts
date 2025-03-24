@@ -7,13 +7,16 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { NewRootChatDTO } from './dtos/new-root-chat.dto';
 import { NewChatDTO } from './dtos/new-chat.dto';
 import { NewMessageDTO } from './dtos/new-message.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('chats')
+@UseGuards(AuthGuard)
 export class ChatsController {
   private chatsService;
 

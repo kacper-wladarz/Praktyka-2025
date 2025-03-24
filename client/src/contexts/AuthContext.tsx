@@ -36,7 +36,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 
     const { data: userData } = useQuery({
         queryKey: ["user", "data"],
-        placeholderData: { login: "" },
+        placeholderData: { login: "", role: null },
         queryFn: async () =>
             await api.get("/user/data").then((res) => res.data),
         enabled: isAuthenticated,
@@ -51,7 +51,7 @@ export const AuthContextProvider = ({ children }: Props) => {
                 expires.setDate(expires.getDate() + 1);
                 setCookie("jwt", data.jwt, expires.toUTCString());
                 setJWT(data.jwt);
-                setUser({ login: data.login });
+                setUser({ login: data.login, role: data.role });
             }
 
             if (error || data === undefined) {
@@ -64,7 +64,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 
     useEffect(() => {
         if (userData) {
-            setUser({ login: userData.login });
+            setUser({ login: userData.login, role: userData.role });
         }
     }, [userData]);
 

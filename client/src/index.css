@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+.form_input {
+    @apply px-3 py-2 rounded-lg border border-white outline-none;
+}
+
+.profile_option {
+    @apply w-full px-4 py-2 hover:bg-zinc-700 cursor-pointer flex items-center gap-2 transition-[background] duration-300 ease-in-out;
+}
+
+.dashboard_button {
+    @apply aspect-square font-extralight text-center border border-zinc-200 rounded-full p-4 hover:bg-zinc-600 transition-all duration-200 ease-in-out cursor-pointer active:bg-zinc-400;
+}
+
+.dashboard_option_bottom_shape::after {
+    mask-image: radial-gradient(
+        circle at left bottom,
+        transparent 72%,
+        black 10%
+    );
+}
+
+.dashboard_option_bottom_shape::before {
+    mask-image: radial-gradient(circle at left top, transparent 72%, black 10%);
+}
+
 :root {
     font-family: "Poppins", sans-serif;
     font-weight: 300;

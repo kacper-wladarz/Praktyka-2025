@@ -1,14 +1,15 @@
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, ChangeEvent } from "react";
-import Input from "@components/Input";
-import QueryError from "@components/QueryError";
+import { useState } from "react";
 import Loading from "@assets/Loading";
 import { useRegistration } from "@mutations/registration";
 import { useGoogleRegistration } from "@mutations/googleRegistration";
 import { useAuth } from "@contexts/AuthContext";
 import Logged from "@components/Logged";
 import { useTranslation } from "react-i18next";
+import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
+import FormError from "@/components/FormError";
 
 export const Route = createFileRoute("/registration/")({
     component: RouteComponent,
@@ -17,22 +18,34 @@ export const Route = createFileRoute("/registration/")({
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const [data, setData] = useState<RegistrationData>({} as RegistrationData);
     const [error, setError] = useState<string | null>(null);
     const auth = useAuth();
     const registrationMutation = useRegistration();
     const googleRegistrationMutation = useGoogleRegistration();
     const { t, i18n } = useTranslation();
+    const userSchema = z.object({
+        login: z.string().email(t("registration.validation.invalidLogin")),
+        password: z.string().min(8, t("registration.validation.minPassword")),
+        repeatedPassword: z
+            .string()
+            .min(8, t("registration.validation.minRepeatedPassword")),
+    });
+    const form = useForm({
+        defaultValues: {
+            login: "",
+            password: "",
+            repeatedPassword: "",
+        },
+        validators: {
+            onChangeAsyncDebounceMs: 500,
+            onChangeAsync: userSchema,
+        },
+        onSubmit: ({ value }) => {
+            registerUser(value);
+        },
+    });
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setData((prev) => ({
-            ...prev,
-            [event.target.name]: event.target.value,
-        }));
-    };
-
-    const registerUser = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
+    const registerUser = (data: RegistrationData) => {
         registrationMutation.mutate(data, {
             onSuccess: (res) => {
                 auth.login(res.data.jwt);
@@ -74,34 +87,107 @@ function RouteComponent() {
             <span className="text-4xl font-extralight tracking-wide">
                 {t("registration.header")}
             </span>
-            <form className="text-xl font-extralight">
+            <form
+                className="text-xl font-extralight max-w-[340px] w-fit"
+                onSubmit={(e) => e.preventDefault()}
+            >
                 <div className="flex flex-col gap-6">
-                    <Input
-                        type="text"
+                    <form.Field
                         name="login"
-                        placeholder={t("registration.loginInputPlaceholder")}
-                        autoComplete="email"
-                        onChange={handleInputChange}
+                        children={(field) => {
+                            return (
+                                <div className="flex flex-col gap-2">
+                                    <input
+                                        type="text"
+                                        className="form_input"
+                                        placeholder={t(
+                                            "registration.loginInputPlaceholder"
+                                        )}
+                                        autoComplete="email"
+                                        value={field.state.value}
+                                        onChange={(event) =>
+                                            field.handleChange(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                    {field.state.meta.errors[0] && (
+                                        <FormError
+                                            message={
+                                                field.state.meta.errors[0]
+                                                    .message
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            );
+                        }}
                     />
-                    <Input
-                        type="password"
+                    <form.Field
                         name="password"
-                        placeholder={t("registration.passwordInputPlaceholder")}
-                        autoComplete="new-password"
-                        onChange={handleInputChange}
+                        children={(field) => {
+                            return (
+                                <div className="flex flex-col gap-2">
+                                    <input
+                                        type="password"
+                                        className="form_input"
+                                        placeholder={t(
+                                            "registration.passwordInputPlaceholder"
+                                        )}
+                                        autoComplete="new-password"
+                                        value={field.state.value}
+                                        onChange={(event) =>
+                                            field.handleChange(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                    {field.state.meta.errors[0] && (
+                                        <FormError
+                                            message={
+                                                field.state.meta.errors[0]
+                                                    .message
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            );
+                        }}
                     />
-                    <Input
-                        type="password"
+                    <form.Field
                         name="repeatedPassword"
-                        placeholder={t(
-                            "registration.repeatPasswordInputPlaceholder"
-                        )}
-                        autoComplete="new-password"
-                        onChange={handleInputChange}
+                        children={(field) => {
+                            return (
+                                <div className="flex flex-col gap-2">
+                                    <input
+                                        type="password"
+                                        className="form_input"
+                                        placeholder={t(
+                                            "registration.repeatPasswordInputPlaceholder"
+                                        )}
+                                        autoComplete="new-password"
+                                        value={field.state.value}
+                                        onChange={(event) =>
+                                            field.handleChange(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                    {field.state.meta.errors[0] && (
+                                        <FormError
+                                            message={
+                                                field.state.meta.errors[0]
+                                                    .message
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            );
+                        }}
                     />
                     <GoogleLogin
                         text="signup_with"
-                        width={260}
+                        width={340}
                         locale={i18n.language}
                         logo_alignment="center"
                         onSuccess={(response) => googleRegisterUser(response)}
@@ -112,7 +198,7 @@ function RouteComponent() {
                     <button
                         type="submit"
                         className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-extralight hover:bg-blue-600 transition-[background-color] ease-in-out duration-300"
-                        onClick={(event) => registerUser(event)}
+                        onClick={form.handleSubmit}
                         disabled={
                             registrationMutation.isPending ||
                             googleRegistrationMutation.isPending
@@ -122,7 +208,7 @@ function RouteComponent() {
                     </button>
                 </div>
             </form>
-            {error && <QueryError error={error} />}
+            {error && <FormError message={error} />}
         </div>
     );
 }

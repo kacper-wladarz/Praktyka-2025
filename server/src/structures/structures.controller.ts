@@ -6,10 +6,13 @@ import {
   Patch,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { StructuresService } from './structures.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('structures')
+@UseGuards(AuthGuard)
 export class StructuresController {
   private structuresService;
 

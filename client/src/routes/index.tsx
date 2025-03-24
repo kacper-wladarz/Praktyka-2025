@@ -2,13 +2,14 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import Loading from "@assets/Loading";
 import { useAuth } from "@contexts/AuthContext";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
 import { useLogin } from "@mutations/login";
-import Input from "@components/Input";
-import QueryError from "@components/QueryError";
 import { useGoogleLogin } from "@mutations/googleLogin";
 import Logged from "@components/Logged";
 import { useTranslation } from "react-i18next";
+import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
+import FormError from "@/components/FormError";
 
 export const Route = createFileRoute("/")({
     component: Index,
@@ -18,21 +19,29 @@ export const Route = createFileRoute("/")({
 function Index() {
     const auth = useAuth();
     const navigate = useNavigate();
-    const [data, setData] = useState<LoginData>({} as LoginData);
     const [error, setError] = useState<string | null>(null);
     const { t, i18n } = useTranslation();
     const loginMutation = useLogin();
     const googleLoginMutation = useGoogleLogin();
+    const userSchema = z.object({
+        login: z.string().email(t("login.validation.invalidLogin")),
+        password: z.string().min(8, t("login.validation.minPassword")),
+    });
+    const form = useForm({
+        defaultValues: {
+            login: "",
+            password: "",
+        },
+        validators: {
+            onChangeAsyncDebounceMs: 500,
+            onChangeAsync: userSchema,
+        },
+        onSubmit: ({ value }) => {
+            loginUser(value);
+        },
+    });
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setData((prev) => ({
-            ...prev,
-            [event.target.name]: event.target.value,
-        }));
-    };
-
-    const loginUser = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
+    const loginUser = (data: LoginData) => {
         loginMutation.mutate(data, {
             onSuccess: (res) => {
                 auth.login(res.data.jwt);
@@ -67,21 +76,72 @@ function Index() {
             <span className="text-4xl font-extralight tracking-wide">
                 {t("login.header")}
             </span>
-            <form className="text-xl font-extralight">
+            <form
+                className="text-xl font-extralight max-w-[260px]"
+                onSubmit={(e) => e.preventDefault()}
+            >
                 <div className="flex flex-col items-stretch gap-6">
-                    <Input
-                        type="text"
+                    <form.Field
                         name="login"
-                        placeholder={t("login.loginInputPlaceholder")}
-                        autoComplete="email"
-                        onChange={handleInputChange}
+                        children={(field) => {
+                            return (
+                                <div className="flex flex-col gap-2">
+                                    <input
+                                        type="text"
+                                        className="form_input"
+                                        placeholder={t(
+                                            "login.loginInputPlaceholder"
+                                        )}
+                                        value={field.state.value}
+                                        autoComplete="email"
+                                        onChange={(event) =>
+                                            field.handleChange(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                    {field.state.meta.errors[0] && (
+                                        <FormError
+                                            message={
+                                                field.state.meta.errors[0]
+                                                    .message
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            );
+                        }}
                     />
-                    <Input
-                        type="password"
+                    <form.Field
                         name="password"
-                        placeholder={t("login.passwordInputPlaceholder")}
-                        autoComplete="current-password"
-                        onChange={handleInputChange}
+                        children={(field) => {
+                            return (
+                                <div className="flex flex-col gap-2">
+                                    <input
+                                        type="password"
+                                        className="form_input"
+                                        placeholder={t(
+                                            "login.passwordInputPlaceholder"
+                                        )}
+                                        value={field.state.value}
+                                        autoComplete="current-password"
+                                        onChange={(event) =>
+                                            field.handleChange(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                    {field.state.meta.errors[0] && (
+                                        <FormError
+                                            message={
+                                                field.state.meta.errors[0]
+                                                    .message
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            );
+                        }}
                     />
                     <GoogleLogin
                         text="signin_with"
@@ -94,7 +154,7 @@ function Index() {
                     <button
                         type="submit"
                         className="p-2 bg-blue-500 text-white rounded-md cursor-pointer font-extralight hover:bg-blue-600 transition-[background-color] ease-in-out duration-300"
-                        onClick={(event) => loginUser(event)}
+                        onClick={form.handleSubmit}
                         disabled={
                             loginMutation.isPending ||
                             googleLoginMutation.isPending
@@ -102,7 +162,7 @@ function Index() {
                     >
                         {t("login.confirmButton")}
                     </button>
-                    {error && <QueryError error={error} />}
+                    {error && <FormError message={error} />}
                 </div>
             </form>
         </div>

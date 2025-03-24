@@ -3,6 +3,6 @@ import { api } from "../axios";
 
 export const useLogin = () => {
     return useMutation({
-        mutationFn: async (data: UserData) => api.post(`/user/login`, data),
+        mutationFn: async (data: LoginData) => api.post(`/user/login`, data),
     });
 };

@@ -16,13 +16,13 @@ export const Route = createFileRoute("/_chatLayout")({
 
 function RouteComponent() {
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-    const { isAuthenticated } = useAuth();
+    const auth = useAuth();
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!auth.isAuthenticated) {
             router.navigate({ to: "/" });
         }
-    }, [isAuthenticated]);
+    }, [auth.isAuthenticated]);
 
     return (
         <SidebarContextProvider props={{ isSidebarOpen, setIsSidebarOpen }}>

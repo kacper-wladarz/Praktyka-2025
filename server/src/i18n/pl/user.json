@@ -4,7 +4,6 @@
     "incorrectLoginCredentials": "Błędne dane logowania",
     "userExists": "Taki użytkownik już istnieje",
     "samePasswords": "Hasła muszą być takie same",
-    "userNotExists": "Taki użytkownik nie istnieje",
     "googleVerification": "Wystąpił błąd podczas weryfikacji Google",
     "authCodeRequired": "Wymagany jest kod autoryzacji",
     "registrationError": "Wystąpił błąd podczas rejestracji",

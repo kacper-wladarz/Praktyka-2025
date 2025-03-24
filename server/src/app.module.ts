@@ -1,20 +1,15 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { PrismaService } from './prisma/prisma.service';
 import { FoldersModule } from './folders/folders.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthMiddleware } from './auth/auth.middleware';
 import { ChatsModule } from './chats/chats.module';
 import { StructuresModule } from './structures/structures.module';
 import { ConfigModule } from '@nestjs/config';
-import {
-  AcceptLanguageResolver,
-  HeaderResolver,
-  I18nModule,
-  QueryResolver,
-} from 'nestjs-i18n';
+import { HeaderResolver, I18nModule } from 'nestjs-i18n';
+import { DashboardModule } from './dashboard/dashboard.module';
 import * as path from 'path';
 
 @Module({
@@ -33,21 +28,9 @@ import * as path from 'path';
       },
       resolvers: [new HeaderResolver(['x-lang'])],
     }),
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .forRoutes(
-        'auth',
-        'user/data',
-        'user/last-opened-chat',
-        'folders',
-        'chats',
-        'structures',
-      );
-  }
-}
+export class AppModule {}

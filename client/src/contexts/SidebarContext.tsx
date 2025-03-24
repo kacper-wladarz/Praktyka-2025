@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext } from "react";
 
-export const SidebarContext = createContext<SidebarContext | null>(null);
+const SidebarContext = createContext<SidebarContext | null>(null);
 
 interface Props {
     children: ReactNode;

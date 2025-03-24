@@ -38,19 +38,25 @@ interface SidebarContext {
     setIsSidebarOpen: React.Dispatch<SetStateAction<boolean>>;
 }
 
+interface DashboardContext {
+    isAdminAuth: boolean;
+    setIsAdminAuth: React.Dispatch<SetStateAction<boolean>>;
+}
+
+interface UserData {
+    login: string;
+    role: "USER" | "ADMIN";
+}
+
 interface LoginData {
     login: string;
     password: string;
 }
 
-interface UserData {
-    login: string;
-}
-
 interface RegistrationData {
     login: string;
     password: string;
-    repeatPassword: string;
+    repeatedPassword: string;
 }
 
 interface reqAuth {
@@ -101,4 +107,18 @@ interface ChatItem {
     id: string;
     name: string;
     type: "CHAT";
+}
+
+interface DashboardUser {
+    id: string;
+    login: string;
+    googleId: string;
+    createdAt: Date;
+    role: "USER" | "ADMIN";
+}
+
+interface DashboardUserToCreate{
+    login: string,
+    password: string
+    role: "USER" | "ADMIN"
 }

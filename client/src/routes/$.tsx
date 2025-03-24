@@ -4,9 +4,6 @@ export const Route = createFileRoute("/$")({
     beforeLoad: () => {
         throw redirect({
             to: "/not-found",
-            search: {
-                from: window.location.pathname,
-            },
         });
     },
 });

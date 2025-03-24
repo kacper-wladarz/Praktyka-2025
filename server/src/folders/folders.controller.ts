@@ -6,12 +6,15 @@ import {
   Param,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { NewRootFolderDTO } from './dtos/new-root-folder.dto';
 import { FoldersService } from './folders.service';
 import { NewFolderDTO } from './dtos/new-folder.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('folders')
+@UseGuards(AuthGuard)
 export class FoldersController {
   private foldersService;
 

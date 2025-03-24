@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `PIN` CHAR(4) NOT NULL DEFAULT '';

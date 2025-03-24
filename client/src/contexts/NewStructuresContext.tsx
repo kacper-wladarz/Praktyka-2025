@@ -1,8 +1,6 @@
 import { createContext, ReactNode, useContext } from "react";
 
-export const NewStructuresContext = createContext<NewStructuresContext | null>(
-    null
-);
+const NewStructuresContext = createContext<NewStructuresContext | null>(null);
 
 interface Props {
     children: ReactNode;

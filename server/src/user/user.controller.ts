@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginUserDto } from './dtos/login-user.dto';
@@ -14,6 +15,7 @@ import { RegisterUserDto } from './dtos/register-user.dto';
 import { GoogleLoginUserDto } from './dtos/google-login-user.dto';
 import { GoogleRegistrationAuth } from './dtos/google-registration-auth.dto';
 import { UpdateLastOpenedChatDTO } from './dtos/update-last-opened-chat.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -29,8 +31,9 @@ export class UserController {
   }
 
   @Get('data')
-  getUserData(@Req() req: Request) {
-    return { login: req['login'] };
+  @UseGuards(AuthGuard)
+  async getUserData(@Req() req: Request) {
+    return await this.userService.getUserData(req['user']);
   }
 
   @Post('registration')
@@ -63,11 +66,13 @@ export class UserController {
   }
 
   @Get('last-opened-chat')
+  @UseGuards(AuthGuard)
   async getLastOpenedChat(@Req() req: Request) {
     return await this.userService.getLastOpenedChat(req['user']);
   }
 
   @Put('last-opened-chat')
+  @UseGuards(AuthGuard)
   async pdateLastOpenedChat(
     @Req() req: Request,
     @Body() body: UpdateLastOpenedChatDTO,

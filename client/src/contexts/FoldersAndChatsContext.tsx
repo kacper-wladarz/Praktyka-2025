@@ -1,8 +1,6 @@
 import { createContext, ReactNode, useContext } from "react";
 
-export const FoldersAndChatsContext = createContext<FoldersAndChats | null>(
-    null
-);
+const FoldersAndChatsContext = createContext<FoldersAndChats | null>(null);
 
 interface Props {
     children: ReactNode;

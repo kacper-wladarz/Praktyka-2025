@@ -47,6 +47,18 @@ export class UserService {
     return payload;
   }
 
+  async getUserData(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(this.i18n.t('user.error.userNotFound'));
+    }
+
+    return { login: user.login, role: user.role };
+  }
+
   async loginUser(login: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { login } });
 
@@ -81,7 +93,7 @@ export class UserService {
     }
 
     if (password !== repeatedPassword) {
-      throw new BadRequestException(this.i18n.t('user.error.samePassword'));
+      throw new BadRequestException(this.i18n.t('user.error.samePasswords'));
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -111,7 +123,7 @@ export class UserService {
     });
 
     if (!user || user.googleId !== payload.sub) {
-      throw new NotFoundException(this.i18n.t('user.error.userNotExists'));
+      throw new NotFoundException(this.i18n.t('user.error.userNotFound'));
     }
 
     const jwt = this.generateJWT(user.id);

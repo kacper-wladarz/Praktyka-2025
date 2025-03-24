@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model User {
   id             String    @id @default(uuid())
   login          String    @unique
@@ -22,6 +27,9 @@ model User {
   confirmed      Boolean?
   createdAt      DateTime  @default(now())
   lastOpenedChat String?
+  role           Role      @default(USER)
+  PIN            String    @default("") @db.Char(4)
+  PINexpires     DateTime?
   folders        Folder[]
   chats          Chat[]
   messages       Message[]
