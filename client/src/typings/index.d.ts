@@ -43,6 +43,15 @@ interface DashboardContext {
     setIsAdminAuth: React.Dispatch<SetStateAction<boolean>>;
 }
 
+interface UserDataToUpdate {
+    id: string;
+    login: string;
+    password: string;
+    lastOpenedChat: string;
+    role: "ADMIN" | "USER";
+    PIN: string | null;
+}
+
 interface UserData {
     login: string;
     role: "USER" | "ADMIN";
@@ -117,8 +126,8 @@ interface DashboardUser {
     role: "USER" | "ADMIN";
 }
 
-interface DashboardUserToCreate{
-    login: string,
-    password: string
-    role: "USER" | "ADMIN"
+interface DashboardUserToCreate {
+    login: string;
+    password: string;
+    role: "USER" | "ADMIN";
 }

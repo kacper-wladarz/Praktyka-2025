@@ -1,0 +1,33 @@
+import Loading from "@/assets/Loading";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+
+export const Route = createFileRoute(
+    "/_dashboardLayout/dashboard/users/delete/success"
+)({
+    loader: ({ location }) => {
+        if (!location.state?.allow) {
+            return redirect({ to: location.state?.from || "/dashboard/users" });
+        }
+    },
+    component: RouteComponent,
+    pendingComponent: () => <Loading />,
+});
+
+function RouteComponent() {
+    const { t } = useTranslation();
+
+    return (
+        <div className="appear flex-1 flex flex-col justify-center items-center gap-6 text-xl">
+            <span className="text-center">
+                {t("dashboard.panels.users.delete.success")}
+            </span>
+            <Link
+                to="/dashboard/users"
+                className="text-center cursor pointer text-sky-400 hover:text-sky-600 transition-[color] duration-300 ease-in-out"
+            >
+                {t("dashboard.panels.users.delete.successLink")}
+            </Link>
+        </div>
+    );
+}

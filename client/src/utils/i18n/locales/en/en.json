@@ -65,5 +65,46 @@
         "newFolderPlaceholder": "Folder name",
         "newChatPlaceholder": "Chat name",
         "rootArea": "Main folder"
+    },
+    "dashboard": {
+        "PINPad": {
+            "enterCode": "Enter code"
+        },
+        "panels": {
+            "stats": {
+                "name": "Stats"
+            },
+            "users": {
+                "name": "Users",
+                "title": "Users",
+                "createUser": "Create",
+                "create": {
+                    "title": "Create user",
+                    "loginPlaceholder": "Email",
+                    "passwordPlaceholder": "Password",
+                    "roleOptions": {
+                        "user": "User",
+                        "admin": "Admin"
+                    },
+                    "createButton": "Create"
+                },
+                "delete": {
+                    "title": "Delete user",
+                    "deleteBtn": "Delete",
+                    "success": "User successfully deleted",
+                    "successLink": "Return to users"
+                },
+                "update": {
+                    "title": "Edit user",
+                    "updateBtn": "Save"
+                }
+            },
+            "ai": {
+                "name": "AI"
+            },
+            "settings": {
+                "name": "Settings"
+            }
+        }
     }
 }

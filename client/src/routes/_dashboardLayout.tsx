@@ -49,7 +49,7 @@ function RouteComponent() {
     return (
         <DashboardContextProvider props={{ isAdminAuth, setIsAdminAuth }}>
             <div className="appear flex h-full relative">
-                {!isPending && !isAdminAuth && <PINPad />}
+                {!isPending && !isAdminAuth ? <PINPad /> : null}
                 <div
                     className={`flex h-full w-full ${isAdminAuth ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"} transition-opacity duration-300 ease-in-out`}
                 >
@@ -57,7 +57,7 @@ function RouteComponent() {
                         <DashboardSidebar />
                     </div>
                     {isAdminAuth ? (
-                        <div className="flex-1 h-full bg-zinc-900 overflow-auto p-8">
+                        <div className="flex-1 flex flex-col h-full bg-zinc-900 overflow-auto p-8">
                             <Outlet />
                         </div>
                     ) : null}

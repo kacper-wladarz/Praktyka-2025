@@ -17,6 +17,6 @@
     "minPasswordLength": "Hasło musi mieć conajmniej 8 znaków",
     "incorrectLoginCredentials": "Błędne dane logowania",
     "registrationError": "Wystąpił błąd podczas rejestracji",
-    "loginError": "Wystąpił błąd podcazs logowania"
+    "loginError": "Wystąpił błąd podczas logowania"
   }
 }

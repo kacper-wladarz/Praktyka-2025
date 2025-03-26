@@ -25,12 +25,15 @@ import { Route as RegistrationCancelImport } from './routes/registration/cancel'
 import { Route as LoginSuccessImport } from './routes/login/success'
 import { Route as DashboardLayoutDashboardIndexImport } from './routes/_dashboardLayout/dashboard/index'
 import { Route as ChatLayoutChatIndexImport } from './routes/_chatLayout/chat/index'
-import { Route as DashboardLayoutDashboardUsersImport } from './routes/_dashboardLayout/dashboard/users'
 import { Route as DashboardLayoutDashboardStatsImport } from './routes/_dashboardLayout/dashboard/stats'
 import { Route as DashboardLayoutDashboardSettingsImport } from './routes/_dashboardLayout/dashboard/settings'
-import { Route as DashboardLayoutDashboardCreateImport } from './routes/_dashboardLayout/dashboard/create'
 import { Route as DashboardLayoutDashboardAiImport } from './routes/_dashboardLayout/dashboard/ai'
 import { Route as ChatLayoutChatIdImport } from './routes/_chatLayout/chat/$id'
+import { Route as DashboardLayoutDashboardUsersIndexImport } from './routes/_dashboardLayout/dashboard/users/index'
+import { Route as DashboardLayoutDashboardUsersCreateImport } from './routes/_dashboardLayout/dashboard/users/create'
+import { Route as DashboardLayoutDashboardUsersUpdateIdImport } from './routes/_dashboardLayout/dashboard/users/update/$id'
+import { Route as DashboardLayoutDashboardUsersDeleteSuccessImport } from './routes/_dashboardLayout/dashboard/users/delete/success'
+import { Route as DashboardLayoutDashboardUsersDeleteIdImport } from './routes/_dashboardLayout/dashboard/users/delete/$id'
 
 // Create/Update Routes
 
@@ -117,13 +120,6 @@ const ChatLayoutChatIndexRoute = ChatLayoutChatIndexImport.update({
   getParentRoute: () => ChatLayoutRoute,
 } as any)
 
-const DashboardLayoutDashboardUsersRoute =
-  DashboardLayoutDashboardUsersImport.update({
-    id: '/dashboard/users',
-    path: '/dashboard/users',
-    getParentRoute: () => DashboardLayoutRoute,
-  } as any)
-
 const DashboardLayoutDashboardStatsRoute =
   DashboardLayoutDashboardStatsImport.update({
     id: '/dashboard/stats',
@@ -135,13 +131,6 @@ const DashboardLayoutDashboardSettingsRoute =
   DashboardLayoutDashboardSettingsImport.update({
     id: '/dashboard/settings',
     path: '/dashboard/settings',
-    getParentRoute: () => DashboardLayoutRoute,
-  } as any)
-
-const DashboardLayoutDashboardCreateRoute =
-  DashboardLayoutDashboardCreateImport.update({
-    id: '/dashboard/create',
-    path: '/dashboard/create',
     getParentRoute: () => DashboardLayoutRoute,
   } as any)
 
@@ -158,6 +147,41 @@ const ChatLayoutChatIdRoute = ChatLayoutChatIdImport.update({
   path: '/chat/$id',
   getParentRoute: () => ChatLayoutRoute,
 } as any)
+
+const DashboardLayoutDashboardUsersIndexRoute =
+  DashboardLayoutDashboardUsersIndexImport.update({
+    id: '/dashboard/users/',
+    path: '/dashboard/users/',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardUsersCreateRoute =
+  DashboardLayoutDashboardUsersCreateImport.update({
+    id: '/dashboard/users/create',
+    path: '/dashboard/users/create',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardUsersUpdateIdRoute =
+  DashboardLayoutDashboardUsersUpdateIdImport.update({
+    id: '/dashboard/users/update/$id',
+    path: '/dashboard/users/update/$id',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardUsersDeleteSuccessRoute =
+  DashboardLayoutDashboardUsersDeleteSuccessImport.update({
+    id: '/dashboard/users/delete/success',
+    path: '/dashboard/users/delete/success',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
+
+const DashboardLayoutDashboardUsersDeleteIdRoute =
+  DashboardLayoutDashboardUsersDeleteIdImport.update({
+    id: '/dashboard/users/delete/$id',
+    path: '/dashboard/users/delete/$id',
+    getParentRoute: () => DashboardLayoutRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -261,13 +285,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLayoutDashboardAiImport
       parentRoute: typeof DashboardLayoutImport
     }
-    '/_dashboardLayout/dashboard/create': {
-      id: '/_dashboardLayout/dashboard/create'
-      path: '/dashboard/create'
-      fullPath: '/dashboard/create'
-      preLoaderRoute: typeof DashboardLayoutDashboardCreateImport
-      parentRoute: typeof DashboardLayoutImport
-    }
     '/_dashboardLayout/dashboard/settings': {
       id: '/_dashboardLayout/dashboard/settings'
       path: '/dashboard/settings'
@@ -282,13 +299,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLayoutDashboardStatsImport
       parentRoute: typeof DashboardLayoutImport
     }
-    '/_dashboardLayout/dashboard/users': {
-      id: '/_dashboardLayout/dashboard/users'
-      path: '/dashboard/users'
-      fullPath: '/dashboard/users'
-      preLoaderRoute: typeof DashboardLayoutDashboardUsersImport
-      parentRoute: typeof DashboardLayoutImport
-    }
     '/_chatLayout/chat/': {
       id: '/_chatLayout/chat/'
       path: '/chat'
@@ -301,6 +311,41 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardLayoutDashboardIndexImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/users/create': {
+      id: '/_dashboardLayout/dashboard/users/create'
+      path: '/dashboard/users/create'
+      fullPath: '/dashboard/users/create'
+      preLoaderRoute: typeof DashboardLayoutDashboardUsersCreateImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/users/': {
+      id: '/_dashboardLayout/dashboard/users/'
+      path: '/dashboard/users'
+      fullPath: '/dashboard/users'
+      preLoaderRoute: typeof DashboardLayoutDashboardUsersIndexImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/users/delete/$id': {
+      id: '/_dashboardLayout/dashboard/users/delete/$id'
+      path: '/dashboard/users/delete/$id'
+      fullPath: '/dashboard/users/delete/$id'
+      preLoaderRoute: typeof DashboardLayoutDashboardUsersDeleteIdImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/users/delete/success': {
+      id: '/_dashboardLayout/dashboard/users/delete/success'
+      path: '/dashboard/users/delete/success'
+      fullPath: '/dashboard/users/delete/success'
+      preLoaderRoute: typeof DashboardLayoutDashboardUsersDeleteSuccessImport
+      parentRoute: typeof DashboardLayoutImport
+    }
+    '/_dashboardLayout/dashboard/users/update/$id': {
+      id: '/_dashboardLayout/dashboard/users/update/$id'
+      path: '/dashboard/users/update/$id'
+      fullPath: '/dashboard/users/update/$id'
+      preLoaderRoute: typeof DashboardLayoutDashboardUsersUpdateIdImport
       parentRoute: typeof DashboardLayoutImport
     }
   }
@@ -324,20 +369,31 @@ const ChatLayoutRouteWithChildren = ChatLayoutRoute._addFileChildren(
 
 interface DashboardLayoutRouteChildren {
   DashboardLayoutDashboardAiRoute: typeof DashboardLayoutDashboardAiRoute
-  DashboardLayoutDashboardCreateRoute: typeof DashboardLayoutDashboardCreateRoute
   DashboardLayoutDashboardSettingsRoute: typeof DashboardLayoutDashboardSettingsRoute
   DashboardLayoutDashboardStatsRoute: typeof DashboardLayoutDashboardStatsRoute
-  DashboardLayoutDashboardUsersRoute: typeof DashboardLayoutDashboardUsersRoute
   DashboardLayoutDashboardIndexRoute: typeof DashboardLayoutDashboardIndexRoute
+  DashboardLayoutDashboardUsersCreateRoute: typeof DashboardLayoutDashboardUsersCreateRoute
+  DashboardLayoutDashboardUsersIndexRoute: typeof DashboardLayoutDashboardUsersIndexRoute
+  DashboardLayoutDashboardUsersDeleteIdRoute: typeof DashboardLayoutDashboardUsersDeleteIdRoute
+  DashboardLayoutDashboardUsersDeleteSuccessRoute: typeof DashboardLayoutDashboardUsersDeleteSuccessRoute
+  DashboardLayoutDashboardUsersUpdateIdRoute: typeof DashboardLayoutDashboardUsersUpdateIdRoute
 }
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardLayoutDashboardAiRoute: DashboardLayoutDashboardAiRoute,
-  DashboardLayoutDashboardCreateRoute: DashboardLayoutDashboardCreateRoute,
   DashboardLayoutDashboardSettingsRoute: DashboardLayoutDashboardSettingsRoute,
   DashboardLayoutDashboardStatsRoute: DashboardLayoutDashboardStatsRoute,
-  DashboardLayoutDashboardUsersRoute: DashboardLayoutDashboardUsersRoute,
   DashboardLayoutDashboardIndexRoute: DashboardLayoutDashboardIndexRoute,
+  DashboardLayoutDashboardUsersCreateRoute:
+    DashboardLayoutDashboardUsersCreateRoute,
+  DashboardLayoutDashboardUsersIndexRoute:
+    DashboardLayoutDashboardUsersIndexRoute,
+  DashboardLayoutDashboardUsersDeleteIdRoute:
+    DashboardLayoutDashboardUsersDeleteIdRoute,
+  DashboardLayoutDashboardUsersDeleteSuccessRoute:
+    DashboardLayoutDashboardUsersDeleteSuccessRoute,
+  DashboardLayoutDashboardUsersUpdateIdRoute:
+    DashboardLayoutDashboardUsersUpdateIdRoute,
 }
 
 const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
@@ -358,12 +414,15 @@ export interface FileRoutesByFullPath {
   '/registration': typeof RegistrationIndexRoute
   '/chat/$id': typeof ChatLayoutChatIdRoute
   '/dashboard/ai': typeof DashboardLayoutDashboardAiRoute
-  '/dashboard/create': typeof DashboardLayoutDashboardCreateRoute
   '/dashboard/settings': typeof DashboardLayoutDashboardSettingsRoute
   '/dashboard/stats': typeof DashboardLayoutDashboardStatsRoute
-  '/dashboard/users': typeof DashboardLayoutDashboardUsersRoute
   '/chat': typeof ChatLayoutChatIndexRoute
   '/dashboard': typeof DashboardLayoutDashboardIndexRoute
+  '/dashboard/users/create': typeof DashboardLayoutDashboardUsersCreateRoute
+  '/dashboard/users': typeof DashboardLayoutDashboardUsersIndexRoute
+  '/dashboard/users/delete/$id': typeof DashboardLayoutDashboardUsersDeleteIdRoute
+  '/dashboard/users/delete/success': typeof DashboardLayoutDashboardUsersDeleteSuccessRoute
+  '/dashboard/users/update/$id': typeof DashboardLayoutDashboardUsersUpdateIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -380,12 +439,15 @@ export interface FileRoutesByTo {
   '/registration': typeof RegistrationIndexRoute
   '/chat/$id': typeof ChatLayoutChatIdRoute
   '/dashboard/ai': typeof DashboardLayoutDashboardAiRoute
-  '/dashboard/create': typeof DashboardLayoutDashboardCreateRoute
   '/dashboard/settings': typeof DashboardLayoutDashboardSettingsRoute
   '/dashboard/stats': typeof DashboardLayoutDashboardStatsRoute
-  '/dashboard/users': typeof DashboardLayoutDashboardUsersRoute
   '/chat': typeof ChatLayoutChatIndexRoute
   '/dashboard': typeof DashboardLayoutDashboardIndexRoute
+  '/dashboard/users/create': typeof DashboardLayoutDashboardUsersCreateRoute
+  '/dashboard/users': typeof DashboardLayoutDashboardUsersIndexRoute
+  '/dashboard/users/delete/$id': typeof DashboardLayoutDashboardUsersDeleteIdRoute
+  '/dashboard/users/delete/success': typeof DashboardLayoutDashboardUsersDeleteSuccessRoute
+  '/dashboard/users/update/$id': typeof DashboardLayoutDashboardUsersUpdateIdRoute
 }
 
 export interface FileRoutesById {
@@ -404,12 +466,15 @@ export interface FileRoutesById {
   '/registration/': typeof RegistrationIndexRoute
   '/_chatLayout/chat/$id': typeof ChatLayoutChatIdRoute
   '/_dashboardLayout/dashboard/ai': typeof DashboardLayoutDashboardAiRoute
-  '/_dashboardLayout/dashboard/create': typeof DashboardLayoutDashboardCreateRoute
   '/_dashboardLayout/dashboard/settings': typeof DashboardLayoutDashboardSettingsRoute
   '/_dashboardLayout/dashboard/stats': typeof DashboardLayoutDashboardStatsRoute
-  '/_dashboardLayout/dashboard/users': typeof DashboardLayoutDashboardUsersRoute
   '/_chatLayout/chat/': typeof ChatLayoutChatIndexRoute
   '/_dashboardLayout/dashboard/': typeof DashboardLayoutDashboardIndexRoute
+  '/_dashboardLayout/dashboard/users/create': typeof DashboardLayoutDashboardUsersCreateRoute
+  '/_dashboardLayout/dashboard/users/': typeof DashboardLayoutDashboardUsersIndexRoute
+  '/_dashboardLayout/dashboard/users/delete/$id': typeof DashboardLayoutDashboardUsersDeleteIdRoute
+  '/_dashboardLayout/dashboard/users/delete/success': typeof DashboardLayoutDashboardUsersDeleteSuccessRoute
+  '/_dashboardLayout/dashboard/users/update/$id': typeof DashboardLayoutDashboardUsersUpdateIdRoute
 }
 
 export interface FileRouteTypes {
@@ -428,12 +493,15 @@ export interface FileRouteTypes {
     | '/registration'
     | '/chat/$id'
     | '/dashboard/ai'
-    | '/dashboard/create'
     | '/dashboard/settings'
     | '/dashboard/stats'
-    | '/dashboard/users'
     | '/chat'
     | '/dashboard'
+    | '/dashboard/users/create'
+    | '/dashboard/users'
+    | '/dashboard/users/delete/$id'
+    | '/dashboard/users/delete/success'
+    | '/dashboard/users/update/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -449,12 +517,15 @@ export interface FileRouteTypes {
     | '/registration'
     | '/chat/$id'
     | '/dashboard/ai'
-    | '/dashboard/create'
     | '/dashboard/settings'
     | '/dashboard/stats'
-    | '/dashboard/users'
     | '/chat'
     | '/dashboard'
+    | '/dashboard/users/create'
+    | '/dashboard/users'
+    | '/dashboard/users/delete/$id'
+    | '/dashboard/users/delete/success'
+    | '/dashboard/users/update/$id'
   id:
     | '__root__'
     | '/'
@@ -471,12 +542,15 @@ export interface FileRouteTypes {
     | '/registration/'
     | '/_chatLayout/chat/$id'
     | '/_dashboardLayout/dashboard/ai'
-    | '/_dashboardLayout/dashboard/create'
     | '/_dashboardLayout/dashboard/settings'
     | '/_dashboardLayout/dashboard/stats'
-    | '/_dashboardLayout/dashboard/users'
     | '/_chatLayout/chat/'
     | '/_dashboardLayout/dashboard/'
+    | '/_dashboardLayout/dashboard/users/create'
+    | '/_dashboardLayout/dashboard/users/'
+    | '/_dashboardLayout/dashboard/users/delete/$id'
+    | '/_dashboardLayout/dashboard/users/delete/success'
+    | '/_dashboardLayout/dashboard/users/update/$id'
   fileRoutesById: FileRoutesById
 }
 
@@ -551,11 +625,14 @@ export const routeTree = rootRoute
       "filePath": "_dashboardLayout.tsx",
       "children": [
         "/_dashboardLayout/dashboard/ai",
-        "/_dashboardLayout/dashboard/create",
         "/_dashboardLayout/dashboard/settings",
         "/_dashboardLayout/dashboard/stats",
-        "/_dashboardLayout/dashboard/users",
-        "/_dashboardLayout/dashboard/"
+        "/_dashboardLayout/dashboard/",
+        "/_dashboardLayout/dashboard/users/create",
+        "/_dashboardLayout/dashboard/users/",
+        "/_dashboardLayout/dashboard/users/delete/$id",
+        "/_dashboardLayout/dashboard/users/delete/success",
+        "/_dashboardLayout/dashboard/users/update/$id"
       ]
     },
     "/not-found": {
@@ -590,10 +667,6 @@ export const routeTree = rootRoute
       "filePath": "_dashboardLayout/dashboard/ai.tsx",
       "parent": "/_dashboardLayout"
     },
-    "/_dashboardLayout/dashboard/create": {
-      "filePath": "_dashboardLayout/dashboard/create.tsx",
-      "parent": "/_dashboardLayout"
-    },
     "/_dashboardLayout/dashboard/settings": {
       "filePath": "_dashboardLayout/dashboard/settings.tsx",
       "parent": "/_dashboardLayout"
@@ -602,16 +675,32 @@ export const routeTree = rootRoute
       "filePath": "_dashboardLayout/dashboard/stats.tsx",
       "parent": "/_dashboardLayout"
     },
-    "/_dashboardLayout/dashboard/users": {
-      "filePath": "_dashboardLayout/dashboard/users.tsx",
-      "parent": "/_dashboardLayout"
-    },
     "/_chatLayout/chat/": {
       "filePath": "_chatLayout/chat/index.tsx",
       "parent": "/_chatLayout"
     },
     "/_dashboardLayout/dashboard/": {
       "filePath": "_dashboardLayout/dashboard/index.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/users/create": {
+      "filePath": "_dashboardLayout/dashboard/users/create.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/users/": {
+      "filePath": "_dashboardLayout/dashboard/users/index.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/users/delete/$id": {
+      "filePath": "_dashboardLayout/dashboard/users/delete/$id.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/users/delete/success": {
+      "filePath": "_dashboardLayout/dashboard/users/delete/success.tsx",
+      "parent": "/_dashboardLayout"
+    },
+    "/_dashboardLayout/dashboard/users/update/$id": {
+      "filePath": "_dashboardLayout/dashboard/users/update/$id.tsx",
       "parent": "/_dashboardLayout"
     }
   }

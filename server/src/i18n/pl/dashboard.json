@@ -1,5 +1,17 @@
 {
   "error": {
-    "adminNotAuth": "Brak dostępu do panelu"
+    "adminNotAuth": "Brak dostępu do panelu",
+    "userExists": "Taki użytkownik już istnieje",
+    "unexpectedError": "Wystąpił nieoczekiwany błąd",
+    "userNotExist": "Użytkownik nie istnieje"
+  },
+  "DTO": {
+    "newUserInvalidData": "Niepoprawne dane",
+    "newUserIncorrectRole": "Niepoprawna rola",
+    "updateBadLogin": "Niepoprawny login",
+    "updateBadRole": "Niepoprawna rola",
+    "updateMinLengthPIN": "PIN musi składać się z 4 cyfr",
+    "updatePasswordMinLength": "Hasło musi mieć conajmniej 8 znaków",
+    "PINLength": "PIN musi mieć 4 znaki"
   }
 }

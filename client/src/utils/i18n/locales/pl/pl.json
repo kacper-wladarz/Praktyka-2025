@@ -65,5 +65,46 @@
         "newFolderPlaceholder": "Nazwa folderu",
         "newChatPlaceholder": "Nazwa czatu",
         "rootArea": "Główny folder"
+    },
+    "dashboard": {
+        "PINPad": {
+            "enterCode": "Wpisz kod"
+        },
+        "panels": {
+            "stats": {
+                "name": "Statystyki"
+            },
+            "users": {
+                "name": "Użytkownicy",
+                "title": "Użytkownicy",
+                "createUser": "Stwórz",
+                "create": {
+                    "title": "Stwórz użytkownika",
+                    "loginPlaceholder": "Email",
+                    "passwordPlaceholder": "Hasło",
+                    "roleOptions": {
+                        "user": "Użytkownik",
+                        "admin": "Admin"
+                    },
+                    "createBtn": "Stwórz"
+                },
+                "delete": {
+                    "title": "Usuń użytkownika",
+                    "deleteBtn": "Usuń",
+                    "success": "Pomyślnie usunięto użytkownika",
+                    "successLink": "Wróć do użytkowników"
+                },
+                "update": {
+                    "title": "Edytuj użytkownika",
+                    "updateBtn": "Zapisz"
+                }
+            },
+            "ai": {
+                "name": "AI"
+            },
+            "settings": {
+                "name": "Ustawienia"
+            }
+        }
     }
 }

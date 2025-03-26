@@ -1,5 +1,15 @@
 {
   "error": {
-    "adminNotAuth": "No access to the panel"
+    "adminNotAuth": "No access to the panel",
+    "userExists": "Such a user already exists",
+    "unexpectedError": "An unexpected error occurred",
+    "userNotExist": "The user does not exist"
+  },
+  "DTO": {
+    "newUserInvalidData": "Invalid data",
+    "newUserIncorrectRole": "Incorrect role",
+    "updateBadLogin": "Invalid login",
+    "updateBadRole": "Invalid role",
+    "updateMinLengthPIN": "PIN must consist of 4 digits"
   }
 }
