@@ -9,13 +9,19 @@ import { I18nService } from 'nestjs-i18n';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdatedUserDTO } from './dtos/updated-user.dto';
+import { ConfigService } from '@nestjs/config';
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 
 @Injectable()
 export class DashboardService {
+  private isServerToReset: boolean = false;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly i18n: I18nService,
+    private readonly configService: ConfigService,
   ) {}
 
   formatUser(user) {
@@ -135,8 +141,6 @@ export class DashboardService {
       );
     }
 
-    console.log(finalPassword, user);
-
     try {
       await this.prisma.user.update({
         where: { id },
@@ -150,11 +154,40 @@ export class DashboardService {
         },
       });
     } catch (error) {
-      console.error('BŁĄD::::::', error);
       throw new BadRequestException(
         this.i18n.t('dashboard.error.unexpectedError'),
       );
     }
     return;
+  }
+
+  async getSettings(adminId: string) {
+    await this.isAdminAuth(adminId);
+    return {
+      settings: dotenv.parse(fs.readFileSync('.env', 'utf8')),
+      toReset: this.isServerToReset,
+    };
+  }
+
+  async updateSettings(settings: Record<string, string>, adminId: string) {
+    await this.isAdminAuth(adminId);
+
+    const content = Object.entries(settings)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('\n');
+
+    fs.writeFileSync('.env', content);
+    this.isServerToReset = true;
+    return;
+  }
+
+  async getStats(adminId: string) {
+    await this.isAdminAuth(adminId);
+    const users = await this.prisma.user.count({ where: { role: 'USER' } });
+    const admins = await this.prisma.user.count({ where: { role: 'ADMIN' } });
+    const folders = await this.prisma.folder.count();
+    const chats = await this.prisma.chat.count();
+    const messages = await this.prisma.message.count();
+    return { users, admins, folders, chats, messages };
   }
 }

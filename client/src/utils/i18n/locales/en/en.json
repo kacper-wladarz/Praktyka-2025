@@ -1,52 +1,52 @@
 {
     "navbar": {
-        "login": "Log in",
-        "registration": "Registration",
+        "login": "Login",
+        "registration": "Register",
         "profile": {
             "chat": "Chat",
             "dashboard": "Dashboard",
-            "logout": "Log out"
+            "logout": "Logout"
         }
     },
     "login": {
         "header": "Login",
-        "loginInputPlaceholder": "Login",
+        "loginInputPlaceholder": "Username",
         "passwordInputPlaceholder": "Password",
         "confirmButton": "Log in",
         "success": {
-            "text": "You have successfully logged in",
+            "text": "Successfully logged in",
             "link": "Go to chat"
         },
         "googleError": "An error occurred while logging in with Google",
         "validation": {
-            "invalidLogin": "Invalid login",
+            "invalidLogin": "Invalid username",
             "minPassword": "Password must be at least 8 characters long"
         }
     },
     "logout": {
         "text": "Logged out",
-        "link": "Back to login"
+        "link": "Return to login"
     },
     "registration": {
-        "header": "Registration",
-        "loginInputPlaceholder": "Login",
+        "header": "Register",
+        "loginInputPlaceholder": "Username",
         "passwordInputPlaceholder": "Password",
         "repeatPasswordInputPlaceholder": "Repeat password",
-        "confirmButton": "Register",
+        "confirmButton": "Sign up",
         "success": {
-            "text": "Account created successfully",
-            "link": "Go to chat"
+            "text": "Account successfully created",
+            "link": "Go to the homepage"
         },
         "confirm": {
             "cancelButton": "Cancel",
-            "confirmButton": "Create an account"
+            "confirmButton": "Create account"
         },
         "cancel": {
             "text": "Go back to registration"
         },
-        "googleError": "An error occured while signing up with Google",
+        "googleError": "An error occurred while registering with Google",
         "validation": {
-            "invalidLogin": "Invalid login",
+            "invalidLogin": "Invalid username",
             "minPassword": "Password must be at least 8 characters long",
             "minRepeatedPassword": "Password must be at least 8 characters long"
         }
@@ -54,7 +54,7 @@
     "chat": {
         "sidebar": {},
         "closeButton": "Close",
-        "startConversation": "Start a conversation",
+        "startConversation": "Start conversation",
         "selectChat": "Select the chat you want to open",
         "chatInputPlaceholder": "Ask..."
     },
@@ -72,7 +72,18 @@
         },
         "panels": {
             "stats": {
-                "name": "Stats"
+                "name": "Statistics",
+                "title": "Statistics",
+                "users_one": "user",
+                "users_other": "users",
+                "admins_one": "admin",
+                "admins_other": "admins",
+                "folders_one": "folder",
+                "folders_other": "folders",
+                "chats_one": "chat",
+                "chats_other": "chats",
+                "messages_one": "message",
+                "messages_other": "messages"
             },
             "users": {
                 "name": "Users",
@@ -86,7 +97,7 @@
                         "user": "User",
                         "admin": "Admin"
                     },
-                    "createButton": "Create"
+                    "createBtn": "Create"
                 },
                 "delete": {
                     "title": "Delete user",
@@ -99,11 +110,13 @@
                     "updateBtn": "Save"
                 }
             },
-            "ai": {
-                "name": "AI"
-            },
             "settings": {
-                "name": "Settings"
+                "name": "Settings",
+                "title": "Settings",
+                "saveBtn": "Save",
+                "success": "Configuration file successfully updated",
+                "successLink": "Return to settings",
+                "serverToReset": "Server needs to be restarted"
             }
         }
     }

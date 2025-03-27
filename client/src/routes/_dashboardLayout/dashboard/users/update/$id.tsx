@@ -1,6 +1,7 @@
 import { useUpdateUser } from "@/api/mutations/updateuser";
 import { useUserToUpdate } from "@/api/queries/getUserToUpdate";
 import { router } from "@/App";
+import Loading from "@/assets/Loading";
 import FormError from "@/components/FormError";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
     const { id } = Route.useParams();
     const { t } = useTranslation();
-    const { data } = useUserToUpdate(id);
+    const { data, isPending } = useUserToUpdate(id);
     const updateUser = useUpdateUser();
     const [user, setUser] = useState<UserDataToUpdate | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,6 @@ function RouteComponent() {
                 {
                     onSuccess: () => {
                         setError(null);
-
                         router.navigate({ to: "/dashboard/users" });
                     },
                     onError: (error) => {
@@ -45,6 +45,10 @@ function RouteComponent() {
             );
         }
     };
+
+    if (isPending) {
+        return <Loading />;
+    }
 
     return (
         <div className="appear flex flex-col gap-8">

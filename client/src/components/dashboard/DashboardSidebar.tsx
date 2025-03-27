@@ -12,7 +12,6 @@ const DashboardSidebar = () => {
     const panels = [
         { name: t("dashboard.panels.stats.name"), link: "" },
         { name: t("dashboard.panels.users.name"), link: "/users" },
-        { name: t("dashboard.panels.ai.name"), link: "/ai" },
         { name: t("dashboard.panels.settings.name"), link: "/settings" },
     ];
     const path = Route.useLoaderData().replace("/dashboard", "");
@@ -42,7 +41,7 @@ const DashboardSidebar = () => {
                         onClick={() =>
                             router.navigate({ to: `/dashboard${panel.link}` })
                         }
-                        className={`z-10 px-5 py-2 w-full bg-transparent text-left cursor-pointer 
+                        className={`z-10 px-5 py-3 w-full text-2xl bg-transparent text-left cursor-pointer 
                         hover:translate-x-0.5 transition-transform duration-300 ease-in-out relative`}
                     >
                         {panel.name}

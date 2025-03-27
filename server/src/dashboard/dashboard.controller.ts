@@ -57,4 +57,25 @@ export class DashboardController {
   ) {
     return await this.dashboardService.updateUser(id, body, req['user']);
   }
+
+  @Get('settings')
+  async getSettings(@Req() req: Request) {
+    return await this.dashboardService.getSettings(req['user']);
+  }
+
+  @Put('settings')
+  async updateSettings(
+    @Req() req: Request,
+    @Body() body: { settings: Record<string, string> },
+  ) {
+    return await this.dashboardService.updateSettings(
+      body.settings,
+      req['user'],
+    );
+  }
+
+  @Get('stats')
+  async getStats(@Req() req: Request) {
+    return this.dashboardService.getStats(req['user']);
+  }
 }

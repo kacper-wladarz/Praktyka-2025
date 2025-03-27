@@ -72,7 +72,23 @@
         },
         "panels": {
             "stats": {
-                "name": "Statystyki"
+                "name": "Statystyki",
+                "title": "Statystyki",
+                "users_one": "użytkownik",
+                "users_few": "użytkownicy",
+                "users_many": "użytkowników",
+                "admins_one": "admin",
+                "admins_few": "admini",
+                "admins_many": "adminów",
+                "folders_one": "folder",
+                "folders_few": "foldery",
+                "folders_many": "folderów",
+                "chats_one": "czat",
+                "chats_few": "czaty",
+                "chats_many": "czatów",
+                "messages_one": "wiadomość",
+                "messages_few": "wiadomości",
+                "messages_many": "wiadomości"
             },
             "users": {
                 "name": "Użytkownicy",
@@ -99,11 +115,13 @@
                     "updateBtn": "Zapisz"
                 }
             },
-            "ai": {
-                "name": "AI"
-            },
             "settings": {
-                "name": "Ustawienia"
+                "name": "Ustawienia",
+                "title": "Ustawienia",
+                "saveBtn": "Zapisz",
+                "success": "Pomyślnie nadpisano plik konfiguracyjny",
+                "successLink": "Wróć do ustawienień",
+                "serverToReset": "Należy zresetować serwer"
             }
         }
     }

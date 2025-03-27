@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { router } from "../App";
-import ChatIcon from "@assets/ChatIcon";
+import MenuChatIcon from "@assets/MenuChatIcon";
 import LogoutIcon from "@assets/LogoutIcon";
 import { useAuth } from "@contexts/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -73,7 +73,7 @@ const Profile = () => {
                             className="profile_option"
                             onClick={() => handleChatClick()}
                         >
-                            <ChatIcon />
+                            <MenuChatIcon />
                             <span>{t("navbar.profile.chat")}</span>
                         </button>
                         {auth.user?.role === "ADMIN" && (
