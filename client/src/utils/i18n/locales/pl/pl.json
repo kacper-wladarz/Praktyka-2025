@@ -88,7 +88,11 @@
                 "chats_many": "czatów",
                 "messages_one": "wiadomość",
                 "messages_few": "wiadomości",
-                "messages_many": "wiadomości"
+                "messages_many": "wiadomości",
+                "customTooltip": {
+                    "date": "Data",
+                    "count": "Ilość"
+                }
             },
             "users": {
                 "name": "Użytkownicy",

@@ -40,9 +40,19 @@ export class DashboardService {
     }
   }
 
-  async getUsers(adminId: string) {
+  async getUsers(
+    adminId: string,
+    login: string,
+    role: 'ADMIN' | 'USER' | 'ALL',
+  ) {
     await this.isAdminAuth(adminId);
     const users = await this.prisma.user.findMany({
+      where: {
+        login: {
+          contains: login !== '' ? login : undefined,
+        },
+        role: role === 'ALL' ? undefined : role,
+      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -188,6 +198,29 @@ export class DashboardService {
     const folders = await this.prisma.folder.count();
     const chats = await this.prisma.chat.count();
     const messages = await this.prisma.message.count();
-    return { users, admins, folders, chats, messages };
+    const usersInTime = await this.prisma.user.findMany({
+      select: { id: true, createdAt: true },
+    });
+
+    const groupedUsersInTime = Object.entries(
+      usersInTime.reduce((acc, order) => {
+        const date = new Date(order.createdAt);
+        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+        acc[formattedDate] = (acc[formattedDate] || 0) + 1;
+        return acc;
+      }, {}),
+    ).map(([date, count]) => ({ date: new Date(date), count }));
+
+    return {
+      users,
+      admins,
+      folders,
+      chats,
+      messages,
+      usersInTime: groupedUsersInTime.sort(
+        (a, b) => a.date.getTime() - b.date.getTime(),
+      ),
+    };
   }
 }

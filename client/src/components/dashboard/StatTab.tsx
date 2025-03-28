@@ -9,7 +9,7 @@ interface Props {
 const StatTab = ({ value, icon, text }: Props) => {
     return (
         <div
-            className={`flex-1 basis-[200px] flex flex-col gap-6 items-center bg-zinc-800 p-5 rounded-sm`}
+            className={`flex-1 basis-[200px] flex flex-col gap-6 items-center justify-center bg-zinc-800 p-5 rounded-sm`}
         >
             <div className="flex items-center gap-6">
                 {icon}

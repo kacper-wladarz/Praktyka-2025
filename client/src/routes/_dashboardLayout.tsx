@@ -57,7 +57,7 @@ function RouteComponent() {
                         <DashboardSidebar />
                     </div>
                     {isAdminAuth ? (
-                        <div className="flex-1 flex flex-col h-full bg-zinc-900 overflow-auto p-8">
+                        <div className="flex-1 flex flex-col h-full bg-zinc-900 overflow-y-auto p-8">
                             <Outlet />
                         </div>
                     ) : null}

@@ -109,7 +109,7 @@ function RouteComponent() {
             <button
                 className="bg-sky-800 w-fit text-xl px-3 py-2 rounded-lg disabled:bg-zinc-600 not-disabled:cursor-pointer not-disabled:hover:bg-sky-700 transition-[background] duration-200 ease-in-out"
                 onClick={() => handleUpdate()}
-                disabled={!isChanged}
+                disabled={!isChanged || updateSettings.isPending}
             >
                 {t("dashboard.panels.settings.saveBtn")}
             </button>

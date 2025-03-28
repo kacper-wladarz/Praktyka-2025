@@ -131,3 +131,8 @@ interface DashboardUserToCreate {
     password: string;
     role: "USER" | "ADMIN";
 }
+
+interface UsersFilter {
+    login: string;
+    role: "ADMIN" | "USER" | "ALL";
+}

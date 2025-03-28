@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,8 +21,12 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('users')
-  async getUsers(@Req() req: Request) {
-    return await this.dashboardService.getUsers(req['user']);
+  async getUsers(
+    @Req() req: Request,
+    @Query('login') login: string,
+    @Query('role') role: 'USER' | 'ADMIN' | 'ALL',
+  ) {
+    return await this.dashboardService.getUsers(req['user'], login, role);
   }
 
   @Get('users/:id')

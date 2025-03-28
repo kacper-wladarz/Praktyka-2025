@@ -5,7 +5,7 @@ import EditIcon from "@/assets/EditIcon";
 import Loading from "@/assets/Loading";
 import { useDashboardContext } from "@/contexts/DashboardContext";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_dashboardLayout/dashboard/users/")({
@@ -14,7 +14,17 @@ export const Route = createFileRoute("/_dashboardLayout/dashboard/users/")({
 
 function RouteComponent() {
     const { setIsAdminAuth } = useDashboardContext();
-    const { data, isPending, error } = useUsers();
+    const [filters, setFilters] = useState<UsersFilter>({
+        login: "",
+        role: "ALL",
+    });
+    const [searchFilters, setSearchFilters] = useState<UsersFilter>({
+        login: "",
+        role: "ALL",
+    });
+    const { data, isPending, error } = useUsers(searchFilters);
+    const userRef = useRef<HTMLInputElement>(null);
+    const adminRef = useRef<HTMLInputElement>(null);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -38,8 +48,27 @@ function RouteComponent() {
         });
     };
 
+    const handleRoleChange = () => {
+        const userChecked = userRef.current?.checked;
+        const adminChecked = adminRef.current?.checked;
+
+        if (userChecked && adminChecked) {
+            setFilters((prev) => ({ ...prev, role: "ALL" }));
+        } else if (userChecked) {
+            setFilters((prev) => ({ ...prev, role: "USER" }));
+        } else if (adminChecked) {
+            setFilters((prev) => ({ ...prev, role: "ADMIN" }));
+        } else {
+            setFilters((prev) => ({ ...prev, role: "ALL" }));
+        }
+    };
+
+    const handleSearch = () => {
+        setSearchFilters(filters);
+    };
+
     return (
-        <div className="appear flex flex-col gap-8">
+        <div className="appear flex flex-col gap-10">
             <div className="w-full flex justify-between items-center">
                 <span className="text-4xl font-extralight">
                     {t("dashboard.panels.users.title")}
@@ -53,6 +82,65 @@ function RouteComponent() {
                     {t("dashboard.panels.users.createUser")}
                 </button>
             </div>
+            <div className="flex items-center gap-14 flex-wrap">
+                <div className="flex items-center gap-3">
+                    <span className="font-extralight">Wyszukaj</span>
+                    <input
+                        type="text"
+                        className="bg-zinc-800 px-2 py-1 font-extralight rounded-sm outline-none"
+                        placeholder="Login"
+                        value={filters.login}
+                        onChange={(event) =>
+                            setFilters((prev) => ({
+                                ...prev,
+                                login: event.target.value,
+                            }))
+                        }
+                    />
+                </div>
+                <div className="flex gap-5">
+                    <div className="flex items-center">
+                        <input
+                            id="user_checkbox"
+                            ref={userRef}
+                            type="checkbox"
+                            name="role"
+                            value="USER"
+                            className="cursor-pointer"
+                            onChange={handleRoleChange}
+                        />
+                        <label
+                            htmlFor="user_checkbox"
+                            className="cursor-pointer select-none px-2"
+                        >
+                            User
+                        </label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            id="admin_checkbox"
+                            ref={adminRef}
+                            type="checkbox"
+                            name="role"
+                            value="ADMIN"
+                            className="cursor-pointer"
+                            onChange={handleRoleChange}
+                        />
+                        <label
+                            htmlFor="admin_checkbox"
+                            className="cursor-pointer select-none px-2"
+                        >
+                            Admin
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button
+                className="bg-sky-700 w-fit px-2 py-1 rounded-sm font-normal cursor-pointer hover:bg-sky-600 transition-[background] duration-200 ease-in-out"
+                onClick={handleSearch}
+            >
+                Szukaj
+            </button>
             {data ? (
                 <div className="w-full overflow-x-auto">
                     <table className="min-w-full text-sm">

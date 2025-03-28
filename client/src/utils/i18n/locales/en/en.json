@@ -83,7 +83,11 @@
                 "chats_one": "chat",
                 "chats_other": "chats",
                 "messages_one": "message",
-                "messages_other": "messages"
+                "messages_other": "messages",
+                "customTooltip": {
+                    "date": "Date",
+                    "count": "Count"
+                }
             },
             "users": {
                 "name": "Users",
