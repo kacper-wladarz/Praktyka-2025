@@ -12,6 +12,6 @@
     "updateBadRole": "Niepoprawna rola",
     "updateMinLengthPIN": "PIN musi składać się z 4 cyfr",
     "updatePasswordMinLength": "Hasło musi mieć conajmniej 8 znaków",
-    "PINLength": "PIN musi mieć 4 znaki"
+    "updatePINLength": "PIN musi mieć 4 znaki"
   }
 }

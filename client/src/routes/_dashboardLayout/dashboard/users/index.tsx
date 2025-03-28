@@ -84,11 +84,15 @@ function RouteComponent() {
             </div>
             <div className="flex items-center gap-14 flex-wrap">
                 <div className="flex items-center gap-3">
-                    <span className="font-extralight">Wyszukaj</span>
+                    <span className="font-extralight">
+                        {t("dashboard.panels.users.search.text")}
+                    </span>
                     <input
                         type="text"
                         className="bg-zinc-800 px-2 py-1 font-extralight rounded-sm outline-none"
-                        placeholder="Login"
+                        placeholder={t(
+                            "dashboard.panels.users.search.loginInputPlaceholder"
+                        )}
                         value={filters.login}
                         onChange={(event) =>
                             setFilters((prev) => ({
@@ -113,7 +117,7 @@ function RouteComponent() {
                             htmlFor="user_checkbox"
                             className="cursor-pointer select-none px-2"
                         >
-                            User
+                            {t("dashboard.panels.users.search.user")}
                         </label>
                     </div>
                     <div className="flex items-center">
@@ -130,7 +134,7 @@ function RouteComponent() {
                             htmlFor="admin_checkbox"
                             className="cursor-pointer select-none px-2"
                         >
-                            Admin
+                            {t("dashboard.panels.users.search.admin")}
                         </label>
                     </div>
                 </div>
@@ -139,7 +143,7 @@ function RouteComponent() {
                 className="bg-sky-700 w-fit px-2 py-1 rounded-sm font-normal cursor-pointer hover:bg-sky-600 transition-[background] duration-200 ease-in-out"
                 onClick={handleSearch}
             >
-                Szukaj
+                {t("dashboard.panels.users.search.searchBtn")}
             </button>
             {data ? (
                 <div className="w-full overflow-x-auto">

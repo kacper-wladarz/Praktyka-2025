@@ -100,7 +100,7 @@ function RouteComponent() {
                     <div className="flex-[2] flex flex-col">
                         <div className=" flex-1 flex flex-col gap-6 items-start justify-center bg-zinc-800 p-5 rounded-sm">
                             <span className="text-xl font-extralight">
-                                Ilość wszystkich użytkowników
+                                {t("dashboard.panels.stats.createdAccounts")}
                             </span>
                             <ResponsiveContainer width="100%">
                                 <LineChart data={data.usersInTime}>

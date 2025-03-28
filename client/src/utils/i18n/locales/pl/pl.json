@@ -92,7 +92,8 @@
                 "customTooltip": {
                     "date": "Data",
                     "count": "Ilość"
-                }
+                },
+                "createdAccounts": "Ilość stworzonych kont"
             },
             "users": {
                 "name": "Użytkownicy",
@@ -117,6 +118,13 @@
                 "update": {
                     "title": "Edytuj użytkownika",
                     "updateBtn": "Zapisz"
+                },
+                "search": {
+                    "text": "Wyszukaj",
+                    "loginInputPlaceholder": "Login",
+                    "user": "Użytkownik",
+                    "admin": "Admin",
+                    "searchBtn": "Szukaj"
                 }
             },
             "settings": {

@@ -160,7 +160,7 @@ export class DashboardService {
           password: finalPassword || null,
           lastOpenedChat,
           role,
-          PIN: PIN ? String(PIN) : undefined,
+          PIN: PIN ? String(PIN) : '',
         },
       });
     } catch (error) {

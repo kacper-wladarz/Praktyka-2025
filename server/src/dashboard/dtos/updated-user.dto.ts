@@ -36,6 +36,8 @@ export class UpdatedUserDTO {
   })
   role: 'ADMIN' | 'USER';
 
+  @IsOptional()
+  @ValidateIf((obj) => obj.PIN !== null && obj.PIN !== '')
   @IsString()
   @Length(4, 4, {
     message: i18nValidationMessage('dashboard.DTO.updatePINLength'),
